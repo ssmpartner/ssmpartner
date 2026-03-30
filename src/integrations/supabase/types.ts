@@ -369,6 +369,7 @@ export type Database = {
       team_members: {
         Row: {
           active: boolean
+          agency_id: string | null
           category: string
           created_at: string
           id: string
@@ -383,6 +384,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          agency_id?: string | null
           category?: string
           created_at?: string
           id?: string
@@ -397,6 +399,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          agency_id?: string | null
           category?: string
           created_at?: string
           id?: string
@@ -409,7 +412,15 @@ export type Database = {
           sort_order?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "team_members_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
