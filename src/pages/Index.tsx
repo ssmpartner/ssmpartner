@@ -92,8 +92,7 @@ const QuoteBanner = () => {
     </section>
   );
 };
-
-
+const Index = () => {
   const { t } = useLanguage();
   const [current, setCurrent] = useState(0);
 
