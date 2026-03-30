@@ -63,37 +63,37 @@ const Navbar = () => {
     <>
       {/* Desktop floating pill navbar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 flex justify-center px-6 transition-all duration-300 ${
           scrolled ? "pt-3" : "pt-5"
         }`}
       >
         <div
-          className="hidden lg:flex items-center gap-4 bg-white rounded-full px-6 py-3 transition-shadow duration-300"
+          className="hidden lg:flex items-center justify-between w-full max-w-[1340px] bg-white rounded-2xl px-8 py-4 transition-shadow duration-300"
           style={{
             boxShadow: "0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)",
             border: "0.5px solid rgba(36,62,58,0.12)",
           }}
         >
           {/* Logo block */}
-          <Link to="/" className="flex items-center gap-3 pr-3">
-            <img src={ssmLogo} alt="SSM Partner AG" className="h-7" />
-            <div className="w-px h-9 bg-border" />
-            <div className="leading-tight" style={{ fontSize: "9.5px" }}>
+          <Link to="/" className="flex items-center gap-3">
+            <img src={ssmLogo} alt="SSM Partner AG" className="h-8" />
+            <div className="w-px h-10 bg-border" />
+            <div className="leading-tight" style={{ fontSize: "10px" }}>
               <span style={{ color: "#243e3a" }}>Eine Tochtergesellschaft der Visana-Gruppe.</span>
               <br />
               <span className="text-muted-foreground">Gebundener Vermittler gemäss VAG.</span>
             </div>
           </Link>
 
-          {/* Nav links from DB */}
-          <div className="flex items-center gap-1">
+          {/* Center: Nav links + language + button */}
+          <div className="flex items-center gap-2">
             {navItems?.map((item) => (
               <Link
                 key={item.id}
                 to={item.url}
-                className="font-body transition-all duration-200 rounded-full px-4 py-2"
+                className="font-body transition-all duration-200 rounded-xl px-5 py-2.5"
                 style={{
-                  fontSize: "13.5px",
+                  fontSize: "14px",
                   backgroundColor: isActive(item.url) ? "#e8f0ef" : "transparent",
                   color: isActive(item.url) ? "#243e3a" : "#4a5568",
                   fontWeight: isActive(item.url) ? 500 : 400,
@@ -102,22 +102,20 @@ const Navbar = () => {
                 {getLabel(item)}
               </Link>
             ))}
-          </div>
-
           {/* Language dropdown */}
-          <div ref={langRef} className="relative ml-2">
+          <div ref={langRef} className="relative ml-1">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1.5 font-body text-xs rounded-full px-3 py-2 transition-colors hover:bg-muted"
+              className="flex items-center gap-1.5 font-body text-sm rounded-xl px-4 py-2.5 transition-colors hover:bg-muted"
               style={{ color: "#4a5568" }}
             >
-              <Globe size={14} />
+              <Globe size={15} />
               <span className="uppercase font-medium" style={{ color: "#243e3a" }}>{lang}</span>
-              <ChevronDown size={12} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
+              <ChevronDown size={13} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
             </button>
             {langOpen && (
               <div
-                className="absolute top-full right-0 mt-2 bg-white rounded-xl py-1 min-w-[140px] z-50"
+                className="absolute top-full right-0 mt-2 bg-white rounded-xl py-1 min-w-[150px] z-50"
                 style={{
                   boxShadow: "0 4px 24px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06)",
                   border: "0.5px solid rgba(36,62,58,0.1)",
@@ -127,7 +125,7 @@ const Navbar = () => {
                   <button
                     key={l.code}
                     onClick={() => { setLang(l.code); setLangOpen(false); }}
-                    className="w-full text-left px-4 py-2 font-body text-sm transition-colors hover:bg-muted flex items-center justify-between"
+                    className="w-full text-left px-4 py-2.5 font-body text-sm transition-colors hover:bg-muted flex items-center justify-between"
                     style={{ color: lang === l.code ? "#243e3a" : "#4a5568", fontWeight: lang === l.code ? 500 : 400 }}
                   >
                     {l.label}
@@ -141,11 +139,12 @@ const Navbar = () => {
           {/* Contact button */}
           <Link
             to="/kontakt"
-            className="font-body text-sm font-medium rounded-full px-6 py-2.5 transition-all duration-200 hover:opacity-90"
+            className="font-body text-sm font-medium rounded-xl px-7 py-2.5 transition-all duration-200 hover:opacity-90"
             style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
           >
             {t("nav.cta")}
           </Link>
+          </div>
         </div>
 
         {/* Mobile header */}
