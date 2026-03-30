@@ -163,6 +163,19 @@ const AdminHeroes = () => {
           })}
         </div>
       )}
+
+      <MediaPickerModal
+        open={!!mediaPickerKey}
+        onClose={() => setMediaPickerKey(null)}
+        onSelect={(url) => {
+          if (mediaPickerKey) {
+            updateMutation.mutate({ pageKey: mediaPickerKey, image_url: url });
+          }
+          setMediaPickerKey(null);
+        }}
+        accept="image"
+        title="Bild aus Mediathek wählen"
+      />
     </div>
   );
 };
