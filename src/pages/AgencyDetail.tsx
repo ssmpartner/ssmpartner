@@ -14,6 +14,7 @@ const AgencyDetail = () => {
   const navigate = useNavigate();
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "", recipient: "" });
   const [sending, setSending] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
 
   const { data: agency, isLoading } = useQuery({
     queryKey: ["agency", slug],
