@@ -207,28 +207,28 @@ const Index = () => {
         </div>
 
         {/* Mobile: stacked cards below dots */}
-        <div className="absolute bottom-4 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
+        <div className="absolute bottom-20 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
           <Link
             to="/karriere"
-            className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl p-3 pr-4"
-            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}
+            className="flex items-center gap-3 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-xl p-3 pr-4"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
-            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
               <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80" alt="Karriere" className="w-full h-full object-cover" />
             </div>
-            <p className="font-heading text-xs font-bold text-foreground flex-1">Jetzt bewerben</p>
-            <ArrowRight size={14} className="text-primary" />
+            <p className="font-heading text-xs font-bold text-white flex-1">Jetzt bewerben</p>
+            <ArrowRight size={14} className="text-white" />
           </Link>
           <Link
             to="/agenturen"
-            className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl p-3 pr-4"
-            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}
+            className="flex items-center gap-3 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-xl p-3 pr-4"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
-            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
               <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&q=80" alt="Agenturen" className="w-full h-full object-cover" />
             </div>
-            <p className="font-heading text-xs font-bold text-foreground flex-1">Agenturen entdecken</p>
-            <ArrowRight size={14} className="text-primary" />
+            <p className="font-heading text-xs font-bold text-white flex-1">Agenturen entdecken</p>
+            <ArrowRight size={14} className="text-white" />
           </Link>
         </div>
       </section>
