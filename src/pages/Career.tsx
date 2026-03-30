@@ -123,6 +123,19 @@ const Career = () => {
     },
   });
 
+  const { data: processImage } = useQuery({
+    queryKey: ["career-process-hero"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_heroes")
+        .select("image_url")
+        .eq("page_key", "career-process")
+        .maybeSingle();
+      if (error) throw error;
+      return data?.image_url || null;
+    },
+  });
+
   const reasons = [
     { num: "01", title: t("career.why.1.title"), desc: t("career.why.1.desc") },
     { num: "02", title: t("career.why.2.title"), desc: t("career.why.2.desc") },
