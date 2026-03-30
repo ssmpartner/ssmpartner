@@ -249,6 +249,10 @@ const AdminTeam = () => {
                   Agenturleiter/in
                 </label>
               )}
+              <label className="flex items-center gap-2 font-body text-sm text-foreground cursor-pointer">
+                <input type="checkbox" checked={form.is_recruiting_partner} onChange={(e) => setForm({ ...form, is_recruiting_partner: e.target.checked })} className="rounded border-border" />
+                Recruiting Partner (Karriereseite)
+              </label>
             </div>
           </div>
 
