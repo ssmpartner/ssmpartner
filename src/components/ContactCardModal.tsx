@@ -50,24 +50,24 @@ const ContactCardModal = ({ member, open, onClose }: ContactCardModalProps) => {
         className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="relative bg-primary px-6 pt-6 pb-10">
-          <button onClick={onClose} className="absolute top-3 right-3 text-primary-foreground/70 hover:text-primary-foreground">
+        {/* Header with photo */}
+        <div className="relative bg-primary px-6 pt-6 pb-14">
+          <button onClick={onClose} className="absolute top-3 right-3 text-primary-foreground/70 hover:text-primary-foreground z-10">
             <X size={20} />
           </button>
           <p className="font-body text-xs text-primary-foreground/60 uppercase tracking-wider">Kontaktkarte</p>
         </div>
 
         {/* Avatar overlapping */}
-        <div className="flex justify-center -mt-8">
+        <div className="flex justify-center -mt-12">
           <div
-            className="w-16 h-16 rounded-full border-4 border-card overflow-hidden bg-muted"
-            style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
+            className="w-24 h-24 rounded-2xl border-4 border-card overflow-hidden bg-muted"
+            style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.2)" }}
           >
             {member.image_url ? (
               <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-xl">
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-2xl">
                 {member.name.charAt(0)}
               </div>
             )}
