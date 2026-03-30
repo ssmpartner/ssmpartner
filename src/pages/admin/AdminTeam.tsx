@@ -111,12 +111,18 @@ const AdminTeam = () => {
             <option value="agentur">Agentur-Zuweisung</option>
           </select>
           {form.category === "agentur" && (
-            <select value={form.agency_id} onChange={(e) => setForm({ ...form, agency_id: e.target.value })} className={inputClass}>
-              <option value="">– Agentur wählen –</option>
-              {agencies?.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
+            <>
+              <select value={form.agency_id} onChange={(e) => setForm({ ...form, agency_id: e.target.value })} className={inputClass}>
+                <option value="">– Agentur wählen –</option>
+                {agencies?.map((a) => (
+                  <option key={a.id} value={a.id}>{a.name}</option>
+                ))}
+              </select>
+              <label className="flex items-center gap-2 font-body text-sm text-foreground cursor-pointer">
+                <input type="checkbox" checked={form.is_agency_leader} onChange={(e) => setForm({ ...form, is_agency_leader: e.target.checked })} className="rounded border-border" />
+                Agenturleiter/in
+              </label>
+            </>
           )}
           <div className="grid grid-cols-2 gap-4">
             <input placeholder="Rolle (DE)" value={form.role_de} onChange={(e) => setForm({ ...form, role_de: e.target.value })} className={inputClass} />
