@@ -240,6 +240,39 @@ export type Database = {
         }
         Relationships: []
       }
+      chatbot_knowledge: {
+        Row: {
+          active: boolean
+          answer: string
+          category: string
+          created_at: string
+          id: string
+          question: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          answer?: string
+          category?: string
+          created_at?: string
+          id?: string
+          question?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          answer?: string
+          category?: string
+          created_at?: string
+          id?: string
+          question?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           agency_id: string | null

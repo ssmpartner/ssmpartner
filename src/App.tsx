@@ -30,6 +30,8 @@ import AdminDocs from "./pages/admin/AdminDocs";
 import AdminCareerVideos from "./pages/admin/AdminCareerVideos";
 import AdminCareerFaqs from "./pages/admin/AdminCareerFaqs";
 import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
+import AdminChatKnowledge from "./pages/admin/AdminChatKnowledge";
+import ChatWidget from "@/components/ChatWidget";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
@@ -46,6 +48,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
     <Navbar />
     {children}
     <Footer />
+    <ChatWidget />
   </>
 );
 
@@ -87,6 +90,7 @@ const App = () => (
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 <Route path="/admin/api-docs" element={<AdminApiDocs />} />
                 <Route path="/admin/docs" element={<AdminDocs />} />
+                <Route path="/admin/chat-knowledge" element={<AdminChatKnowledge />} />
               </Route>
             </Route>
 
