@@ -8,6 +8,7 @@ const staticPages = [
   { key: "about", label: "Über uns" },
   { key: "about-intro", label: "Über uns – Intro-Bild" },
   { key: "career", label: "Karriere" },
+  { key: "career-process", label: "Karriere – Ihr Weg zu uns" },
   { key: "contact", label: "Kontakt" },
   { key: "team", label: "Agenturen" },
   { key: "legal", label: "Impressum / Datenschutz" },

@@ -123,6 +123,19 @@ const Career = () => {
     },
   });
 
+  const { data: processImage } = useQuery({
+    queryKey: ["career-process-hero"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_heroes")
+        .select("image_url")
+        .eq("page_key", "career-process")
+        .maybeSingle();
+      if (error) throw error;
+      return data?.image_url || null;
+    },
+  });
+
   const reasons = [
     { num: "01", title: t("career.why.1.title"), desc: t("career.why.1.desc") },
     { num: "02", title: t("career.why.2.title"), desc: t("career.why.2.desc") },
@@ -325,6 +338,19 @@ const Career = () => {
             </AnimatedSection>
           </div>
         </section>
+      )}
+
+      {/* ── Onboarding Image Divider ── */}
+      {processImage && (
+        <div className="relative h-64 lg:h-80 overflow-hidden">
+          <img src={processImage} alt="Ihr Weg zu uns" className="w-full h-full object-cover" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3acc, #6A938788)" }} />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="font-heading text-2xl lg:text-3xl font-bold text-white text-center px-6 drop-shadow-lg">
+              Ihr Weg zu uns
+            </p>
+          </div>
+        </div>
       )}
 
       {/* ── Onboarding Steps ── */}
