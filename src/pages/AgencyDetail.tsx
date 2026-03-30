@@ -317,7 +317,7 @@ const AgencyDetail = () => {
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8 mt-14">
-              {members.map((member, i) => (
+              {members?.map((member, i) => (
                 <AnimatedSection key={member.id} delay={i * 0.05}>
                   <div className="group relative flex flex-col items-center text-center">
                     <div
@@ -341,6 +341,26 @@ const AgencyDetail = () => {
                     </div>
                     <h3 className="font-heading text-base font-semibold text-foreground mt-4">{member.name}</h3>
                     {member.role && <p className="font-body text-sm text-muted-foreground mt-1">{member.role}</p>}
+                  </div>
+                </AnimatedSection>
+              ))}
+              {teamMembers?.map((member, i) => (
+                <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
+                  <div className="group relative flex flex-col items-center text-center">
+                    <div
+                      className="w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted relative"
+                      style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.12)" }}
+                    >
+                      {member.image_url ? (
+                        <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-3xl">
+                          {member.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="font-heading text-base font-semibold text-foreground mt-4">{member.name}</h3>
+                    {member.role_de && <p className="font-body text-sm text-muted-foreground mt-1">{member.role_de}</p>}
                   </div>
                 </AnimatedSection>
               ))}
