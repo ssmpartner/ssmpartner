@@ -180,7 +180,7 @@ const Career = () => {
                     <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/50 to-transparent">
                       <h3 className="font-heading text-lg font-semibold text-white drop-shadow-lg">{card.title}</h3>
                     </div>
-                  </button>
+                  </motion.button>
                 </AnimatedSection>
               ))}
             </div>
