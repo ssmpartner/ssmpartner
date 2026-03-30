@@ -93,14 +93,14 @@ const Contact = () => {
             <div className="bg-card border rounded-2xl p-8">
               <div className="font-body text-sm text-foreground space-y-1">
                 <p className="font-semibold">SSM Partner AG</p>
-                <p className="text-muted-foreground">Riedmattstrasse 12</p>
-                <p className="text-muted-foreground">6032 Ebikon, Schweiz</p>
+                <p className="text-muted-foreground">Stationsstrasse 92</p>
+                <p className="text-muted-foreground">CH-6023 Rothenburg</p>
               </div>
 
               <div className="h-px bg-border my-6" />
 
               <div className="font-body text-sm text-muted-foreground space-y-1">
-                <p>+41 41 000 00 00</p>
+                <p>041 220 20 50</p>
                 <p>info@ssmpartner.ch</p>
               </div>
 
