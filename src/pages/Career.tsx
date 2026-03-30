@@ -268,9 +268,9 @@ const Career = () => {
                       Spontane Bewerbung? Oder hast du eine Frage? {recruitingPartner.name.split(" ")[0]} nimmt sich für deine offenen Fragen Zeit. Entdecke unten die nächsten Schritte im Bewerbungsprozess.
                     </p>
                     <div className="flex flex-wrap gap-3 mt-6">
-                      <Link to="/kontakt?subject=career" className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
+                      <button onClick={() => setShowApply(true)} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
                         <Mail size={16} /> Jetzt bewerben
-                      </Link>
+                      </button>
                       <Link to="/agenturen" className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted transition-colors">
                         <Building2 size={16} /> Unsere Agenturen
                       </Link>
