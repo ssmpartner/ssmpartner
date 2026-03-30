@@ -150,6 +150,28 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Overlap CTA Bar */}
+      <div className="relative z-20 -mt-7 px-6 lg:px-8">
+        <div
+          className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-8 py-4 rounded-full"
+          style={{
+            backgroundColor: "#B3B69C",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)",
+          }}
+        >
+          <p className="font-body text-sm sm:text-base font-medium text-white text-center sm:text-left">
+            Persönliche Beratung — wir sind für Sie da.
+          </p>
+          <Link
+            to="/kontakt"
+            className="shrink-0 font-body text-sm font-semibold px-6 py-2.5 rounded-full transition-all hover:opacity-90 uppercase tracking-wider"
+            style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
+          >
+            Jetzt Kontakt aufnehmen
+          </Link>
+        </div>
+      </div>
+
       {/* Wer wir sind */}
       <section className="py-24 lg:py-32" style={{ backgroundColor: "#f5f7f5" }}>
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
