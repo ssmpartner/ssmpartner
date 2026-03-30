@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import About from "./pages/About";
+import Team from "./pages/Team";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -41,6 +42,7 @@ const App = () => (
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
             <Route path="/ueber-uns" element={<PublicLayout><About /></PublicLayout>} />
+            <Route path="/team" element={<PublicLayout><Team /></PublicLayout>} />
             <Route path="/karriere" element={<PublicLayout><Career /></PublicLayout>} />
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
 
