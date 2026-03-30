@@ -88,7 +88,7 @@ const AgencyDetail = () => {
       const mailto = agency?.email || "info@ssmpartner.ch";
       window.open(`mailto:${mailto}?subject=${subject}&body=${body}`, "_self");
       toast.success("Vielen Dank für Ihre Anfrage!");
-      setContactForm({ name: "", email: "", phone: "", message: "" });
+      setContactForm({ name: "", email: "", phone: "", message: "", recipient: "" });
     } catch {
       toast.error("Ein Fehler ist aufgetreten.");
     } finally {
