@@ -11,7 +11,7 @@ import SwissMap from "@/components/SwissMap";
 const AgencyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "", recipient: "" });
   const [sending, setSending] = useState(false);
 
   const { data: agency, isLoading } = useQuery({
@@ -81,14 +81,22 @@ const AgencyDetail = () => {
     setSending(true);
     try {
       // For now, open mailto with pre-filled data
+      // Build recipient list from all available people
+      const allPeople = [
+        ...(teamMembers?.filter(tm => tm.is_agency_leader).map(tm => ({ name: tm.name, email: null })) || []),
+        ...(teamMembers?.filter(tm => !tm.is_agency_leader).map(tm => ({ name: tm.name, email: null })) || []),
+        ...(members?.map(m => ({ name: m.name, email: m.email })) || []),
+      ];
+      const selectedPerson = allPeople.find(p => p.name === contactForm.recipient);
+      const recipientLine = contactForm.recipient ? `\nAnsprechperson: ${contactForm.recipient}` : "";
       const subject = encodeURIComponent(`Anfrage über Website – Agentur ${agency?.name}`);
       const body = encodeURIComponent(
-        `Name: ${contactForm.name}\nE-Mail: ${contactForm.email}\nTelefon: ${contactForm.phone}\n\n${contactForm.message}`
+        `Name: ${contactForm.name}\nE-Mail: ${contactForm.email}\nTelefon: ${contactForm.phone}${recipientLine}\n\n${contactForm.message}`
       );
-      const mailto = agency?.email || "info@ssmpartner.ch";
+      const mailto = (selectedPerson?.email) || agency?.email || "info@ssmpartner.ch";
       window.open(`mailto:${mailto}?subject=${subject}&body=${body}`, "_self");
       toast.success("Vielen Dank für Ihre Anfrage!");
-      setContactForm({ name: "", email: "", phone: "", message: "" });
+      setContactForm({ name: "", email: "", phone: "", message: "", recipient: "" });
     } catch {
       toast.error("Ein Fehler ist aufgetreten.");
     } finally {
@@ -261,6 +269,33 @@ const AgencyDetail = () => {
                   <div className="mt-8 pt-6 border-t">
                     <h4 className="font-heading text-sm font-semibold text-foreground mb-4">Schnellanfrage</h4>
                     <form onSubmit={handleContactSubmit} className="space-y-3">
+                      {/* Recipient selector */}
+                      {(() => {
+                        const people: { name: string; label: string }[] = [];
+                        const leader = teamMembers?.find((tm: any) => tm.is_agency_leader);
+                        if (leader) people.push({ name: leader.name, label: `${leader.name} (Agenturleitung)` });
+                        teamMembers?.filter((tm: any) => !tm.is_agency_leader).forEach(tm => {
+                          people.push({ name: tm.name, label: `${tm.name}${tm.role_de ? ` – ${tm.role_de}` : ""}` });
+                        });
+                        members?.forEach(m => {
+                          if (!people.some(p => p.name === m.name)) {
+                            people.push({ name: m.name, label: `${m.name}${m.role ? ` – ${m.role}` : ""}` });
+                          }
+                        });
+                        if (people.length === 0) return null;
+                        return (
+                          <select
+                            value={contactForm.recipient}
+                            onChange={(e) => setContactForm({ ...contactForm, recipient: e.target.value })}
+                            className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                          >
+                            <option value="">Ansprechperson wählen (optional)</option>
+                            {people.map(p => (
+                              <option key={p.name} value={p.name}>{p.label}</option>
+                            ))}
+                          </select>
+                        );
+                      })()}
                       <input
                         type="text"
                         value={contactForm.name}
