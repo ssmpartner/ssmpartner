@@ -242,10 +242,24 @@ const ChatWidget = () => {
         {!open && (
           <motion.button
             initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+              y: [0, -6, 0],
+              boxShadow: [
+                "0 4px 20px rgba(179,182,156,0.3)",
+                "0 8px 30px rgba(179,182,156,0.5)",
+                "0 4px 20px rgba(179,182,156,0.3)",
+              ],
+            }}
             exit={{ scale: 0, opacity: 0 }}
+            transition={{
+              scale: { duration: 0.3 },
+              y: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+              boxShadow: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+            }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#243e3a] text-white shadow-lg hover:shadow-xl flex items-center justify-center transition-shadow"
+            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[#243e3a] to-[#B3B69C] text-white flex items-center justify-center ring-2 ring-[#B3B69C]/40 ring-offset-2"
             aria-label="Chat öffnen"
           >
             <MessageCircle size={24} />
