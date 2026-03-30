@@ -35,7 +35,9 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
         />
       </div>
       {/* Green line */}
-      <div className="w-full h-1.5" style={{ backgroundColor: "#243e3a" }} />
+      <div className="w-full h-1.5" style={{ backgroundColor: "#B3B69C" }} />
+      {/* Shadow transition */}
+      <div className="w-full h-6" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08), transparent)" }} />
     </div>
   );
 };
