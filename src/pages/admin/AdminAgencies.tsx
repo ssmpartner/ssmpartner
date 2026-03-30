@@ -14,6 +14,11 @@ const emptyForm = {
   description_fr: "",
   description_it: "",
   description_en: "",
+  leader_name: "",
+  leader_role: "",
+  opening_hours: "",
+  map_lat: "",
+  map_lng: "",
 };
 
 const AdminAgencies = () => {
