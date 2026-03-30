@@ -136,6 +136,20 @@ const Career = () => {
     },
   });
 
+  const { data: dividerImages } = useQuery({
+    queryKey: ["career-divider-images"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_heroes")
+        .select("page_key, image_url")
+        .in("page_key", ["career-divider-1", "career-divider-2"]);
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      data?.forEach((d) => { if (d.image_url) map[d.page_key] = d.image_url; });
+      return map;
+    },
+  });
+
   const reasons = [
     { num: "01", title: t("career.why.1.title"), desc: t("career.why.1.desc") },
     { num: "02", title: t("career.why.2.title"), desc: t("career.why.2.desc") },
