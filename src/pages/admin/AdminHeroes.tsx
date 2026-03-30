@@ -4,12 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
-const pages = [
+const staticPages = [
   { key: "about", label: "Über uns" },
   { key: "about-intro", label: "Über uns – Intro-Bild" },
   { key: "career", label: "Karriere" },
   { key: "contact", label: "Kontakt" },
-  { key: "team", label: "Team" },
+  { key: "team", label: "Agenturen" },
   { key: "legal", label: "Impressum / Datenschutz" },
 ];
 
