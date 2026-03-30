@@ -116,6 +116,11 @@ const AdminAgencies = () => {
       description_fr: agency.description_fr || "",
       description_it: agency.description_it || "",
       description_en: agency.description_en || "",
+      leader_name: agency.leader_name || "",
+      leader_role: agency.leader_role || "",
+      opening_hours: agency.opening_hours || "",
+      map_lat: agency.map_lat?.toString() || "",
+      map_lng: agency.map_lng?.toString() || "",
     });
   };
 
