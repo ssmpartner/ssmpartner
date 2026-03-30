@@ -12,7 +12,14 @@ const categories = [
   { value: "agentur", label: "Alle Agenturen" },
 ];
 
-const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "" };
+const badgeOptions = [
+  { value: "", label: "– Kein Badge –" },
+  { value: "verkaufsleiter", label: "Verkaufsleiter" },
+  { value: "teamleiter", label: "Teamleiter" },
+  { value: "finanzexperte", label: "Finanzexperte" },
+];
+
+const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "", badge: "" };
 
 const AdminTeam = () => {
   const queryClient = useQueryClient();
