@@ -59,7 +59,7 @@ const ContactCardModal = ({ member, open, onClose }: ContactCardModalProps) => {
         </div>
 
         {/* Avatar overlapping */}
-        <div className="flex justify-center -mt-12">
+        <div className="relative z-10 flex justify-center -mt-12">
           <div
             className="w-24 h-24 rounded-2xl border-4 border-card overflow-hidden bg-muted"
             style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.2)" }}
