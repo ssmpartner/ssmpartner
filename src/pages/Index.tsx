@@ -2,12 +2,25 @@ import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
-import { Phone, Send } from "lucide-react";
-import heroOffice from "@/assets/hero-office.jpg";
-import heroOffice2 from "@/assets/hero-office-2.jpg";
-import heroOffice3 from "@/assets/hero-office-3.jpg";
+import { Phone, Send, ChevronLeft, ChevronRight } from "lucide-react";
 
-const slides = [heroOffice, heroOffice2, heroOffice3];
+const heroSlides = [
+  {
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80",
+    title: "Ihr Partner für Finanzen",
+    subtitle: "Massgeschneiderte Lösungen für Versicherung, Vorsorge und Finanzierung.",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1920&q=80",
+    title: "Transparenz & Vertrauen",
+    subtitle: "Wir bringen Klarheit in den Finanz- und Versicherungsmarkt.",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80",
+    title: "Technologie trifft Beratung",
+    subtitle: "Innovation und persönliche Betreuung — das Beste aus beiden Welten.",
+  },
+];
 
 const Index = () => {
   const { t } = useLanguage();
@@ -16,7 +29,11 @@ const Index = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % slides.length);
+    setCurrent((prev) => (prev + 1) % heroSlides.length);
+  }, []);
+
+  const prev = useCallback(() => {
+    setCurrent((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
   }, []);
 
   useEffect(() => {
@@ -40,61 +57,80 @@ const Index = () => {
   };
 
   const inputClass = (field: string) =>
-    `w-full bg-card border ${errors[field] ? "border-destructive" : "border-border"} px-4 py-3 font-body text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring rounded-lg transition-all`;
+    `w-full bg-white border ${errors[field] ? "border-destructive" : "border-border"} px-4 py-3 font-body text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring rounded-lg transition-all`;
 
   return (
     <main>
-      {/* Hero Slider - Full width */}
-      <section className="relative w-full h-[60vh] lg:h-[75vh] overflow-hidden">
-        {slides.map((src, i) => (
-          <img
+      {/* Hero Slider — 100vh */}
+      <section className="relative w-full h-screen overflow-hidden">
+        {heroSlides.map((slide, i) => (
+          <div
             key={i}
-            src={src}
-            alt={`SSM Partner AG Office ${i + 1}`}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            className={`absolute inset-0 transition-opacity duration-1000 ${
               i === current ? "opacity-100" : "opacity-0"
             }`}
-            width={1920}
-            height={960}
-          />
+          >
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="absolute inset-0 w-full h-full object-cover"
+              loading={i === 0 ? "eager" : "lazy"}
+            />
+            {/* Dark overlay */}
+            <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
+            {/* Content */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+              <h1
+                className="font-heading text-white leading-tight max-w-3xl"
+                style={{ fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 500 }}
+              >
+                {slide.title}
+              </h1>
+              <p
+                className="mt-4 max-w-xl"
+                style={{ fontSize: "clamp(14px, 1.5vw, 18px)", color: "rgba(255,255,255,0.8)" }}
+              >
+                {slide.subtitle}
+              </p>
+            </div>
+          </div>
         ))}
-        {/* Slider dots */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
-          {slides.map((_, i) => (
+
+        {/* Arrow navigation */}
+        <button
+          onClick={prev}
+          className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+          aria-label="Next slide"
+        >
+          <ChevronRight size={20} />
+        </button>
+
+        {/* Dot navigation */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
+          {heroSlides.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
               aria-label={`Slide ${i + 1}`}
-              className={`w-3 h-3 rounded-full transition-all ${
-                i === current ? "bg-primary-foreground scale-110" : "bg-primary-foreground/50"
-              }`}
+              className="w-2.5 h-2.5 rounded-full transition-all duration-300"
+              style={{
+                backgroundColor: i === current ? "#ffffff" : "rgba(255,255,255,0.4)",
+                transform: i === current ? "scale(1.2)" : "scale(1)",
+              }}
             />
           ))}
-        </div>
-
-        {/* Phone CTA Bar - overlapping bottom of hero */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-2xl px-4">
-          <div className="bg-primary rounded-t-2xl px-8 py-6 flex items-center justify-between">
-            <div>
-              <h3 className="font-heading text-lg font-semibold text-primary-foreground">
-                {t("home.phone.title")}
-              </h3>
-              <p className="font-body text-sm text-primary-foreground/80">
-                {t("home.phone.sub")}
-              </p>
-            </div>
-            <a
-              href="tel:+41412202050"
-              className="font-heading text-2xl lg:text-3xl font-bold text-primary-foreground hover:text-accent transition-colors whitespace-nowrap"
-            >
-              +41 41 220 20 50
-            </a>
-          </div>
         </div>
       </section>
 
       {/* Wer wir sind */}
-      <section className="py-20 lg:py-28">
+      <section className="py-24 lg:py-32" style={{ backgroundColor: "#f5f7f5" }}>
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
           <AnimatedSection>
             <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
@@ -105,7 +141,8 @@ const Index = () => {
             </p>
             <Link
               to="/ueber-uns"
-              className="inline-block mt-10 font-body text-sm font-medium tracking-wider border border-primary text-primary px-8 py-3 rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-300 uppercase"
+              className="inline-block mt-10 font-body text-sm font-medium tracking-wider rounded-full px-8 py-3 transition-all duration-300 uppercase hover:opacity-90"
+              style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
             >
               {t("home.who.cta")}
             </Link>
@@ -113,9 +150,30 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Headquarter / Contact */}
-      <section className="py-20 lg:py-28 bg-card border-t">
-        <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
+      {/* Phone CTA */}
+      <section className="py-16" style={{ backgroundColor: "#243e3a" }}>
+        <div className="container mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl">
+          <div>
+            <h3 className="font-heading text-lg font-semibold text-white">
+              {t("home.phone.title")}
+            </h3>
+            <p className="font-body text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
+              {t("home.phone.sub")}
+            </p>
+          </div>
+          <a
+            href="tel:+41412202050"
+            className="font-heading text-2xl lg:text-3xl font-bold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex items-center gap-3"
+          >
+            <Phone size={24} />
+            +41 41 220 20 50
+          </a>
+        </div>
+      </section>
+
+      {/* Contact Form */}
+      <section className="py-24 lg:py-32" style={{ backgroundColor: "#f5f7f5" }}>
+        <div className="container mx-auto px-6 lg:px-8 max-w-lg text-center">
           <AnimatedSection>
             <h3 className="font-heading text-2xl lg:text-3xl text-foreground">
               <span className="font-bold">{t("home.hq.title")}</span>{" "}
@@ -123,11 +181,11 @@ const Index = () => {
             </h3>
 
             {submitted ? (
-              <div className="mt-10 p-6 bg-background rounded-2xl border inline-block">
+              <div className="mt-10 p-6 bg-white rounded-2xl border inline-block">
                 <p className="font-body text-base text-foreground">✓ Nachricht gesendet</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="mt-10 space-y-4 max-w-md mx-auto text-left" noValidate>
+              <form onSubmit={handleSubmit} className="mt-10 space-y-4 text-left" noValidate>
                 <div>
                   <input name="name" type="text" placeholder={t("contact.form.name")} className={inputClass("name")} />
                   {errors.name && <span className="font-body text-xs text-destructive mt-1 block">{t("contact.form.required")}</span>}
@@ -142,7 +200,8 @@ const Index = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full gradient-primary text-primary-foreground font-body text-sm font-semibold py-3.5 rounded-lg hover:opacity-90 transition-opacity uppercase tracking-wider flex items-center justify-center gap-2"
+                  className="w-full font-body text-sm font-semibold py-3.5 rounded-full hover:opacity-90 transition-opacity uppercase tracking-wider flex items-center justify-center gap-2"
+                  style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
                 >
                   <Send size={16} />
                   {t("contact.form.submit")}
