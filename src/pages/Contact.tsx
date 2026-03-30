@@ -115,7 +115,7 @@ const Contact = () => {
           </AnimatedSection>
 
           {/* Info */}
-          <AnimatedSection delay={0.15} className="lg:pt-16">
+          <AnimatedSection delay={0.15} className="lg:pt-16 space-y-6">
             <div className="bg-card border rounded-2xl p-8">
               <div className="font-body text-sm text-foreground space-y-1">
                 <p className="font-semibold">SSM Partner AG</p>
@@ -139,23 +139,32 @@ const Contact = () => {
                 </a>
               </div>
             </div>
+
+            {/* Öffnungszeiten */}
+            <div className="bg-card border rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-heading text-lg font-semibold text-foreground">Öffnungszeiten</h3>
+              </div>
+              <div className="font-body text-sm text-muted-foreground space-y-2">
+                <div className="flex justify-between">
+                  <span>Montag – Freitag</span>
+                  <span className="font-medium text-foreground">08:00 – 12:00 / 13:30 – 17:00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Samstag – Sonntag</span>
+                  <span className="font-medium text-foreground">Geschlossen</span>
+                </div>
+              </div>
+            </div>
           </AnimatedSection>
         </div>
       </section>
 
-      {/* Map */}
-      <section className="w-full h-[400px] lg:h-[500px]">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2718.5!2d8.2683!3d47.0933!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x478ffd43d4e5b8ed%3A0x0!2sStationsstrasse%2092%2C%206023%20Rothenburg!5e0!3m2!1sde!2sch!4v1700000000000"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title="SSM Partner AG Standort"
-        />
-      </section>
+      {/* Mapbox Map */}
+      <ContactMap />
     </main>
   );
 };
