@@ -85,15 +85,15 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Nav links from DB */}
-          <div className="flex items-center gap-1">
+          {/* Center: Nav links + language + button */}
+          <div className="flex items-center gap-2">
             {navItems?.map((item) => (
               <Link
                 key={item.id}
                 to={item.url}
-                className="font-body transition-all duration-200 rounded-full px-4 py-2"
+                className="font-body transition-all duration-200 rounded-xl px-5 py-2.5"
                 style={{
-                  fontSize: "13.5px",
+                  fontSize: "14px",
                   backgroundColor: isActive(item.url) ? "#e8f0ef" : "transparent",
                   color: isActive(item.url) ? "#243e3a" : "#4a5568",
                   fontWeight: isActive(item.url) ? 500 : 400,
