@@ -2,15 +2,24 @@ export type Language = "de" | "fr" | "it" | "en";
 
 export const translations: Record<string, Record<Language, string>> = {
   // Nav
-  "nav.about": { de: "Über uns", fr: "À propos", it: "Chi siamo", en: "About us" },
-  "nav.career": { de: "Karriere", fr: "Carrière", it: "Carriera", en: "Careers" },
-  "nav.contact": { de: "Kontakt", fr: "Contact", it: "Contatto", en: "Contact" },
-  "nav.cta": { de: "Beratung anfragen", fr: "Demander un conseil", it: "Richiedi consulenza", en: "Request consultation" },
+  "nav.home": { de: "HOME", fr: "ACCUEIL", it: "HOME", en: "HOME" },
+  "nav.team": { de: "TEAM", fr: "ÉQUIPE", it: "TEAM", en: "TEAM" },
+  "nav.career": { de: "KARRIERE", fr: "CARRIÈRE", it: "CARRIERA", en: "CAREERS" },
+  "nav.vag": { de: "VAG 45", fr: "LSA 45", it: "LSA 45", en: "ISA 45" },
+  "nav.cta": { de: "Kontakt aufnehmen", fr: "Nous contacter", it: "Contattaci", en: "Contact us" },
 
-  // Home Hero
-  "home.hero.title": { de: "Ihr Partner für Finanzen.", fr: "Votre partenaire financier.", it: "Il vostro partner finanziario.", en: "Your financial partner." },
-  "home.hero.sub": { de: "Massgeschneiderte Lösungen für Versicherung, Vorsorge und Finanzierung.", fr: "Des solutions sur mesure pour l'assurance, la prévoyance et le financement.", it: "Soluzioni su misura per assicurazioni, previdenza e finanziamenti.", en: "Tailored solutions for insurance, pension planning and financing." },
-  "home.hero.cta": { de: "Beratung anfragen →", fr: "Demander un conseil →", it: "Richiedi consulenza →", en: "Request consultation →" },
+  // Phone bar
+  "home.phone.title": { de: "Sie haben eine Frage?", fr: "Vous avez une question?", it: "Avete una domanda?", en: "Do you have a question?" },
+  "home.phone.sub": { de: "Wir freuen uns auf Ihren Anruf.", fr: "Nous nous réjouissons de votre appel.", it: "Saremo lieti di ricevere la vostra chiamata.", en: "We look forward to your call." },
+
+  // Home - Wer wir sind
+  "home.who.title": { de: "Wer wir sind", fr: "Qui nous sommes", it: "Chi siamo", en: "Who we are" },
+  "home.who.text": { de: "Die SSM Partner AG ist eine gebundene Versicherungsvermittlerin und eine Tochtergesellschaft der Visana-Gruppe. Wir arbeiten mit ausgewählten, Partnern zusammen und unterstützen sie dabei, den Vertrieb von Finanz- und Versicherungsprodukten effizient, zuverlässig und abgestimmt zu gestalten.", fr: "SSM Partner SA est un intermédiaire d'assurance lié et une filiale du groupe Visana. Nous travaillons avec des partenaires sélectionnés et les soutenons dans la distribution efficace, fiable et coordonnée de produits financiers et d'assurance.", it: "SSM Partner SA è un intermediario assicurativo vincolato e una società affiliata del gruppo Visana. Lavoriamo con partner selezionati e li supportiamo nella distribuzione efficiente, affidabile e coordinata di prodotti finanziari e assicurativi.", en: "SSM Partner AG is a tied insurance intermediary and a subsidiary of the Visana Group. We work with selected partners and support them in distributing financial and insurance products efficiently, reliably and in a coordinated manner." },
+  "home.who.cta": { de: "TEAM KENNENLERNEN", fr: "DÉCOUVRIR L'ÉQUIPE", it: "SCOPRI IL TEAM", en: "MEET THE TEAM" },
+
+  // Home - Headquarter
+  "home.hq.title": { de: "Unser Headquarter", fr: "Notre siège", it: "La nostra sede", en: "Our Headquarters" },
+  "home.hq.sub": { de: "in Rothenburg, beantwortet gerne Ihre offenen Fragen.", fr: "à Rothenburg, répond volontiers à vos questions.", it: "a Rothenburg, risponde volentieri alle vostre domande.", en: "in Rothenburg, is happy to answer your questions." },
 
   // Stats
   "home.stats.coaches": { de: "Finanzcoaches", fr: "Coachs financiers", it: "Coach finanziari", en: "Financial coaches" },
