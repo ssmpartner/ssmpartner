@@ -81,11 +81,19 @@ const AgencyDetail = () => {
     setSending(true);
     try {
       // For now, open mailto with pre-filled data
+      // Build recipient list from all available people
+      const allPeople = [
+        ...(teamMembers?.filter(tm => tm.is_agency_leader).map(tm => ({ name: tm.name, email: null })) || []),
+        ...(teamMembers?.filter(tm => !tm.is_agency_leader).map(tm => ({ name: tm.name, email: null })) || []),
+        ...(members?.map(m => ({ name: m.name, email: m.email })) || []),
+      ];
+      const selectedPerson = allPeople.find(p => p.name === contactForm.recipient);
+      const recipientLine = contactForm.recipient ? `\nAnsprechperson: ${contactForm.recipient}` : "";
       const subject = encodeURIComponent(`Anfrage über Website – Agentur ${agency?.name}`);
       const body = encodeURIComponent(
-        `Name: ${contactForm.name}\nE-Mail: ${contactForm.email}\nTelefon: ${contactForm.phone}\n\n${contactForm.message}`
+        `Name: ${contactForm.name}\nE-Mail: ${contactForm.email}\nTelefon: ${contactForm.phone}${recipientLine}\n\n${contactForm.message}`
       );
-      const mailto = agency?.email || "info@ssmpartner.ch";
+      const mailto = (selectedPerson?.email) || agency?.email || "info@ssmpartner.ch";
       window.open(`mailto:${mailto}?subject=${subject}&body=${body}`, "_self");
       toast.success("Vielen Dank für Ihre Anfrage!");
       setContactForm({ name: "", email: "", phone: "", message: "", recipient: "" });
