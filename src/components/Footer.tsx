@@ -31,7 +31,7 @@ const Footer = () => {
             <nav className="flex flex-col gap-2.5">
               <Link to="/" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Home</Link>
               <Link to="/ueber-uns" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Über uns</Link>
-              <Link to="/team" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Team</Link>
+              <Link to="/agenturen" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Agenturen</Link>
               <Link to="/karriere" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Karriere</Link>
               <Link to="/kontakt" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Kontakt</Link>
             </nav>

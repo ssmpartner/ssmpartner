@@ -1,0 +1,1 @@
+UPDATE public.nav_items SET label_de = 'Agenturen', url = '/agenturen' WHERE id = '0bde3f45-66e8-49fb-bef9-9e8efd93389d';
