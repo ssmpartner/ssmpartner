@@ -461,6 +461,28 @@ const Career = () => {
         )}
       </AnimatePresence>
 
+      {/* ── FAQ ── */}
+      {faqs && faqs.length > 0 && (
+        <section className="py-20 lg:py-28">
+          <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+            <AnimatedSection>
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Häufig gestellte Fragen</h2>
+              <p className="font-body text-base text-muted-foreground mt-4 text-center">
+                Alles, was du über eine Karriere bei SSM Partner wissen musst.
+              </p>
+              <div className="brand-rule mt-4 mx-auto" />
+            </AnimatedSection>
+            <div className="mt-12 space-y-3">
+              {faqs.map((faq, i) => (
+                <AnimatedSection key={faq.id} delay={i * 0.05}>
+                  <FaqItem question={faq.question} answer={faq.answer} />
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Bewerbung iFrame Modal ── */}
       <AnimatePresence>
         {showApply && (
