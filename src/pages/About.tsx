@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
+import { ContactCardModal } from "@/components/ContactCardModal";
 
 const About = () => {
   const { lang, t } = useLanguage();
