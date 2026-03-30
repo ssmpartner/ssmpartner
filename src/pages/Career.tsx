@@ -11,6 +11,19 @@ const Career = () => {
   const { t } = useLanguage();
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
+  const { data: videoCards } = useQuery({
+    queryKey: ["career-videos"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("career_videos")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const reasons = [
     { num: "01", title: t("career.why.1.title"), desc: t("career.why.1.desc") },
     { num: "02", title: t("career.why.2.title"), desc: t("career.why.2.desc") },
