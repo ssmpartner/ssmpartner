@@ -1,15 +1,9 @@
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Mail } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel";
 
 const About = () => {
   const { lang, t } = useLanguage();
@@ -61,11 +55,11 @@ const About = () => {
     const isSmall = size === "sm";
     return (
       <AnimatedSection delay={delay}>
-        <div className="flex flex-col items-center text-center">
+        <div className="group relative flex flex-col items-center text-center">
           <div
-            className={`${isSmall ? "w-28 h-28 lg:w-32 lg:h-32" : "w-36 h-36 lg:w-44 lg:h-44"} rounded-full overflow-hidden bg-muted`}
+            className={`${isSmall ? "w-full aspect-[3/4]" : "w-full aspect-[3/4]"} rounded-2xl overflow-hidden bg-muted relative`}
             style={{
-              boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)",
+              boxShadow: "0 4px 24px rgba(36,62,58,0.12), 0 2px 8px rgba(0,0,0,0.04)",
             }}
           >
             {member.image_url ? (
@@ -74,13 +68,18 @@ const About = () => {
                 alt={member.name}
                 className="w-full h-full object-cover"
                 loading="lazy"
-                style={{ imageRendering: "auto" }}
               />
             ) : (
-              <div className={`w-full h-full flex items-center justify-center text-muted-foreground font-heading ${isSmall ? "text-2xl" : "text-3xl"}`}>
+              <div className={`w-full h-full flex items-center justify-center text-muted-foreground font-heading ${isSmall ? "text-2xl" : "text-4xl"}`}>
                 {member.name.charAt(0)}
               </div>
             )}
+            {/* Hover overlay with email icon */}
+            <div className="absolute inset-0 bg-[#243e3a]/0 group-hover:bg-[#243e3a]/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                <Mail className="text-white" size={isSmall ? 18 : 22} />
+              </div>
+            </div>
           </div>
           <h3 className={`font-heading font-semibold text-foreground ${isSmall ? "text-sm mt-3" : "text-base mt-4"}`}>{member.name}</h3>
           <p className={`font-body text-muted-foreground ${isSmall ? "text-xs mt-0.5" : "text-sm mt-1"}`}>{getRole(member)}</p>
@@ -93,8 +92,8 @@ const About = () => {
     <AnimatedSection delay={delay}>
       <div className="flex flex-col items-center text-center">
         <div
-          className="w-36 h-36 lg:w-44 lg:h-44 rounded-full bg-muted"
-          style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)" }}
+          className="w-full aspect-[3/4] rounded-2xl bg-muted"
+          style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.12), 0 2px 8px rgba(0,0,0,0.04)" }}
         />
         <p className="font-body text-sm text-muted-foreground mt-4">Wird ergänzt</p>
       </div>
@@ -150,7 +149,7 @@ const About = () => {
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Geschäftsleitung</h2>
             <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mt-14">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 mt-14">
             {geschaeftsleitung.length > 0
               ? geschaeftsleitung.map((member, i) => (
                   <TeamCard key={member.id} member={member} delay={i * 0.1} />
@@ -167,7 +166,7 @@ const About = () => {
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Fachführung</h2>
             <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mt-14">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 mt-14">
             {fachfuehrung.length > 0
               ? fachfuehrung.map((member, i) => (
                   <TeamCard key={member.id} member={member} delay={i * 0.1} />
@@ -177,7 +176,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* Erweitertes Team – Carousel */}
+      {/* Erweitertes Team */}
       {erweitertesTeam.length > 0 && (
         <section className="py-20 lg:py-28 border-t">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
@@ -185,27 +184,10 @@ const About = () => {
               <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Erweitertes Team</h2>
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
-            <div className="mt-14 px-12">
-              <Carousel
-                opts={{
-                  align: "start",
-                  loop: true,
-                }}
-                className="w-full"
-              >
-                <CarouselContent className="-ml-6">
-                  {erweitertesTeam.map((member, i) => (
-                    <CarouselItem
-                      key={member.id}
-                      className="pl-6 basis-1/3 md:basis-1/4 lg:basis-1/5"
-                    >
-                      <TeamCard member={member} delay={i * 0.05} size="sm" />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="-left-6 bg-background border-border hover:bg-muted" />
-                <CarouselNext className="-right-6 bg-background border-border hover:bg-muted" />
-              </Carousel>
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 lg:gap-6 mt-14">
+              {erweitertesTeam.map((member, i) => (
+                <TeamCard key={member.id} member={member} delay={i * 0.05} size="sm" />
+              ))}
             </div>
           </div>
         </section>
