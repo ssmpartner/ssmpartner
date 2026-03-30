@@ -12,7 +12,6 @@ import About from "./pages/About";
 import Agencies from "./pages/Agencies";
 import AgencyDetail from "./pages/AgencyDetail";
 import Career from "./pages/Career";
-import ApplicationProcess from "./pages/ApplicationProcess";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/admin/AdminDashboard";
