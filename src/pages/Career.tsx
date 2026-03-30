@@ -340,29 +340,29 @@ const Career = () => {
         </section>
       )}
 
-      {/* ── Onboarding Image Divider ── */}
-      {processImage && (
-        <div className="relative h-64 lg:h-80 overflow-hidden">
-          <img src={processImage} alt="Ihr Weg zu uns" className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3acc, #6A938788)" }} />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="font-heading text-2xl lg:text-3xl font-bold text-white text-center px-6 drop-shadow-lg">
-              Ihr Weg zu uns
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* ── Onboarding Steps ── */}
       <section className="py-20 lg:py-28 bg-card">
         <div className="container mx-auto px-6 lg:px-8">
-          <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("career.onboarding.title")}</h2>
-            <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
-              Von der Bewerbung bis zum ersten Arbeitstag — wir begleiten dich durch jeden Schritt.
-            </p>
-            <div className="brand-rule mt-4" />
-          </AnimatedSection>
+          <div className="flex flex-col md:flex-row gap-12 lg:gap-16 items-start">
+            {/* Left: Text */}
+            <div className="flex-1">
+              <AnimatedSection>
+                <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("career.onboarding.title")}</h2>
+                <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
+                  Von der Bewerbung bis zum ersten Arbeitstag — wir begleiten dich durch jeden Schritt.
+                </p>
+                <div className="brand-rule mt-4" />
+              </AnimatedSection>
+            </div>
+            {/* Right: Image */}
+            {processImage && (
+              <div className="w-full md:w-80 lg:w-96 shrink-0">
+                <AnimatedSection delay={0.15}>
+                  <img src={processImage} alt="Ihr Weg zu uns" className="w-full h-64 md:h-72 object-cover rounded-2xl" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }} />
+                </AnimatedSection>
+              </div>
+            )}
+          </div>
           <div className="grid md:grid-cols-4 gap-8 lg:gap-12 mt-16">
             {steps.map((s, i) => (
               <AnimatedSection key={i} delay={i * 0.1}>
