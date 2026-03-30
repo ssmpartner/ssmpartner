@@ -43,7 +43,6 @@ const Legal = () => {
   });
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
     setSearchParams({ tab });
     setActiveSection(null);
   };
