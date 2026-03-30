@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
+import { ContactCardModal } from "@/components/ContactCardModal";
 
 const AgencyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
