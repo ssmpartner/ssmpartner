@@ -23,7 +23,7 @@ const AdminTeam = () => {
     mutationFn: async (item: typeof form & { id?: string }) => {
       if (item.id) {
         const { error } = await supabase.from("team_members").update({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: item.category,
         }).eq("id", item.id);
         if (error) throw error;
       } else {
