@@ -33,6 +33,7 @@ const staticPages = [
 const AdminHeroes = () => {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState<string | null>(null);
+  const [mediaPickerKey, setMediaPickerKey] = useState<string | null>(null);
 
   const { data: heroes, isLoading } = useQuery({
     queryKey: ["admin-heroes"],
