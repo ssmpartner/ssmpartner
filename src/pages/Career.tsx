@@ -136,6 +136,20 @@ const Career = () => {
     },
   });
 
+  const { data: dividerImages } = useQuery({
+    queryKey: ["career-divider-images"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_heroes")
+        .select("page_key, image_url")
+        .in("page_key", ["career-divider-1", "career-divider-2"]);
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      data?.forEach((d) => { if (d.image_url) map[d.page_key] = d.image_url; });
+      return map;
+    },
+  });
+
   const reasons = [
     { num: "01", title: t("career.why.1.title"), desc: t("career.why.1.desc") },
     { num: "02", title: t("career.why.2.title"), desc: t("career.why.2.desc") },
@@ -186,7 +200,7 @@ const Career = () => {
       {/* ── Image Divider ── */}
       <div className="relative h-64 lg:h-80 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80"
+          src={dividerImages?.["career-divider-1"] || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80"}
           alt="Teamarbeit"
           className="w-full h-full object-cover"
         />
@@ -284,7 +298,7 @@ const Career = () => {
       {/* ── Image Divider 2 ── */}
       <div className="relative h-64 lg:h-80 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"
+          src={dividerImages?.["career-divider-2"] || "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"}
           alt="Moderne Büros"
           className="w-full h-full object-cover"
         />
