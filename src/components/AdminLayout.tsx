@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { LayoutDashboard, Image, Users, Briefcase, FileText, LogOut, Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2, Book, Video, FolderOpen } from "lucide-react";
+import { LayoutDashboard, Image, Users, Briefcase, FileText, LogOut, Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2, Book, Video, FolderOpen, HelpCircle } from "lucide-react";
 
 const adminLinks = [
   { to: "/admin", label: "Übersicht", icon: LayoutDashboard, end: true },
@@ -12,6 +12,7 @@ const adminLinks = [
   { to: "/admin/agencies", label: "Agenturen", icon: Building2 },
   { to: "/admin/jobs", label: "Stellen", icon: Briefcase },
   { to: "/admin/career-videos", label: "Karriere-Videos", icon: Video },
+  { to: "/admin/career-faqs", label: "Karriere-FAQ", icon: HelpCircle },
   { to: "/admin/media", label: "Mediathek", icon: FolderOpen },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },

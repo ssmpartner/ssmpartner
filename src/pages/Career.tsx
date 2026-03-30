@@ -10,8 +10,34 @@ import {
   Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake,
   Mail, Building2, MessageCircleQuestion, ArrowRight, Send, FileText,
   Users, MessageSquare, Handshake, FileCheck, Rocket, PartyPopper,
-  ChevronRight, CheckCircle2,
+  ChevronRight, CheckCircle2, ChevronDown,
 } from "lucide-react";
+
+/* ── FAQ Accordion Item ── */
+const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-border rounded-2xl overflow-hidden bg-card" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-4 p-5 text-left">
+        <span className="font-heading text-sm font-semibold text-foreground">{question}</span>
+        <ChevronDown size={18} className={`shrink-0 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <p className="font-body text-sm text-muted-foreground px-5 pb-5 leading-relaxed">{answer}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 /* ── Bewerbungsprozess phases ── */
 const phases = [
@@ -76,6 +102,19 @@ const Career = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("career_videos")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: faqs } = useQuery({
+    queryKey: ["career-faqs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("career_faqs")
         .select("*")
         .eq("active", true)
         .order("sort_order");
@@ -447,6 +486,28 @@ const Career = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── FAQ ── */}
+      {faqs && faqs.length > 0 && (
+        <section className="py-20 lg:py-28">
+          <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+            <AnimatedSection>
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Häufig gestellte Fragen</h2>
+              <p className="font-body text-base text-muted-foreground mt-4 text-center">
+                Alles, was du über eine Karriere bei SSM Partner wissen musst.
+              </p>
+              <div className="brand-rule mt-4 mx-auto" />
+            </AnimatedSection>
+            <div className="mt-12 space-y-3">
+              {faqs.map((faq, i) => (
+                <AnimatedSection key={faq.id} delay={i * 0.05}>
+                  <FaqItem question={faq.question} answer={faq.answer} />
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Bewerbung iFrame Modal ── */}
       <AnimatePresence>
