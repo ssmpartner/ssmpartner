@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      agencies: {
+        Row: {
+          active: boolean
+          address: string | null
+          created_at: string
+          description_de: string | null
+          description_en: string | null
+          description_fr: string | null
+          description_it: string | null
+          email: string | null
+          id: string
+          image_url: string | null
+          map_lat: number | null
+          map_lng: number | null
+          name: string
+          phone: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          address?: string | null
+          created_at?: string
+          description_de?: string | null
+          description_en?: string | null
+          description_fr?: string | null
+          description_it?: string | null
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          map_lat?: number | null
+          map_lng?: number | null
+          name: string
+          phone?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          address?: string | null
+          created_at?: string
+          description_de?: string | null
+          description_en?: string | null
+          description_fr?: string | null
+          description_it?: string | null
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          map_lat?: number | null
+          map_lng?: number | null
+          name?: string
+          phone?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_positions: {
         Row: {
           active: boolean
