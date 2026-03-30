@@ -327,6 +327,22 @@ const Career = () => {
         </section>
       )}
 
+      {/* ── Onboarding Image Divider ── */}
+      {(() => {
+        const processHero = processImage;
+        return processHero ? (
+          <div className="relative h-64 lg:h-80 overflow-hidden">
+            <img src={processHero} alt="Ihr Weg zu uns" className="w-full h-full object-cover" />
+            <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3acc, #6A938788)" }} />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="font-heading text-2xl lg:text-3xl font-bold text-white text-center px-6 drop-shadow-lg">
+                Ihr Weg zu uns
+              </p>
+            </div>
+          </div>
+        ) : null;
+      })()}
+
       {/* ── Onboarding Steps ── */}
       <section className="py-20 lg:py-28 bg-card">
         <div className="container mx-auto px-6 lg:px-8">
