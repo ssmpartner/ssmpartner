@@ -166,6 +166,9 @@ const Agencies = () => {
         </div>
       </section>
 
+      {/* HQ Gallery */}
+      <HQGallerySection onImageClick={setLightboxImg} />
+
       {/* Bottom CTA */}
       <section className="py-20 lg:py-28">
         <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center">
@@ -186,6 +189,27 @@ const Agencies = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* Lightbox */}
+      {lightboxImg && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-pointer"
+          onClick={() => setLightboxImg(null)}
+        >
+          <button
+            onClick={() => setLightboxImg(null)}
+            className="absolute top-6 right-6 text-white/80 hover:text-white transition-colors"
+          >
+            <X size={28} />
+          </button>
+          <img
+            src={lightboxImg}
+            alt="HQ Ansicht"
+            className="max-w-full max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </main>
   );
 };
