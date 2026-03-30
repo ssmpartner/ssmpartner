@@ -14,7 +14,165 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      job_positions: {
+        Row: {
+          active: boolean
+          created_at: string
+          description_de: string | null
+          description_en: string | null
+          description_fr: string | null
+          description_it: string | null
+          id: string
+          location: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+          workload: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description_de?: string | null
+          description_en?: string | null
+          description_fr?: string | null
+          description_it?: string | null
+          id?: string
+          location?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+          workload?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description_de?: string | null
+          description_en?: string | null
+          description_fr?: string | null
+          description_it?: string | null
+          id?: string
+          location?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          workload?: string | null
+        }
+        Relationships: []
+      }
+      site_content: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          lang: string
+          link_text: string | null
+          link_url: string | null
+          page: string
+          section_key: string
+          sort_order: number
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          lang?: string
+          link_text?: string | null
+          link_url?: string | null
+          page: string
+          section_key: string
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          lang?: string
+          link_text?: string | null
+          link_url?: string | null
+          page?: string
+          section_key?: string
+          sort_order?: number
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      slider_images: {
+        Row: {
+          active: boolean
+          alt_text: string | null
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      team_members: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          role_de: string | null
+          role_en: string | null
+          role_fr: string | null
+          role_it: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          role_de?: string | null
+          role_en?: string | null
+          role_fr?: string | null
+          role_it?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          role_de?: string | null
+          role_en?: string | null
+          role_fr?: string | null
+          role_it?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
