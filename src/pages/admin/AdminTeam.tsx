@@ -7,8 +7,17 @@ import { toast } from "sonner";
 const AdminTeam = () => {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung" });
+  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "" });
   const [uploading, setUploading] = useState(false);
+
+  const { data: agencies } = useQuery({
+    queryKey: ["admin-agencies-list"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("agencies").select("id, name").order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data: members, isLoading } = useQuery({
     queryKey: ["admin-team"],
