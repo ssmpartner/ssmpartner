@@ -1,24 +1,26 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Phone, Send, ChevronLeft, ChevronRight } from "lucide-react";
 
-const heroSlides = [
+const fallbackSlides = [
   {
     image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80",
-    title: "Ihr Partner für Finanzen",
-    subtitle: "Massgeschneiderte Lösungen für Versicherung, Vorsorge und Finanzierung.",
+    headline: "Ihr Partner für Finanzen",
+    subline: "Massgeschneiderte Lösungen für Versicherung, Vorsorge und Finanzierung.",
   },
   {
     image: "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1920&q=80",
-    title: "Transparenz & Vertrauen",
-    subtitle: "Wir bringen Klarheit in den Finanz- und Versicherungsmarkt.",
+    headline: "Transparenz & Vertrauen",
+    subline: "Wir bringen Klarheit in den Finanz- und Versicherungsmarkt.",
   },
   {
     image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=80",
-    title: "Technologie trifft Beratung",
-    subtitle: "Innovation und persönliche Betreuung — das Beste aus beiden Welten.",
+    headline: "Technologie trifft Beratung",
+    subline: "Innovation und persönliche Betreuung — das Beste aus beiden Welten.",
   },
 ];
 
@@ -28,13 +30,30 @@ const Index = () => {
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  const { data: dbSlides } = useQuery({
+    queryKey: ["slider-images"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("slider_images")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const slides = dbSlides && dbSlides.length > 0
+    ? dbSlides.map((s) => ({ image: s.image_url, headline: s.headline || "", subline: s.subline || "" }))
+    : fallbackSlides;
+
   const next = useCallback(() => {
-    setCurrent((prev) => (prev + 1) % heroSlides.length);
-  }, []);
+    setCurrent((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
 
   const prev = useCallback(() => {
-    setCurrent((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
-  }, []);
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
 
   useEffect(() => {
     const timer = setInterval(next, 5000);
@@ -61,9 +80,9 @@ const Index = () => {
 
   return (
     <main>
-      {/* Hero Slider — 100vh */}
+      {/* Hero Slider — 75vh */}
       <section className="relative w-full overflow-hidden" style={{ height: "75vh" }}>
-        {heroSlides.map((slide, i) => (
+        {slides.map((slide, i) => (
           <div
             key={i}
             className={`absolute inset-0 transition-opacity duration-1000 ${
@@ -72,31 +91,34 @@ const Index = () => {
           >
             <img
               src={slide.image}
-              alt={slide.title}
+              alt={slide.headline || `Slide ${i + 1}`}
               className="absolute inset-0 w-full h-full object-cover"
               loading={i === 0 ? "eager" : "lazy"}
             />
-            {/* Dark overlay */}
             <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
-            {/* Content */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
-              <h1
-                className="font-heading text-white leading-tight max-w-3xl"
-                style={{ fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 500 }}
-              >
-                {slide.title}
-              </h1>
-              <p
-                className="mt-4 max-w-xl"
-                style={{ fontSize: "clamp(14px, 1.5vw, 18px)", color: "rgba(255,255,255,0.8)" }}
-              >
-                {slide.subtitle}
-              </p>
-            </div>
+            {(slide.headline || slide.subline) && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+                {slide.headline && (
+                  <h1
+                    className="font-heading text-white leading-tight max-w-3xl"
+                    style={{ fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 500 }}
+                  >
+                    {slide.headline}
+                  </h1>
+                )}
+                {slide.subline && (
+                  <p
+                    className="mt-4 max-w-xl"
+                    style={{ fontSize: "clamp(14px, 1.5vw, 18px)", color: "rgba(255,255,255,0.8)" }}
+                  >
+                    {slide.subline}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         ))}
 
-        {/* Arrow navigation */}
         <button
           onClick={prev}
           className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
@@ -112,9 +134,8 @@ const Index = () => {
           <ChevronRight size={20} />
         </button>
 
-        {/* Dot navigation */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
-          {heroSlides.map((_, i) => (
+          {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
