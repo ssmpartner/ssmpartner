@@ -68,7 +68,7 @@ const Navbar = () => {
         }`}
       >
         <div
-          className="hidden lg:flex items-center gap-4 bg-white rounded-full px-6 py-3 transition-shadow duration-300"
+          className="hidden lg:flex items-center justify-between w-full max-w-[1340px] bg-white rounded-2xl px-8 py-4 transition-shadow duration-300"
           style={{
             boxShadow: "0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)",
             border: "0.5px solid rgba(36,62,58,0.12)",
