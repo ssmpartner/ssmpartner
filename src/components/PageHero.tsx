@@ -25,9 +25,9 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
   if (!imageUrl) return null;
 
   return (
-    <div className="w-full pt-16 lg:pt-20">
-      {/* Hero image */}
-      <div className="w-full h-[35vh] lg:h-[45vh] overflow-hidden">
+    <div className="w-full">
+      {/* Hero image — full top, behind navbar */}
+      <div className="w-full h-[45vh] lg:h-[55vh] overflow-hidden">
         <img
           src={imageUrl}
           alt={hero?.alt_text || ""}
