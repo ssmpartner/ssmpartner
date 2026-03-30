@@ -72,6 +72,12 @@ const AdminHeroes = () => {
       <div className="mb-8">
         <h1 className="font-heading text-2xl font-bold text-foreground">Hero-Bilder</h1>
         <p className="font-body text-sm text-muted-foreground mt-1">Verwalten Sie die Hero-Bilder für jede Seite.</p>
+        <div className="mt-3 bg-muted/60 border border-border rounded-lg px-4 py-3">
+          <p className="font-body text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">Empfohlenes Format:</span>{" "}
+            1920 × 800 px · Seitenverhältnis 21:9 · JPG/WebP · max. 500 KB für schnelle Ladezeiten
+          </p>
+        </div>
       </div>
 
       {isLoading ? (
