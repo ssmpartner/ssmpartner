@@ -62,7 +62,7 @@ const Index = () => {
   return (
     <main>
       {/* Hero Slider — 100vh */}
-      <section className="relative w-full h-screen overflow-hidden">
+      <section className="relative w-full overflow-hidden" style={{ height: "75vh" }}>
         {heroSlides.map((slide, i) => (
           <div
             key={i}
