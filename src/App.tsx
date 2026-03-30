@@ -10,6 +10,7 @@ import AdminLayout from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Agencies from "./pages/Agencies";
+import AgencyDetail from "./pages/AgencyDetail";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
