@@ -12,10 +12,14 @@ export const translations: Record<string, Record<Language, string>> = {
   "home.phone.title": { de: "Sie haben eine Frage?", fr: "Vous avez une question?", it: "Avete una domanda?", en: "Do you have a question?" },
   "home.phone.sub": { de: "Wir freuen uns auf Ihren Anruf.", fr: "Nous nous réjouissons de votre appel.", it: "Saremo lieti di ricevere la vostra chiamata.", en: "We look forward to your call." },
 
-  // Home Hero
-  "home.hero.title": { de: "Ihr Partner für Finanzen.", fr: "Votre partenaire financier.", it: "Il vostro partner finanziario.", en: "Your financial partner." },
-  "home.hero.sub": { de: "Massgeschneiderte Lösungen für Versicherung, Vorsorge und Finanzierung.", fr: "Des solutions sur mesure pour l'assurance, la prévoyance et le financement.", it: "Soluzioni su misura per assicurazioni, previdenza e finanziamenti.", en: "Tailored solutions for insurance, pension planning and financing." },
-  "home.hero.cta": { de: "Beratung anfragen →", fr: "Demander un conseil →", it: "Richiedi consulenza →", en: "Request consultation →" },
+  // Home - Wer wir sind
+  "home.who.title": { de: "Wer wir sind", fr: "Qui nous sommes", it: "Chi siamo", en: "Who we are" },
+  "home.who.text": { de: "Die SSM Partner AG ist eine gebundene Versicherungsvermittlerin und eine Tochtergesellschaft der Visana-Gruppe. Wir arbeiten mit ausgewählten, Partnern zusammen und unterstützen sie dabei, den Vertrieb von Finanz- und Versicherungsprodukten effizient, zuverlässig und abgestimmt zu gestalten.", fr: "SSM Partner SA est un intermédiaire d'assurance lié et une filiale du groupe Visana. Nous travaillons avec des partenaires sélectionnés et les soutenons dans la distribution efficace, fiable et coordonnée de produits financiers et d'assurance.", it: "SSM Partner SA è un intermediario assicurativo vincolato e una società affiliata del gruppo Visana. Lavoriamo con partner selezionati e li supportiamo nella distribuzione efficiente, affidabile e coordinata di prodotti finanziari e assicurativi.", en: "SSM Partner AG is a tied insurance intermediary and a subsidiary of the Visana Group. We work with selected partners and support them in distributing financial and insurance products efficiently, reliably and in a coordinated manner." },
+  "home.who.cta": { de: "TEAM KENNENLERNEN", fr: "DÉCOUVRIR L'ÉQUIPE", it: "SCOPRI IL TEAM", en: "MEET THE TEAM" },
+
+  // Home - Headquarter
+  "home.hq.title": { de: "Unser Headquarter", fr: "Notre siège", it: "La nostra sede", en: "Our Headquarters" },
+  "home.hq.sub": { de: "in Rothenburg, beantwortet gerne Ihre offenen Fragen.", fr: "à Rothenburg, répond volontiers à vos questions.", it: "a Rothenburg, risponde volentieri alle vostre domande.", en: "in Rothenburg, is happy to answer your questions." },
 
   // Stats
   "home.stats.coaches": { de: "Finanzcoaches", fr: "Coachs financiers", it: "Coach finanziari", en: "Financial coaches" },
