@@ -9,7 +9,7 @@ const categories = [
   { value: "geschaeftsleitung", label: "Geschäftsleitung" },
   { value: "fachfuehrung", label: "Fachführung" },
   { value: "erweitertes_team", label: "Erweitertes Team" },
-  { value: "agentur", label: "Agentur" },
+  { value: "agentur", label: "Alle Agenturen" },
 ];
 
 const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, image_url: "" };
