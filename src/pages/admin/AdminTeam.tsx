@@ -126,6 +126,7 @@ const AdminTeam = () => {
       category: m.category || "geschaeftsleitung",
       agency_id: m.agency_id || "",
       is_agency_leader: m.is_agency_leader || false,
+      is_recruiting_partner: m.is_recruiting_partner || false,
       image_url: m.image_url || "",
       phone: m.phone || "",
       email: m.email || "",
