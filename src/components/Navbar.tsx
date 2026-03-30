@@ -63,7 +63,7 @@ const Navbar = () => {
     <>
       {/* Desktop floating pill navbar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 flex justify-center px-6 transition-all duration-300 ${
           scrolled ? "pt-3" : "pt-5"
         }`}
       >
