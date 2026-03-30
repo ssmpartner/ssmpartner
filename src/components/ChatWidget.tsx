@@ -1,8 +1,12 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, X, Send, Loader2, ArrowRight } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, ArrowRight, User, Phone, Mail, QrCode } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { ContactCardModal } from "@/components/ContactCardModal";
+import type { TeamMember } from "@/components/ContactCardModal";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -19,14 +23,55 @@ const ChatWidget = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [vcardMember, setVcardMember] = useState<TeamMember | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
+  // Fetch team members + agencies for vcard rendering
+  const { data: teamMembers = [] } = useQuery({
+    queryKey: ["chat-team-members"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("team_members")
+        .select("id, name, role_de, phone, email, image_url, agency_id")
+        .eq("active", true);
+      return data || [];
+    },
+    enabled: open,
+  });
+
+  const { data: agencies = [] } = useQuery({
+    queryKey: ["chat-agencies"],
+    queryFn: async () => {
+      const { data } = await supabase.from("agencies").select("id, name, address").eq("active", true);
+      return data || [];
+    },
+    enabled: open,
+  });
+
+  const memberMap = useMemo(() => {
+    const map: Record<string, TeamMember & { id: string }> = {};
+    const agencyMap: Record<string, { name: string; address: string | null }> = {};
+    agencies.forEach(a => { agencyMap[a.id] = { name: a.name, address: a.address }; });
+    teamMembers.forEach(m => {
+      const ag = m.agency_id ? agencyMap[m.agency_id] : null;
+      map[m.id] = {
+        id: m.id,
+        name: m.name,
+        role_de: m.role_de,
+        phone: m.phone,
+        email: m.email,
+        image_url: m.image_url,
+        agency_name: ag?.name || null,
+        agency_address: ag?.address || null,
+      };
+    });
+    return map;
+  }, [teamMembers, agencies]);
+
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
   useEffect(() => {
@@ -113,6 +158,83 @@ const ChatWidget = () => {
     }
   };
 
+  // Render message content, replacing [VCARD:id] with inline contact cards
+  const renderContent = (content: string) => {
+    const vcardRegex = /\[VCARD:([a-f0-9-]+)\]/g;
+    const parts: (string | { memberId: string })[] = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = vcardRegex.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(content.slice(lastIndex, match.index));
+      }
+      parts.push({ memberId: match[1] });
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < content.length) {
+      parts.push(content.slice(lastIndex));
+    }
+
+    return (
+      <>
+        {parts.map((part, i) => {
+          if (typeof part === "string") {
+            return (
+              <ReactMarkdown
+                key={i}
+                components={{
+                  a: ({ href, children }) => (
+                    <button
+                      onClick={() => href && handleLinkClick(href)}
+                      className="text-[#243e3a] underline font-semibold hover:text-[#B3B69C] transition-colors"
+                    >
+                      {children}
+                    </button>
+                  ),
+                  p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
+                }}
+              >
+                {part}
+              </ReactMarkdown>
+            );
+          }
+
+          // Inline VCard button
+          const member = memberMap[part.memberId];
+          if (!member) return null;
+
+          return (
+            <button
+              key={i}
+              onClick={() => setVcardMember(member)}
+              className="my-2 w-full flex items-center gap-3 bg-white border border-[#B3B69C]/40 rounded-xl p-3 hover:border-[#B3B69C] hover:shadow-md transition-all text-left"
+            >
+              {/* Avatar */}
+              <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted shrink-0">
+                {member.image_url ? (
+                  <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <User size={18} />
+                  </div>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-[#243e3a] truncate">{member.name}</p>
+                {member.role_de && <p className="text-[11px] text-muted-foreground truncate">{member.role_de}</p>}
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <QrCode size={14} className="text-[#B3B69C]" />
+                <span className="text-[10px] text-[#B3B69C] font-medium">Visitenkarte</span>
+              </div>
+            </button>
+          );
+        })}
+      </>
+    );
+  };
+
   return (
     <>
       {/* Floating Button */}
@@ -185,25 +307,7 @@ const ChatWidget = () => {
                         : "bg-muted text-foreground rounded-bl-sm"
                     }`}
                   >
-                    {msg.role === "assistant" ? (
-                      <ReactMarkdown
-                        components={{
-                          a: ({ href, children }) => (
-                            <button
-                              onClick={() => href && handleLinkClick(href)}
-                              className="text-[#243e3a] underline font-semibold hover:text-[#B3B69C] transition-colors"
-                            >
-                              {children}
-                            </button>
-                          ),
-                          p: ({ children }) => <p className="mb-1 last:mb-0">{children}</p>,
-                        }}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
-                    ) : (
-                      msg.content
-                    )}
+                    {msg.role === "assistant" ? renderContent(msg.content) : msg.content}
                   </div>
                 </div>
               ))}
@@ -241,6 +345,15 @@ const ChatWidget = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Contact Card Modal */}
+      {vcardMember && (
+        <ContactCardModal
+          member={vcardMember}
+          open={!!vcardMember}
+          onClose={() => setVcardMember(null)}
+        />
+      )}
     </>
   );
 };
