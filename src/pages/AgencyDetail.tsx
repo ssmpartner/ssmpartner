@@ -11,7 +11,7 @@ import SwissMap from "@/components/SwissMap";
 const AgencyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "", recipient: "" });
   const [sending, setSending] = useState(false);
 
   const { data: agency, isLoading } = useQuery({
