@@ -27,6 +27,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminApiDocs from "./pages/admin/AdminApiDocs";
 import AdminDocs from "./pages/admin/AdminDocs";
 import AdminCareerVideos from "./pages/admin/AdminCareerVideos";
+import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
@@ -71,6 +72,7 @@ const App = () => (
                 <Route path="/admin/agencies" element={<AdminAgencies />} />
                 <Route path="/admin/jobs" element={<AdminJobs />} />
                 <Route path="/admin/career-videos" element={<AdminCareerVideos />} />
+                <Route path="/admin/media" element={<AdminMediaLibrary />} />
                 <Route path="/admin/inquiries" element={<AdminInquiries />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 <Route path="/admin/api-docs" element={<AdminApiDocs />} />
