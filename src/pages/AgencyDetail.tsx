@@ -307,7 +307,7 @@ const AgencyDetail = () => {
       </section>
 
       {/* Team Members */}
-      {members && members.length > 0 && (
+      {((members && members.length > 0) || (teamMembers && teamMembers.length > 0)) && (
         <section className="py-20 lg:py-28 border-t bg-card">
           <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
             <AnimatedSection>
