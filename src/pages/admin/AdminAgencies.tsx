@@ -39,13 +39,18 @@ const AdminAgencies = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (item: any) => {
-      if (item.id) {
-        const { id, ...rest } = item;
+      const prepared = {
+        ...item,
+        map_lat: item.map_lat ? parseFloat(item.map_lat) : null,
+        map_lng: item.map_lng ? parseFloat(item.map_lng) : null,
+      };
+      if (prepared.id) {
+        const { id, ...rest } = prepared;
         const { error } = await supabase.from("agencies").update(rest).eq("id", id);
         if (error) throw error;
       } else {
         const maxOrder = agencies?.length ? Math.max(...agencies.map((a) => a.sort_order)) + 1 : 0;
-        const { error } = await supabase.from("agencies").insert({ ...item, sort_order: maxOrder });
+        const { error } = await supabase.from("agencies").insert({ ...prepared, sort_order: maxOrder });
         if (error) throw error;
       }
     },
