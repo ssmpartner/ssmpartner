@@ -10,7 +10,7 @@ import {
   Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake,
   Mail, Building2, MessageCircleQuestion, ArrowRight, Send, FileText,
   Users, MessageSquare, Handshake, FileCheck, Rocket, PartyPopper,
-  ChevronRight, CheckCircle2,
+  ChevronRight, CheckCircle2, ChevronDown,
 } from "lucide-react";
 
 /* ── Bewerbungsprozess phases ── */
