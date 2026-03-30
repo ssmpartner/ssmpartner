@@ -343,47 +343,66 @@ const Career = () => {
       {/* ── Onboarding Steps ── */}
       <section className="py-20 lg:py-28 bg-card">
         <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row gap-12 lg:gap-16 items-start">
-            {/* Left: Text */}
-            <div className="flex-1">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16">
+            {/* Left: Image */}
+            {processImage && (
+              <div className="w-full lg:w-[420px] shrink-0">
+                <AnimatedSection>
+                  <img
+                    src={processImage}
+                    alt="Ihr Weg zu uns"
+                    className="w-full h-full min-h-[320px] lg:min-h-[480px] object-cover rounded-2xl"
+                    style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }}
+                  />
+                </AnimatedSection>
+              </div>
+            )}
+
+            {/* Right: Title + Steps vertical */}
+            <div className="flex-1 flex flex-col justify-center">
               <AnimatedSection>
                 <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("career.onboarding.title")}</h2>
-                <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
+                <p className="font-body text-base text-muted-foreground mt-4 max-w-lg leading-relaxed">
                   Von der Bewerbung bis zum ersten Arbeitstag — wir begleiten dich durch jeden Schritt.
                 </p>
                 <div className="brand-rule mt-4" />
               </AnimatedSection>
-            </div>
-            {/* Right: Image */}
-            {processImage && (
-              <div className="w-full md:w-80 lg:w-96 shrink-0">
-                <AnimatedSection delay={0.15}>
-                  <img src={processImage} alt="Ihr Weg zu uns" className="w-full h-64 md:h-72 object-cover rounded-2xl" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }} />
-                </AnimatedSection>
+
+              <div className="mt-10 space-y-6">
+                {steps.map((s, i) => (
+                  <AnimatedSection key={i} delay={i * 0.1}>
+                    <div className="flex gap-4 items-start">
+                      <div className="flex flex-col items-center shrink-0">
+                        <span
+                          className="w-10 h-10 rounded-xl flex items-center justify-center font-heading text-sm font-bold text-white"
+                          style={{ backgroundColor: "#6A9387" }}
+                        >
+                          {i + 1}
+                        </span>
+                        {i < steps.length - 1 && (
+                          <div className="w-px h-full min-h-[24px] bg-border mt-2" />
+                        )}
+                      </div>
+                      <div className="pb-2">
+                        <h3 className="font-heading text-sm font-semibold text-foreground">{s.title}</h3>
+                        <p className="font-body text-sm text-muted-foreground mt-1 leading-relaxed">{s.desc}</p>
+                      </div>
+                    </div>
+                  </AnimatedSection>
+                ))}
               </div>
-            )}
-          </div>
-          <div className="grid md:grid-cols-4 gap-8 lg:gap-12 mt-16">
-            {steps.map((s, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="w-10 h-10 rounded-xl flex items-center justify-center font-heading text-sm font-bold text-white" style={{ backgroundColor: "#6A9387" }}>{i + 1}</span>
-                  <div className="h-px flex-1 bg-border" />
-                </div>
-                <h3 className="font-heading text-sm font-semibold text-foreground">{s.title}</h3>
-                <p className="font-body text-sm text-muted-foreground mt-2 leading-relaxed">{s.desc}</p>
+
+              <AnimatedSection delay={0.4} className="mt-8">
+                <button
+                  onClick={() => { setShowProcess(true); setActivePhase(0); }}
+                  className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl text-white hover:opacity-90 transition-colors"
+                  style={{ backgroundColor: "#6A9387" }}
+                >
+                  Bewerbungsprozess erkunden <ArrowRight size={16} />
+                </button>
               </AnimatedSection>
-            ))}
+            </div>
           </div>
-          <AnimatedSection delay={0.4} className="mt-12">
-            <button
-              onClick={() => { setShowProcess(true); setActivePhase(0); }}
-              className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl text-white hover:opacity-90 transition-colors"
-              style={{ backgroundColor: "#6A9387" }}
-            >
-              Bewerbungsprozess erkunden <ArrowRight size={16} />
-            </button>
-          </AnimatedSection>
         </div>
       </section>
 
