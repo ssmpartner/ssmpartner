@@ -82,7 +82,12 @@ const ContactCardModal = ({ member, open, onClose }: ContactCardModalProps) => {
         <div className="px-6 pt-3 pb-2 text-center">
           <h3 className="font-heading text-lg font-bold text-foreground">{member.name}</h3>
           {member.role_de && <p className="font-body text-sm text-muted-foreground mt-0.5">{member.role_de}</p>}
-          <p className="font-body text-xs text-primary mt-1">SSM Partner AG</p>
+          <p className="font-body text-xs text-primary mt-1">
+            SSM Partner AG{member.agency_name ? ` – ${member.agency_name}` : ""}
+          </p>
+          {member.agency_address && (
+            <p className="font-body text-[11px] text-muted-foreground mt-0.5">{member.agency_address}</p>
+          )}
         </div>
 
         {/* Contact details */}
