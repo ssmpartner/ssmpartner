@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
+import PageHero from "@/components/PageHero";
 
 const Career = () => {
   const { t } = useLanguage();
@@ -25,7 +26,8 @@ const Career = () => {
   ];
 
   return (
-    <main className="pt-20 lg:pt-24">
+    <main>
+      <PageHero pageKey="career" fallbackImage="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=80" />
       {/* Hero */}
       <section className="py-24 lg:py-32 relative overflow-hidden">
         <div className="absolute inset-0 gradient-hero opacity-[0.03]" />

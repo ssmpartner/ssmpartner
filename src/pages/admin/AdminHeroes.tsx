@@ -1,0 +1,121 @@
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Upload, Image as ImageIcon } from "lucide-react";
+import { toast } from "sonner";
+
+const pages = [
+  { key: "about", label: "Über uns" },
+  { key: "career", label: "Karriere" },
+  { key: "contact", label: "Kontakt" },
+  { key: "team", label: "Team" },
+];
+
+const AdminHeroes = () => {
+  const queryClient = useQueryClient();
+  const [uploading, setUploading] = useState<string | null>(null);
+
+  const { data: heroes, isLoading } = useQuery({
+    queryKey: ["admin-heroes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("page_heroes").select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ pageKey, image_url }: { pageKey: string; image_url: string }) => {
+      const existing = heroes?.find((h) => h.page_key === pageKey);
+      if (existing) {
+        const { error } = await supabase.from("page_heroes").update({ image_url }).eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("page_heroes").insert({ page_key: pageKey, image_url });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-heroes"] });
+      toast.success("Hero-Bild aktualisiert");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const handleUpload = async (pageKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(pageKey);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `heroes/${pageKey}-${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("site-images").upload(path, file);
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage.from("site-images").getPublicUrl(path);
+      await updateMutation.mutateAsync({ pageKey, image_url: publicUrl });
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUploading(null);
+      e.target.value = "";
+    }
+  };
+
+  const getHero = (pageKey: string) => heroes?.find((h) => h.page_key === pageKey);
+
+  return (
+    <div>
+      <div className="mb-8">
+        <h1 className="font-heading text-2xl font-bold text-foreground">Hero-Bilder</h1>
+        <p className="font-body text-sm text-muted-foreground mt-1">Verwalten Sie die Hero-Bilder für jede Seite.</p>
+      </div>
+
+      {isLoading ? (
+        <p className="font-body text-sm text-muted-foreground">Laden...</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {pages.map((page) => {
+            const hero = getHero(page.key);
+            return (
+              <div key={page.key} className="bg-card border rounded-xl overflow-hidden">
+                <div className="relative aspect-[21/9] bg-muted">
+                  {hero?.image_url ? (
+                    <img src={hero.image_url} alt={page.label} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
+                      <ImageIcon size={32} />
+                      <span className="font-body text-xs mt-2">Kein Bild</span>
+                    </div>
+                  )}
+                  {/* Green line preview */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1" style={{ backgroundColor: "#243e3a" }} />
+                </div>
+                <div className="p-4 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-body text-sm font-medium text-foreground">{page.label}</h3>
+                    <p className="font-body text-xs text-muted-foreground">Seite: /{page.key}</p>
+                  </div>
+                  <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-xs font-medium px-3 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
+                    <Upload size={14} />
+                    {uploading === page.key ? "Hochladen..." : "Bild ändern"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleUpload(page.key, e)}
+                      className="hidden"
+                      disabled={uploading === page.key}
+                    />
+                  </label>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdminHeroes;

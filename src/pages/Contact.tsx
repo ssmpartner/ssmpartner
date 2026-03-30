@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
+import PageHero from "@/components/PageHero";
 
 const Contact = () => {
   const { t } = useLanguage();
@@ -31,7 +32,8 @@ const Contact = () => {
     `w-full bg-card border ${errors[field] ? "border-destructive" : "border-border"} px-4 py-3 font-body text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent rounded-lg transition-all`;
 
   return (
-    <main className="pt-20 lg:pt-24">
+    <main>
+      <PageHero pageKey="contact" fallbackImage="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80" />
       <section className="py-24 lg:py-32">
         <div className="container mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Form */}

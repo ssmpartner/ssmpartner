@@ -1,5 +1,6 @@
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
+import PageHero from "@/components/PageHero";
 
 const About = () => {
   const { t } = useLanguage();
@@ -17,7 +18,8 @@ const About = () => {
   ];
 
   return (
-    <main className="pt-20 lg:pt-24">
+    <main>
+      <PageHero pageKey="about" fallbackImage="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" />
       {/* Intro */}
       <section className="py-24 lg:py-32">
         <div className="container mx-auto px-6 lg:px-8 grid lg:grid-cols-5 gap-12 lg:gap-16 items-start">
