@@ -336,6 +336,11 @@ const AdminTeam = () => {
                       ? `${agencies?.find((a) => a.id === (m as any).agency_id)?.name || "Agentur"}${(m as any).is_agency_leader ? " ★" : ""}`
                       : "GL"}
                   </span>
+                  {(m as any).badge && (
+                    <span className="font-body text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded mt-0.5 inline-block ml-1">
+                      {badgeOptions.find(b => b.value === (m as any).badge)?.label || (m as any).badge}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1 items-center shrink-0">
                   <button
