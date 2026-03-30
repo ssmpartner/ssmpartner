@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Phone, Send, ChevronLeft, ChevronRight, MapPin,
   Shield, TrendingUp, Building2, Users, Briefcase,
@@ -35,63 +35,8 @@ const services = [
   { icon: TrendingUp, title: "home.services.2.title", desc: "home.services.2.desc" },
   { icon: Building2, title: "home.services.3.title", desc: "home.services.3.desc" },
 ];
-const ssmColors = ["#243e3a", "#B3B69C", "#1a2e2b"];
-const quotes = [
-  "«Transparenz schafft Vertrauen — Vertrauen schafft Erfolg.»",
-  "«Wir begleiten Sie in jeder Lebensphase — persönlich und kompetent.»",
-  "«Innovation und Nähe — das Beste aus beiden Welten.»",
-];
 
-const QuoteBanner = () => {
-  const [index, setIndex] = useState(0);
 
-  useEffect(() => {
-    const timer = setInterval(() => setIndex((p) => (p + 1) % quotes.length), 4000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <section className="relative py-16 lg:py-20 overflow-hidden">
-      {/* Animated gradient background */}
-      <motion.div
-        className="absolute inset-0"
-        animate={{
-          background: [
-            `linear-gradient(135deg, ${ssmColors[0]} 0%, ${ssmColors[1]} 50%, ${ssmColors[2]} 100%)`,
-            `linear-gradient(135deg, ${ssmColors[1]} 0%, ${ssmColors[2]} 50%, ${ssmColors[0]} 100%)`,
-            `linear-gradient(135deg, ${ssmColors[2]} 0%, ${ssmColors[0]} 50%, ${ssmColors[1]} 100%)`,
-            `linear-gradient(135deg, ${ssmColors[0]} 0%, ${ssmColors[1]} 50%, ${ssmColors[2]} 100%)`,
-          ],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className="relative container mx-auto px-6 lg:px-8 max-w-3xl text-center">
-        <AnimatePresence mode="wait">
-          <motion.blockquote
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.6 }}
-            className="font-heading text-xl lg:text-2xl font-medium text-white leading-relaxed"
-          >
-            {quotes[index]}
-          </motion.blockquote>
-        </AnimatePresence>
-        <div className="flex justify-center gap-2 mt-6">
-          {quotes.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIndex(i)}
-              className="w-2 h-2 rounded-full transition-all"
-              style={{ backgroundColor: i === index ? "#fff" : "rgba(255,255,255,0.35)" }}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
 const Index = () => {
   const { t } = useLanguage();
   const [current, setCurrent] = useState(0);
@@ -154,8 +99,8 @@ const Index = () => {
 
   return (
     <main>
-      {/* Hero Slider — 75vh */}
-      <section className="relative w-full overflow-hidden" style={{ height: "75vh" }}>
+      {/* Hero Slider — 85vh with floating cards */}
+      <section className="relative w-full overflow-hidden" style={{ height: "85vh" }}>
         {slides.map((slide, i) => (
           <div
             key={i}
@@ -169,7 +114,7 @@ const Index = () => {
             />
             <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
             {(slide.headline || slide.subline) && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pb-32">
                 {slide.headline && (
                   <h1
                     className="font-heading text-white leading-tight max-w-3xl"
@@ -183,21 +128,6 @@ const Index = () => {
                     {slide.subline}
                   </p>
                 )}
-                <div className="flex gap-4 mt-8">
-                  <Link
-                    to="/kontakt"
-                    className="font-body text-sm font-semibold px-8 py-3.5 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider"
-                    style={{ backgroundColor: "#B3B69C", color: "#fff" }}
-                  >
-                    Beratung anfragen
-                  </Link>
-                  <Link
-                    to="/ueber-uns"
-                    className="font-body text-sm font-medium px-8 py-3.5 rounded-xl border border-white/30 text-white hover:bg-white/10 transition-all uppercase tracking-wider"
-                  >
-                    Mehr erfahren
-                  </Link>
-                </div>
               </div>
             )}
           </div>
@@ -218,7 +148,7 @@ const Index = () => {
           <ChevronRight size={20} />
         </button>
 
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
+        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -232,33 +162,104 @@ const Index = () => {
             />
           ))}
         </div>
+
+        {/* Floating Quickstart Cards — fixed on slider, don't move with slides */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-full max-w-4xl px-6 hidden sm:grid grid-cols-2 gap-4">
+          <motion.div
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Link
+              to="/karriere"
+              className="group flex items-center gap-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 pr-6 transition-all hover:bg-white hover:shadow-2xl"
+              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
+            >
+              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=80" alt="Karriere" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-heading text-sm font-bold text-foreground">Karriere starten</p>
+                <p className="font-body text-xs text-muted-foreground mt-0.5">Entdecke offene Stellen bei SSM</p>
+              </div>
+              <ArrowRight size={18} className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+
+          <motion.div
+            animate={{ y: [0, -6, 0] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          >
+            <Link
+              to="/agenturen"
+              className="group flex items-center gap-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 pr-6 transition-all hover:bg-white hover:shadow-2xl"
+              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
+            >
+              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&q=80" alt="Agenturen" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-heading text-sm font-bold text-foreground">Unsere Agenturen</p>
+                <p className="font-body text-xs text-muted-foreground mt-0.5">Finde deinen Standort in der Nähe</p>
+              </div>
+              <ArrowRight size={18} className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* Mobile: stacked cards below dots */}
+        <div className="absolute bottom-4 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
+          <Link
+            to="/karriere"
+            className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl p-3 pr-4"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}
+          >
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80" alt="Karriere" className="w-full h-full object-cover" />
+            </div>
+            <p className="font-heading text-xs font-bold text-foreground flex-1">Jetzt bewerben</p>
+            <ArrowRight size={14} className="text-primary" />
+          </Link>
+          <Link
+            to="/agenturen"
+            className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl p-3 pr-4"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}
+          >
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&q=80" alt="Agenturen" className="w-full h-full object-cover" />
+            </div>
+            <p className="font-heading text-xs font-bold text-foreground flex-1">Agenturen entdecken</p>
+            <ArrowRight size={14} className="text-primary" />
+          </Link>
+        </div>
       </section>
 
       {/* Overlap CTA Bar */}
-      <div className="relative z-20 -mt-9 px-6 lg:px-8">
+      <div className="relative z-20 -mt-12 px-6 lg:px-8">
         <div
-          className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-10 py-5"
+          className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 px-10 lg:px-14 py-7"
           style={{
             backgroundColor: "#B3B69C",
             borderRadius: "18px",
             boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)",
           }}
         >
-          <p className="font-body text-base sm:text-lg font-medium text-white text-center sm:text-left">
-            Persönliche Beratung — wir sind für Sie da.
-          </p>
+          <div>
+            <p className="font-heading text-lg sm:text-xl font-semibold text-white text-center sm:text-left">
+              Persönliche Beratung — wir sind für Sie da.
+            </p>
+            <p className="font-body text-sm text-white/70 text-center sm:text-left mt-1">
+              Unverbindlich und kostenlos — vereinbaren Sie ein Erstgespräch.
+            </p>
+          </div>
           <Link
             to="/kontakt"
-            className="shrink-0 font-body text-sm font-semibold px-7 py-3 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider"
+            className="shrink-0 font-body text-sm font-semibold px-8 py-3.5 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider"
             style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
           >
             Jetzt Kontakt aufnehmen
           </Link>
         </div>
       </div>
-
-      {/* Animated Quote Banner */}
-      <QuoteBanner />
 
       {/* Wer wir sind */}
       <section className="py-24 lg:py-32 bg-card">
