@@ -165,9 +165,25 @@ const AdminTeam = () => {
             }`}
           >
             {c.label}
-            {c.value === "" ? ` (${members?.length || 0})` : ` (${members?.filter((m) => m.category === c.value).length || 0})`}
+            {c.value === "" ? ` (${members?.length || 0})` : c.value === "agentur" ? ` (${members?.filter((m) => m.category === "agentur").length || 0})` : ` (${members?.filter((m) => m.category === c.value).length || 0})`}
           </button>
         ))}
+        {agencies?.map((a) => {
+          const count = members?.filter((m) => m.category === "agentur" && (m as any).agency_id === a.id).length || 0;
+          return (
+            <button
+              key={`agency-${a.id}`}
+              onClick={() => setFilter(`agency-${a.id}`)}
+              className={`font-body text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                filter === `agency-${a.id}`
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card text-muted-foreground border-border hover:border-primary/50"
+              }`}
+            >
+              {a.name} ({count})
+            </button>
+          );
+        })}
       </div>
 
       {/* Edit / Add Form */}
