@@ -84,7 +84,7 @@ const AdminTeam = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-heading text-2xl font-bold text-foreground">Team</h1>
-        <button onClick={() => { setEditingId("new"); setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "" }); }}
+        <button onClick={() => { setEditingId("new"); setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung" }); }}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90">
           <Plus size={18} /> Mitglied hinzufügen
         </button>
