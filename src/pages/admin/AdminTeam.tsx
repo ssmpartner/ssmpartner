@@ -52,6 +52,7 @@ const AdminTeam = () => {
         category: cat,
         agency_id: agencyId,
         is_agency_leader: item.is_agency_leader,
+        is_recruiting_partner: item.is_recruiting_partner,
         image_url: item.image_url || null,
         phone: item.phone || null,
         email: item.email || null,
