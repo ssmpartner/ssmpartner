@@ -138,6 +138,9 @@ const AdminTeam = () => {
                 <div onClick={() => startEdit(m)} role="button" className="cursor-pointer">
                   <h3 className="font-heading text-sm font-semibold text-foreground">{m.name}</h3>
                   <p className="font-body text-xs text-muted-foreground">{m.role_de}</p>
+                  <span className="font-body text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground mt-1 inline-block">
+                    {m.category === "fachfuehrung" ? "Fachführung" : "Geschäftsleitung"}
+                  </span>
                 </div>
                 <button onClick={() => deleteMutation.mutate(m.id)} className="text-muted-foreground hover:text-destructive">
                   <Trash2 size={16} />
