@@ -164,24 +164,24 @@ const Index = () => {
         </div>
 
         {/* Floating Quickstart Cards — fixed on slider, don't move with slides */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-full max-w-4xl px-6 hidden sm:grid grid-cols-2 gap-4">
+        <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 w-full max-w-4xl px-6 hidden sm:grid grid-cols-2 gap-4">
           <motion.div
             animate={{ y: [0, -6, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
             <Link
               to="/karriere"
-              className="group flex items-center gap-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 pr-6 transition-all hover:bg-white hover:shadow-2xl"
-              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
+              className="group flex items-center gap-4 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-2xl p-4 pr-6 transition-all hover:bg-white/10 hover:border-white"
+              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
             >
-              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/40">
                 <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=80" alt="Karriere" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-heading text-sm font-bold text-foreground">Karriere starten</p>
-                <p className="font-body text-xs text-muted-foreground mt-0.5">Entdecke offene Stellen bei SSM</p>
+                <p className="font-heading text-sm font-bold text-white">Karriere starten</p>
+                <p className="font-body text-xs text-white/70 mt-0.5">Entdecke offene Stellen bei SSM</p>
               </div>
-              <ArrowRight size={18} className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={18} className="text-white shrink-0 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
 
@@ -191,44 +191,44 @@ const Index = () => {
           >
             <Link
               to="/agenturen"
-              className="group flex items-center gap-4 bg-white/95 backdrop-blur-md rounded-2xl p-4 pr-6 transition-all hover:bg-white hover:shadow-2xl"
-              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.2)" }}
+              className="group flex items-center gap-4 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-2xl p-4 pr-6 transition-all hover:bg-white/10 hover:border-white"
+              style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
             >
-              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+              <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/40">
                 <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&q=80" alt="Agenturen" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-heading text-sm font-bold text-foreground">Unsere Agenturen</p>
-                <p className="font-body text-xs text-muted-foreground mt-0.5">Finde deinen Standort in der Nähe</p>
+                <p className="font-heading text-sm font-bold text-white">Unsere Agenturen</p>
+                <p className="font-body text-xs text-white/70 mt-0.5">Finde deinen Standort in der Nähe</p>
               </div>
-              <ArrowRight size={18} className="text-primary shrink-0 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={18} className="text-white shrink-0 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
         </div>
 
         {/* Mobile: stacked cards below dots */}
-        <div className="absolute bottom-4 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
+        <div className="absolute bottom-20 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
           <Link
             to="/karriere"
-            className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl p-3 pr-4"
-            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}
+            className="flex items-center gap-3 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-xl p-3 pr-4"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
-            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
               <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80" alt="Karriere" className="w-full h-full object-cover" />
             </div>
-            <p className="font-heading text-xs font-bold text-foreground flex-1">Jetzt bewerben</p>
-            <ArrowRight size={14} className="text-primary" />
+            <p className="font-heading text-xs font-bold text-white flex-1">Jetzt bewerben</p>
+            <ArrowRight size={14} className="text-white" />
           </Link>
           <Link
             to="/agenturen"
-            className="flex items-center gap-3 bg-white/95 backdrop-blur-md rounded-xl p-3 pr-4"
-            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}
+            className="flex items-center gap-3 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-xl p-3 pr-4"
+            style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
-            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+            <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
               <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&q=80" alt="Agenturen" className="w-full h-full object-cover" />
             </div>
-            <p className="font-heading text-xs font-bold text-foreground flex-1">Agenturen entdecken</p>
-            <ArrowRight size={14} className="text-primary" />
+            <p className="font-heading text-xs font-bold text-white flex-1">Agenturen entdecken</p>
+            <ArrowRight size={14} className="text-white" />
           </Link>
         </div>
       </section>
