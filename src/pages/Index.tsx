@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
@@ -30,17 +30,13 @@ const fallbackSlides = [
   },
 ];
 
-const services = [
-  { icon: Shield, title: "home.services.1.title", desc: "home.services.1.desc" },
-  { icon: TrendingUp, title: "home.services.2.title", desc: "home.services.2.desc" },
-  { icon: Building2, title: "home.services.3.title", desc: "home.services.3.desc" },
-];
-
+const serviceIcons = [Shield, TrendingUp, Building2];
 
 const Index = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [current, setCurrent] = useState(0);
 
+  // Slider images
   const { data: dbSlides } = useQuery({
     queryKey: ["slider-images"],
     queryFn: async () => {
@@ -54,6 +50,7 @@ const Index = () => {
     },
   });
 
+  // Agencies for teaser
   const { data: agencies } = useQuery({
     queryKey: ["home-agencies"],
     queryFn: async () => {
@@ -68,6 +65,7 @@ const Index = () => {
     },
   });
 
+  // Job count
   const { data: jobCount } = useQuery({
     queryKey: ["home-job-count"],
     queryFn: async () => {
@@ -79,6 +77,48 @@ const Index = () => {
       return count || 0;
     },
   });
+
+  // CMS texts for home page
+  const { data: cmsContent } = useQuery({
+    queryKey: ["home-content", language],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_content")
+        .select("*")
+        .eq("page", "home")
+        .eq("lang", language)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // CMS images for home page
+  const { data: cmsHeroes } = useQuery({
+    queryKey: ["home-heroes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_heroes")
+        .select("*");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Helper: get CMS text by section_key
+  const cms = useMemo(() => {
+    const map: Record<string, { title?: string | null; body?: string | null; link_text?: string | null; link_url?: string | null }> = {};
+    (cmsContent || []).forEach((c) => {
+      map[c.section_key] = { title: c.title, body: c.body, link_text: c.link_text, link_url: c.link_url };
+    });
+    return map;
+  }, [cmsContent]);
+
+  // Helper: get CMS image by page_key
+  const heroImg = useCallback((key: string, fallback: string) => {
+    const found = (cmsHeroes || []).find((h) => h.page_key === key);
+    return found?.image_url || fallback;
+  }, [cmsHeroes]);
 
   const slides = dbSlides && dbSlides.length > 0
     ? dbSlides.map((s) => ({ image: s.image_url, headline: s.headline || "", subline: s.subline || "" }))
@@ -96,6 +136,53 @@ const Index = () => {
     const timer = setInterval(next, 5000);
     return () => clearInterval(timer);
   }, [next]);
+
+  // CMS values with fallbacks
+  const overlapTitle = cms["home_overlap"]?.title || "Persönliche Beratung — wir sind für Sie da.";
+  const overlapBody = cms["home_overlap"]?.body || "Unverbindlich und kostenlos — vereinbaren Sie ein Erstgespräch.";
+  const overlapCta = cms["home_overlap"]?.link_text || "Jetzt Kontakt aufnehmen";
+
+  const whoLabel = cms["home_who"]?.link_text || "Über SSM Partner";
+  const whoTitle = cms["home_who"]?.title || t("home.who.title");
+  const whoBody = cms["home_who"]?.body || t("home.who.text");
+  const whoCta = cms["home_who"]?.link_url ? cms["home_who"].link_url : "/ueber-uns";
+
+  const servicesLabel = cms["home_services"]?.link_text || "Unsere Dienstleistungen";
+  const servicesTitle = cms["home_services"]?.title || t("home.services.title");
+  const service1Title = cms["home_service_1"]?.title || t("home.services.1.title");
+  const service1Desc = cms["home_service_1"]?.body || t("home.services.1.desc");
+  const service2Title = cms["home_service_2"]?.title || t("home.services.2.title");
+  const service2Desc = cms["home_service_2"]?.body || t("home.services.2.desc");
+  const service3Title = cms["home_service_3"]?.title || t("home.services.3.title");
+  const service3Desc = cms["home_service_3"]?.body || t("home.services.3.desc");
+  const serviceData = [
+    { icon: serviceIcons[0], title: service1Title, desc: service1Desc },
+    { icon: serviceIcons[1], title: service2Title, desc: service2Desc },
+    { icon: serviceIcons[2], title: service3Title, desc: service3Desc },
+  ];
+
+  const trustQuote = cms["home_trust"]?.body || t("home.trust.quote");
+  const trustAuthor = cms["home_trust"]?.title || t("home.trust.author");
+
+  const agencyLabel = cms["home_agencies"]?.link_text || "Schweizweit für Sie da";
+  const agencyTitle = cms["home_agencies"]?.title || "Unsere Standorte";
+
+  const careerLabel = cms["home_career"]?.link_text || "Karriere";
+  const careerTitle = cms["home_career"]?.title || "Werde Teil unseres Teams";
+  const careerBody = cms["home_career"]?.body || "Entdecke spannende Karrieremöglichkeiten bei SSM Partner. Wir bieten dir ein inspirierendes Arbeitsumfeld, faire Vergütung und echte Entwicklungsperspektiven.";
+
+  const phoneTitle = cms["home_phone"]?.title || t("home.phone.title");
+  const phoneSub = cms["home_phone"]?.body || t("home.phone.sub");
+  const phoneNumber = cms["home_phone"]?.link_text || "+41 41 220 20 50";
+
+  const contactLabel = cms["home_contact"]?.link_text || "Kontakt";
+  const contactTitle = cms["home_contact"]?.title || "Lassen Sie uns ins Gespräch kommen";
+  const contactBody = cms["home_contact"]?.body || "Ob Versicherungsfrage, Finanzplanung oder Karriereanfrage — wir sind persönlich für Sie da. Schreiben Sie uns oder besuchen Sie uns direkt.";
+
+  const quickstart1Title = cms["home_quickstart_1"]?.title || "Karriere starten";
+  const quickstart1Desc = cms["home_quickstart_1"]?.body || "Entdecke offene Stellen bei SSM";
+  const quickstart2Title = cms["home_quickstart_2"]?.title || "Unsere Agenturen";
+  const quickstart2Desc = cms["home_quickstart_2"]?.body || "Finde deinen Standort in der Nähe";
 
   return (
     <main>
@@ -163,7 +250,7 @@ const Index = () => {
           ))}
         </div>
 
-        {/* Floating Quickstart Cards — fixed on slider, don't move with slides */}
+        {/* Floating Quickstart Cards */}
         <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 w-full max-w-4xl px-6 hidden sm:grid grid-cols-2 gap-4">
           <motion.div
             animate={{ y: [0, -6, 0] }}
@@ -175,11 +262,15 @@ const Index = () => {
               style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
             >
               <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/40">
-                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=80" alt="Karriere" className="w-full h-full object-cover" />
+                <img
+                  src={heroImg("home_quickstart_1", "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=80")}
+                  alt="Karriere"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-heading text-sm font-bold text-white">Karriere starten</p>
-                <p className="font-body text-xs text-white/70 mt-0.5">Entdecke offene Stellen bei SSM</p>
+                <p className="font-heading text-sm font-bold text-white">{quickstart1Title}</p>
+                <p className="font-body text-xs text-white/70 mt-0.5">{quickstart1Desc}</p>
               </div>
               <ArrowRight size={18} className="text-white shrink-0 group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -195,11 +286,15 @@ const Index = () => {
               style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
             >
               <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/40">
-                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&q=80" alt="Agenturen" className="w-full h-full object-cover" />
+                <img
+                  src={heroImg("home_quickstart_2", "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&q=80")}
+                  alt="Agenturen"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-heading text-sm font-bold text-white">Unsere Agenturen</p>
-                <p className="font-body text-xs text-white/70 mt-0.5">Finde deinen Standort in der Nähe</p>
+                <p className="font-heading text-sm font-bold text-white">{quickstart2Title}</p>
+                <p className="font-body text-xs text-white/70 mt-0.5">{quickstart2Desc}</p>
               </div>
               <ArrowRight size={18} className="text-white shrink-0 group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -214,9 +309,13 @@ const Index = () => {
             style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
             <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
-              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80" alt="Karriere" className="w-full h-full object-cover" />
+              <img
+                src={heroImg("home_quickstart_1", "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80")}
+                alt="Karriere"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <p className="font-heading text-xs font-bold text-white flex-1">Jetzt bewerben</p>
+            <p className="font-heading text-xs font-bold text-white flex-1">{quickstart1Title}</p>
             <ArrowRight size={14} className="text-white" />
           </Link>
           <Link
@@ -225,9 +324,13 @@ const Index = () => {
             style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
             <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
-              <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&q=80" alt="Agenturen" className="w-full h-full object-cover" />
+              <img
+                src={heroImg("home_quickstart_2", "https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&q=80")}
+                alt="Agenturen"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <p className="font-heading text-xs font-bold text-white flex-1">Agenturen entdecken</p>
+            <p className="font-heading text-xs font-bold text-white flex-1">{quickstart2Title}</p>
             <ArrowRight size={14} className="text-white" />
           </Link>
         </div>
@@ -245,10 +348,10 @@ const Index = () => {
         >
           <div>
             <p className="font-heading text-lg sm:text-xl font-semibold text-white text-center sm:text-left">
-              Persönliche Beratung — wir sind für Sie da.
+              {overlapTitle}
             </p>
             <p className="font-body text-sm text-white/70 text-center sm:text-left mt-1">
-              Unverbindlich und kostenlos — vereinbaren Sie ein Erstgespräch.
+              {overlapBody}
             </p>
           </div>
           <Link
@@ -256,7 +359,7 @@ const Index = () => {
             className="shrink-0 font-body text-sm font-semibold px-8 py-3.5 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider"
             style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
           >
-            Jetzt Kontakt aufnehmen
+            {overlapCta}
           </Link>
         </div>
       </div>
@@ -266,17 +369,17 @@ const Index = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <AnimatedSection>
-              <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">Über SSM Partner</p>
+              <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{whoLabel}</p>
               <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
-                {t("home.who.title")}
+                {whoTitle}
               </h2>
               <div className="w-16 h-1 rounded-full mt-4" style={{ backgroundColor: "#B3B69C" }} />
               <p className="font-body text-base text-muted-foreground mt-6 leading-relaxed">
-                {t("home.who.text")}
+                {whoBody}
               </p>
               <div className="flex flex-wrap gap-3 mt-8">
                 <Link
-                  to="/ueber-uns"
+                  to={whoCta}
                   className="inline-flex items-center gap-2 font-body text-sm font-semibold px-6 py-3 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider bg-primary text-primary-foreground"
                 >
                   {t("home.who.cta")}
@@ -295,12 +398,20 @@ const Index = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
                   <div className="rounded-2xl overflow-hidden aspect-[3/4]" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)" }}>
-                    <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=80" alt="Team" className="w-full h-full object-cover" />
+                    <img
+                      src={heroImg("home_who_1", "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=80")}
+                      alt="Team"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
                 <div className="space-y-4 pt-8">
                   <div className="rounded-2xl overflow-hidden aspect-[3/4]" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)" }}>
-                    <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80" alt="Beratung" className="w-full h-full object-cover" />
+                    <img
+                      src={heroImg("home_who_2", "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80")}
+                      alt="Beratung"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 </div>
               </div>
@@ -314,15 +425,15 @@ const Index = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">Unsere Dienstleistungen</p>
+              <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{servicesLabel}</p>
               <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
-                {t("home.services.title")}
+                {servicesTitle}
               </h2>
               <div className="w-16 h-1 rounded-full mt-4 mx-auto" style={{ backgroundColor: "#B3B69C" }} />
             </div>
           </AnimatedSection>
           <div className="grid md:grid-cols-3 gap-8">
-            {services.map((service, i) => {
+            {serviceData.map((service, i) => {
               const Icon = service.icon;
               return (
                 <AnimatedSection key={i} delay={i * 0.1}>
@@ -334,8 +445,8 @@ const Index = () => {
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6" style={{ backgroundColor: "rgba(179,182,156,0.15)" }}>
                       <Icon size={24} className="text-primary" />
                     </div>
-                    <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{t(service.title)}</h3>
-                    <p className="font-body text-sm text-muted-foreground leading-relaxed">{t(service.desc)}</p>
+                    <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{service.title}</h3>
+                    <p className="font-body text-sm text-muted-foreground leading-relaxed">{service.desc}</p>
                   </motion.div>
                 </AnimatedSection>
               );
@@ -348,7 +459,7 @@ const Index = () => {
       <section className="relative py-28 lg:py-36 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80"
+            src={heroImg("home_trust_bg", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80")}
             alt=""
             className="w-full h-full object-cover"
           />
@@ -358,10 +469,10 @@ const Index = () => {
           <AnimatedSection>
             <Star size={32} className="mx-auto mb-6" style={{ color: "#B3B69C" }} />
             <blockquote className="font-heading text-2xl lg:text-3xl font-medium text-white leading-relaxed">
-              {t("home.trust.quote")}
+              {trustQuote}
             </blockquote>
             <p className="font-body text-sm mt-6" style={{ color: "rgba(255,255,255,0.6)" }}>
-              {t("home.trust.author")}
+              {trustAuthor}
             </p>
           </AnimatedSection>
         </div>
@@ -374,8 +485,8 @@ const Index = () => {
             <AnimatedSection>
               <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-14">
                 <div>
-                  <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">Schweizweit für Sie da</p>
-                  <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Unsere Standorte</h2>
+                  <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{agencyLabel}</p>
+                  <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{agencyTitle}</h2>
                   <div className="w-16 h-1 rounded-full mt-4" style={{ backgroundColor: "#B3B69C" }} />
                 </div>
                 <Link
@@ -424,20 +535,20 @@ const Index = () => {
             <AnimatedSection>
               <div className="rounded-2xl overflow-hidden aspect-[16/10]" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)" }}>
                 <img
-                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80"
+                  src={heroImg("home_career", "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80")}
                   alt="Karriere bei SSM"
                   className="w-full h-full object-cover"
                 />
               </div>
             </AnimatedSection>
             <AnimatedSection delay={0.15}>
-              <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">Karriere</p>
+              <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{careerLabel}</p>
               <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
-                Werde Teil unseres Teams
+                {careerTitle}
               </h2>
               <div className="w-16 h-1 rounded-full mt-4" style={{ backgroundColor: "#B3B69C" }} />
               <p className="font-body text-base text-muted-foreground mt-6 leading-relaxed">
-                Entdecke spannende Karrieremöglichkeiten bei SSM Partner. Wir bieten dir ein inspirierendes Arbeitsumfeld, faire Vergütung und echte Entwicklungsperspektiven.
+                {careerBody}
               </p>
               <div className="flex flex-wrap items-center gap-3 mt-6">
                 {[
@@ -473,18 +584,18 @@ const Index = () => {
         <div className="container mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl">
           <div>
             <h3 className="font-heading text-lg font-semibold text-white">
-              {t("home.phone.title")}
+              {phoneTitle}
             </h3>
             <p className="font-body text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
-              {t("home.phone.sub")}
+              {phoneSub}
             </p>
           </div>
           <a
-            href="tel:+41412202050"
+            href={`tel:${phoneNumber.replace(/\s/g, "")}`}
             className="font-heading text-2xl lg:text-3xl font-bold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex items-center gap-3"
           >
             <Phone size={24} />
-            +41 41 220 20 50
+            {phoneNumber}
           </a>
         </div>
       </section>
@@ -493,13 +604,13 @@ const Index = () => {
       <section className="py-24 lg:py-32 bg-card">
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
           <AnimatedSection>
-            <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">Kontakt</p>
+            <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{contactLabel}</p>
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
-              Lassen Sie uns ins Gespräch kommen
+              {contactTitle}
             </h2>
             <div className="w-16 h-1 rounded-full mt-4 mx-auto" style={{ backgroundColor: "#B3B69C" }} />
             <p className="font-body text-base text-muted-foreground mt-6 leading-relaxed max-w-xl mx-auto">
-              Ob Versicherungsfrage, Finanzplanung oder Karriereanfrage — wir sind persönlich für Sie da. Schreiben Sie uns oder besuchen Sie uns direkt.
+              {contactBody}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
               <Link
