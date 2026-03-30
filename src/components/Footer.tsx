@@ -8,8 +8,14 @@ const Footer = () => {
   const { lang, setLang, t } = useLanguage();
 
   return (
-    <footer className="border-t bg-card">
-      <div className="container mx-auto px-6 lg:px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-body text-muted-foreground">
+    <footer className="py-6 flex justify-center px-6">
+      <div
+        className="w-full max-w-[1340px] bg-white rounded-2xl px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-body text-muted-foreground"
+        style={{
+          boxShadow: "0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)",
+          border: "0.5px solid rgba(36,62,58,0.12)",
+        }}
+      >
         <span>© 2025 SSM Partner AG</span>
 
         <div className="flex items-center gap-4">
@@ -24,7 +30,8 @@ const Footer = () => {
               <span key={l} className="flex items-center">
                 <button
                   onClick={() => setLang(l)}
-                  className={`px-0.5 uppercase transition-colors ${lang === l ? "text-primary font-semibold" : "hover:text-foreground"}`}
+                  className={`px-0.5 uppercase transition-colors ${lang === l ? "font-semibold" : "hover:text-foreground"}`}
+                  style={{ color: lang === l ? "#243e3a" : undefined }}
                 >
                   {l}
                 </button>
@@ -32,7 +39,7 @@ const Footer = () => {
               </span>
             ))}
           </div>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-primary transition-colors">
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-foreground transition-colors">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
           </a>
         </div>
