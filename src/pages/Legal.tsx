@@ -18,10 +18,14 @@ const slugify = (text: string) =>
 const Legal = () => {
   const { lang } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = (searchParams.get("tab") as string) || "impressum";
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const activeTab = searchParams.get("tab") || "impressum";
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to top when tab changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [activeTab]);
 
   const { data: content, isLoading } = useQuery({
     queryKey: ["site-content", "legal", lang, activeTab],
