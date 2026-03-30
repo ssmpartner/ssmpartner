@@ -14,6 +14,11 @@ const staticPages = [
   { key: "contact", label: "Kontakt" },
   { key: "team", label: "Agenturen" },
   { key: "legal", label: "Impressum / Datenschutz" },
+  { key: "hq-1", label: "HQ Galerie – Hauptbild" },
+  { key: "hq-2", label: "HQ Galerie – Bild 2" },
+  { key: "hq-3", label: "HQ Galerie – Bild 3" },
+  { key: "hq-4", label: "HQ Galerie – Bild 4" },
+  { key: "hq-5", label: "HQ Galerie – Bild 5" },
 ];
 
 const AdminHeroes = () => {
