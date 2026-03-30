@@ -9,6 +9,7 @@ const adminLinks = [
   { to: "/admin/nav", label: "Menüpunkte", icon: MenuIcon },
   { to: "/admin/content", label: "Seitentexte", icon: FileText },
   { to: "/admin/team", label: "Team", icon: Users },
+  { to: "/admin/agencies", label: "Agenturen", icon: Building2 },
   { to: "/admin/jobs", label: "Stellen", icon: Briefcase },
 ];
 
