@@ -139,6 +139,7 @@ const AdminTeam = () => {
       image_url: m.image_url || "",
       phone: m.phone || "",
       email: m.email || "",
+      badge: m.badge || "",
     });
   };
 
