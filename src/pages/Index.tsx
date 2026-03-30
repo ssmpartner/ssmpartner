@@ -35,63 +35,8 @@ const services = [
   { icon: TrendingUp, title: "home.services.2.title", desc: "home.services.2.desc" },
   { icon: Building2, title: "home.services.3.title", desc: "home.services.3.desc" },
 ];
-const ssmColors = ["#243e3a", "#B3B69C", "#1a2e2b"];
-const quotes = [
-  "«Transparenz schafft Vertrauen — Vertrauen schafft Erfolg.»",
-  "«Wir begleiten Sie in jeder Lebensphase — persönlich und kompetent.»",
-  "«Innovation und Nähe — das Beste aus beiden Welten.»",
-];
 
-const QuoteBanner = () => {
-  const [index, setIndex] = useState(0);
 
-  useEffect(() => {
-    const timer = setInterval(() => setIndex((p) => (p + 1) % quotes.length), 4000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <section className="relative py-16 lg:py-20 overflow-hidden">
-      {/* Animated gradient background */}
-      <motion.div
-        className="absolute inset-0"
-        animate={{
-          background: [
-            `linear-gradient(135deg, ${ssmColors[0]} 0%, ${ssmColors[1]} 50%, ${ssmColors[2]} 100%)`,
-            `linear-gradient(135deg, ${ssmColors[1]} 0%, ${ssmColors[2]} 50%, ${ssmColors[0]} 100%)`,
-            `linear-gradient(135deg, ${ssmColors[2]} 0%, ${ssmColors[0]} 50%, ${ssmColors[1]} 100%)`,
-            `linear-gradient(135deg, ${ssmColors[0]} 0%, ${ssmColors[1]} 50%, ${ssmColors[2]} 100%)`,
-          ],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className="relative container mx-auto px-6 lg:px-8 max-w-3xl text-center">
-        <AnimatePresence mode="wait">
-          <motion.blockquote
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.6 }}
-            className="font-heading text-xl lg:text-2xl font-medium text-white leading-relaxed"
-          >
-            {quotes[index]}
-          </motion.blockquote>
-        </AnimatePresence>
-        <div className="flex justify-center gap-2 mt-6">
-          {quotes.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIndex(i)}
-              className="w-2 h-2 rounded-full transition-all"
-              style={{ backgroundColor: i === index ? "#fff" : "rgba(255,255,255,0.35)" }}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
 const Index = () => {
   const { t } = useLanguage();
   const [current, setCurrent] = useState(0);
