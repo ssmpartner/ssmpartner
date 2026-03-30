@@ -17,6 +17,7 @@ import AdminSlider from "./pages/admin/AdminSlider";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminTeam from "./pages/admin/AdminTeam";
 import AdminJobs from "./pages/admin/AdminJobs";
+import AdminNav from "./pages/admin/AdminNav";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
               <Route element={<AdminLayout />}>
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/admin/slider" element={<AdminSlider />} />
+                <Route path="/admin/nav" element={<AdminNav />} />
                 <Route path="/admin/content" element={<AdminContent />} />
                 <Route path="/admin/team" element={<AdminTeam />} />
                 <Route path="/admin/jobs" element={<AdminJobs />} />
