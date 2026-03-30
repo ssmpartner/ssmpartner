@@ -49,6 +49,7 @@ const App = () => (
       <LanguageProvider>
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
