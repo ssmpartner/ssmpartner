@@ -63,6 +63,7 @@ const AdminTeam = () => {
         image_url: item.image_url || null,
         phone: item.phone || null,
         email: item.email || null,
+        badge: item.badge || null,
       };
       if (item.id) {
         const { error } = await supabase.from("team_members").update(payload).eq("id", item.id);
