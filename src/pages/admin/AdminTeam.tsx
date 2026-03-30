@@ -251,6 +251,11 @@ const AdminTeam = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
+            <input placeholder="Telefon" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} />
+            <input placeholder="E-Mail" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
             <input placeholder="Rolle (DE)" value={form.role_de} onChange={(e) => setForm({ ...form, role_de: e.target.value })} className={inputClass} />
             <input placeholder="Rolle (FR)" value={form.role_fr} onChange={(e) => setForm({ ...form, role_fr: e.target.value })} className={inputClass} />
             <input placeholder="Rolle (IT)" value={form.role_it} onChange={(e) => setForm({ ...form, role_it: e.target.value })} className={inputClass} />
