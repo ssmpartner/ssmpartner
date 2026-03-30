@@ -45,7 +45,7 @@ const Legal = () => {
       <AnimatedSection>
         <section className="max-w-4xl mx-auto px-6 py-16 lg:py-24">
           {/* Tab Switch */}
-          <div className="flex bg-muted rounded-xl p-1 mb-12 max-w-md mx-auto">
+          <div className="flex bg-muted rounded-xl p-1 mb-12 max-w-xl mx-auto">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
