@@ -53,6 +53,8 @@ const AdminTeam = () => {
         agency_id: agencyId,
         is_agency_leader: item.is_agency_leader,
         image_url: item.image_url || null,
+        phone: item.phone || null,
+        email: item.email || null,
       };
       if (item.id) {
         const { error } = await supabase.from("team_members").update(payload).eq("id", item.id);
