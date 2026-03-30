@@ -100,9 +100,10 @@ const Contact = () => {
 
                 <button
                   type="submit"
-                  className="w-full gradient-primary text-primary-foreground font-body text-sm font-medium py-4 rounded-lg hover:opacity-90 transition-opacity"
+                  disabled={sending}
+                  className="w-full gradient-primary text-primary-foreground font-body text-sm font-medium py-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  {t("contact.form.submit")}
+                  {sending ? "Wird gesendet..." : t("contact.form.submit")}
                 </button>
               </form>
             )}
