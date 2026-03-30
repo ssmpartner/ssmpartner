@@ -24,11 +24,16 @@ export type Database = {
           description_fr: string | null
           description_it: string | null
           email: string | null
+          gallery_urls: string[] | null
           id: string
           image_url: string | null
+          leader_image_url: string | null
+          leader_name: string | null
+          leader_role: string | null
           map_lat: number | null
           map_lng: number | null
           name: string
+          opening_hours: string | null
           phone: string | null
           slug: string
           sort_order: number
@@ -43,11 +48,16 @@ export type Database = {
           description_fr?: string | null
           description_it?: string | null
           email?: string | null
+          gallery_urls?: string[] | null
           id?: string
           image_url?: string | null
+          leader_image_url?: string | null
+          leader_name?: string | null
+          leader_role?: string | null
           map_lat?: number | null
           map_lng?: number | null
           name: string
+          opening_hours?: string | null
           phone?: string | null
           slug: string
           sort_order?: number
@@ -62,17 +72,110 @@ export type Database = {
           description_fr?: string | null
           description_it?: string | null
           email?: string | null
+          gallery_urls?: string[] | null
           id?: string
           image_url?: string | null
+          leader_image_url?: string | null
+          leader_name?: string | null
+          leader_role?: string | null
           map_lat?: number | null
           map_lng?: number | null
           name?: string
+          opening_hours?: string | null
           phone?: string | null
           slug?: string
           sort_order?: number
           updated_at?: string
         }
         Relationships: []
+      }
+      agency_members: {
+        Row: {
+          agency_id: string
+          created_at: string
+          email: string | null
+          id: string
+          image_url: string | null
+          name: string
+          phone: string | null
+          role: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          phone?: string | null
+          role?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          phone?: string | null
+          role?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_members_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agency_reviews: {
+        Row: {
+          active: boolean
+          agency_id: string
+          author_name: string
+          created_at: string
+          id: string
+          rating: number
+          sort_order: number
+          text: string | null
+        }
+        Insert: {
+          active?: boolean
+          agency_id: string
+          author_name: string
+          created_at?: string
+          id?: string
+          rating?: number
+          sort_order?: number
+          text?: string | null
+        }
+        Update: {
+          active?: boolean
+          agency_id?: string
+          author_name?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          sort_order?: number
+          text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agency_reviews_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       job_positions: {
         Row: {

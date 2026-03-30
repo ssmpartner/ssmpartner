@@ -10,6 +10,7 @@ import AdminLayout from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Agencies from "./pages/Agencies";
+import AgencyDetail from "./pages/AgencyDetail";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
             <Route path="/ueber-uns" element={<PublicLayout><About /></PublicLayout>} />
             <Route path="/agenturen" element={<PublicLayout><Agencies /></PublicLayout>} />
+            <Route path="/agenturen/:slug" element={<PublicLayout><AgencyDetail /></PublicLayout>} />
             <Route path="/karriere" element={<PublicLayout><Career /></PublicLayout>} />
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
             <Route path="/rechtliches" element={<PublicLayout><Legal /></PublicLayout>} />

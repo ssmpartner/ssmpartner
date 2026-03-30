@@ -14,6 +14,11 @@ const emptyForm = {
   description_fr: "",
   description_it: "",
   description_en: "",
+  leader_name: "",
+  leader_role: "",
+  opening_hours: "",
+  map_lat: "",
+  map_lng: "",
 };
 
 const AdminAgencies = () => {
@@ -34,13 +39,18 @@ const AdminAgencies = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (item: any) => {
-      if (item.id) {
-        const { id, ...rest } = item;
+      const prepared = {
+        ...item,
+        map_lat: item.map_lat ? parseFloat(item.map_lat) : null,
+        map_lng: item.map_lng ? parseFloat(item.map_lng) : null,
+      };
+      if (prepared.id) {
+        const { id, ...rest } = prepared;
         const { error } = await supabase.from("agencies").update(rest).eq("id", id);
         if (error) throw error;
       } else {
         const maxOrder = agencies?.length ? Math.max(...agencies.map((a) => a.sort_order)) + 1 : 0;
-        const { error } = await supabase.from("agencies").insert({ ...item, sort_order: maxOrder });
+        const { error } = await supabase.from("agencies").insert({ ...prepared, sort_order: maxOrder });
         if (error) throw error;
       }
     },
@@ -111,6 +121,11 @@ const AdminAgencies = () => {
       description_fr: agency.description_fr || "",
       description_it: agency.description_it || "",
       description_en: agency.description_en || "",
+      leader_name: agency.leader_name || "",
+      leader_role: agency.leader_role || "",
+      opening_hours: agency.opening_hours || "",
+      map_lat: agency.map_lat?.toString() || "",
+      map_lng: agency.map_lng?.toString() || "",
     });
   };
 
@@ -144,8 +159,13 @@ const AdminAgencies = () => {
             <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="Slug (z.B. rothenburg)" className="border rounded-lg px-3 py-2 text-sm" />
             <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Telefon" className="border rounded-lg px-3 py-2 text-sm" />
             <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="E-Mail" className="border rounded-lg px-3 py-2 text-sm" />
+            <input value={form.leader_name} onChange={(e) => setForm({ ...form, leader_name: e.target.value })} placeholder="Agenturleiter Name" className="border rounded-lg px-3 py-2 text-sm" />
+            <input value={form.leader_role} onChange={(e) => setForm({ ...form, leader_role: e.target.value })} placeholder="Agenturleiter Rolle" className="border rounded-lg px-3 py-2 text-sm" />
+            <input value={form.map_lat} onChange={(e) => setForm({ ...form, map_lat: e.target.value })} placeholder="Breitengrad (Lat)" className="border rounded-lg px-3 py-2 text-sm" />
+            <input value={form.map_lng} onChange={(e) => setForm({ ...form, map_lng: e.target.value })} placeholder="Längengrad (Lng)" className="border rounded-lg px-3 py-2 text-sm" />
           </div>
           <textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Adresse" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
+          <textarea value={form.opening_hours} onChange={(e) => setForm({ ...form, opening_hours: e.target.value })} placeholder="Öffnungszeiten" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
           <textarea value={form.description_de} onChange={(e) => setForm({ ...form, description_de: e.target.value })} placeholder="Beschreibung (DE)" rows={3} className="w-full border rounded-lg px-3 py-2 text-sm" />
           <div className="flex gap-2">
             <button onClick={() => saveMutation.mutate(form)} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium">Speichern</button>
@@ -167,8 +187,13 @@ const AdminAgencies = () => {
                     <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="Slug" className="border rounded-lg px-3 py-2 text-sm" />
                     <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Telefon" className="border rounded-lg px-3 py-2 text-sm" />
                     <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="E-Mail" className="border rounded-lg px-3 py-2 text-sm" />
+                    <input value={form.leader_name} onChange={(e) => setForm({ ...form, leader_name: e.target.value })} placeholder="Agenturleiter Name" className="border rounded-lg px-3 py-2 text-sm" />
+                    <input value={form.leader_role} onChange={(e) => setForm({ ...form, leader_role: e.target.value })} placeholder="Agenturleiter Rolle" className="border rounded-lg px-3 py-2 text-sm" />
+                    <input value={form.map_lat} onChange={(e) => setForm({ ...form, map_lat: e.target.value })} placeholder="Breitengrad (Lat)" className="border rounded-lg px-3 py-2 text-sm" />
+                    <input value={form.map_lng} onChange={(e) => setForm({ ...form, map_lng: e.target.value })} placeholder="Längengrad (Lng)" className="border rounded-lg px-3 py-2 text-sm" />
                   </div>
                   <textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Adresse" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
+                  <textarea value={form.opening_hours} onChange={(e) => setForm({ ...form, opening_hours: e.target.value })} placeholder="Öffnungszeiten" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
                   <textarea value={form.description_de} onChange={(e) => setForm({ ...form, description_de: e.target.value })} placeholder="Beschreibung (DE)" rows={3} className="w-full border rounded-lg px-3 py-2 text-sm" />
                   <textarea value={form.description_fr} onChange={(e) => setForm({ ...form, description_fr: e.target.value })} placeholder="Beschreibung (FR)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
                   <textarea value={form.description_it} onChange={(e) => setForm({ ...form, description_it: e.target.value })} placeholder="Beschreibung (IT)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
