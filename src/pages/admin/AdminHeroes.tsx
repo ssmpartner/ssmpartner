@@ -4,12 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
-const pages = [
+const staticPages = [
   { key: "about", label: "Über uns" },
   { key: "about-intro", label: "Über uns – Intro-Bild" },
   { key: "career", label: "Karriere" },
   { key: "contact", label: "Kontakt" },
-  { key: "team", label: "Team" },
+  { key: "team", label: "Agenturen" },
   { key: "legal", label: "Impressum / Datenschutz" },
 ];
 
@@ -25,6 +25,20 @@ const AdminHeroes = () => {
       return data;
     },
   });
+
+  const { data: agencies } = useQuery({
+    queryKey: ["admin-agencies-for-heroes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("agencies").select("slug, name").order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const pages = [
+    ...staticPages,
+    ...(agencies?.map((a) => ({ key: `agency-${a.slug}`, label: `Agentur: ${a.name}` })) || []),
+  ];
 
   const updateMutation = useMutation({
     mutationFn: async ({ pageKey, image_url }: { pageKey: string; image_url: string }) => {

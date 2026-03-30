@@ -122,7 +122,7 @@ const AgencyDetail = () => {
 
   return (
     <main>
-      <PageHero pageKey="team" fallbackImage="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" />
+      <PageHero pageKey={`agency-${slug}`} fallbackImage={agency?.image_url || "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"} />
 
       {/* Back + Title */}
       <section className="py-20 lg:py-28">
