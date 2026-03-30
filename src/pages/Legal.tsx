@@ -56,7 +56,7 @@ const Legal = () => {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {tab.key === "impressum" ? "Impressum" : "Datenschutz"}
+                {tab.label}
               </button>
             ))}
           </div>
