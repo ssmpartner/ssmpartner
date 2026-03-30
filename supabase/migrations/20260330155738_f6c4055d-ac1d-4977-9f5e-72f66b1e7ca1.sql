@@ -1,0 +1,1 @@
+ALTER TABLE public.team_members ADD COLUMN is_agency_leader boolean NOT NULL DEFAULT false;

@@ -374,6 +374,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          is_agency_leader: boolean
           name: string
           role_de: string | null
           role_en: string | null
@@ -389,6 +390,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_agency_leader?: boolean
           name: string
           role_de?: string | null
           role_en?: string | null
@@ -404,6 +406,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          is_agency_leader?: boolean
           name?: string
           role_de?: string | null
           role_en?: string | null
