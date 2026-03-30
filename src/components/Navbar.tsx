@@ -105,19 +105,19 @@ const Navbar = () => {
           </div>
 
           {/* Language dropdown */}
-          <div ref={langRef} className="relative ml-2">
+          <div ref={langRef} className="relative ml-1">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="flex items-center gap-1.5 font-body text-xs rounded-full px-3 py-2 transition-colors hover:bg-muted"
+              className="flex items-center gap-1.5 font-body text-sm rounded-xl px-4 py-2.5 transition-colors hover:bg-muted"
               style={{ color: "#4a5568" }}
             >
-              <Globe size={14} />
+              <Globe size={15} />
               <span className="uppercase font-medium" style={{ color: "#243e3a" }}>{lang}</span>
-              <ChevronDown size={12} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
+              <ChevronDown size={13} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
             </button>
             {langOpen && (
               <div
-                className="absolute top-full right-0 mt-2 bg-white rounded-xl py-1 min-w-[140px] z-50"
+                className="absolute top-full right-0 mt-2 bg-white rounded-xl py-1 min-w-[150px] z-50"
                 style={{
                   boxShadow: "0 4px 24px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06)",
                   border: "0.5px solid rgba(36,62,58,0.1)",
@@ -127,7 +127,7 @@ const Navbar = () => {
                   <button
                     key={l.code}
                     onClick={() => { setLang(l.code); setLangOpen(false); }}
-                    className="w-full text-left px-4 py-2 font-body text-sm transition-colors hover:bg-muted flex items-center justify-between"
+                    className="w-full text-left px-4 py-2.5 font-body text-sm transition-colors hover:bg-muted flex items-center justify-between"
                     style={{ color: lang === l.code ? "#243e3a" : "#4a5568", fontWeight: lang === l.code ? 500 : 400 }}
                   >
                     {l.label}
@@ -141,11 +141,12 @@ const Navbar = () => {
           {/* Contact button */}
           <Link
             to="/kontakt"
-            className="font-body text-sm font-medium rounded-full px-6 py-2.5 transition-all duration-200 hover:opacity-90"
+            className="font-body text-sm font-medium rounded-xl px-7 py-2.5 transition-all duration-200 hover:opacity-90"
             style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
           >
             {t("nav.cta")}
           </Link>
+          </div>
         </div>
 
         {/* Mobile header */}
