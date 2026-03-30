@@ -214,4 +214,95 @@ const Agencies = () => {
   );
 };
 
+/* ---------- HQ Gallery Sub-component ---------- */
+const HQGallerySection = ({ onImageClick }: { onImageClick: (url: string) => void }) => {
+  const { data: heroes } = useQuery({
+    queryKey: ["hq-gallery-images"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_heroes")
+        .select("*")
+        .in("page_key", hqImageKeys);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const getImg = (key: string) => heroes?.find((h) => h.page_key === key)?.image_url;
+
+  const fallbacks: Record<string, string> = {
+    "hq-1": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
+    "hq-2": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&q=80",
+    "hq-3": "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=800&q=80",
+    "hq-4": "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=80",
+    "hq-5": "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&q=80",
+  };
+
+  const img = (key: string) => getImg(key) || fallbacks[key];
+
+  return (
+    <section className="py-20 lg:py-28">
+      <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+        <AnimatedSection>
+          <div className="text-center mb-12">
+            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
+              Entdecke unser HQ
+            </h2>
+            <div className="brand-rule mt-4 mx-auto" />
+            <p className="font-body text-base text-muted-foreground mt-6 max-w-2xl mx-auto leading-relaxed">
+              Werfen Sie einen Blick hinter die Kulissen unseres Hauptsitzes — moderne Räumlichkeiten,
+              in denen Teamgeist und Innovation zu Hause sind.
+            </p>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.15}>
+          <div className="grid grid-cols-4 grid-rows-2 gap-3 lg:gap-4" style={{ height: "clamp(320px, 50vw, 520px)" }}>
+            {/* Large hero image — spans 2 cols, 2 rows */}
+            <button
+              onClick={() => onImageClick(img("hq-1"))}
+              className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group"
+            >
+              <img src={img("hq-1")} alt="Hauptsitz" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </button>
+
+            {/* Top-right pair */}
+            <button
+              onClick={() => onImageClick(img("hq-2"))}
+              className="relative rounded-2xl overflow-hidden group"
+            >
+              <img src={img("hq-2")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </button>
+            <button
+              onClick={() => onImageClick(img("hq-3"))}
+              className="relative rounded-2xl overflow-hidden group"
+            >
+              <img src={img("hq-3")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </button>
+
+            {/* Bottom-right pair */}
+            <button
+              onClick={() => onImageClick(img("hq-4"))}
+              className="relative rounded-2xl overflow-hidden group"
+            >
+              <img src={img("hq-4")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </button>
+            <button
+              onClick={() => onImageClick(img("hq-5"))}
+              className="relative rounded-2xl overflow-hidden group"
+            >
+              <img src={img("hq-5")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </button>
+          </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  );
+};
+
 export default Agencies;
