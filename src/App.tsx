@@ -17,6 +17,7 @@ import AdminSlider from "./pages/admin/AdminSlider";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminTeam from "./pages/admin/AdminTeam";
 import AdminJobs from "./pages/admin/AdminJobs";
+import AdminNav from "./pages/admin/AdminNav";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

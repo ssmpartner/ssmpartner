@@ -1,10 +1,11 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { LayoutDashboard, Image, Users, Briefcase, FileText, LogOut } from "lucide-react";
+import { LayoutDashboard, Image, Users, Briefcase, FileText, LogOut, Menu as MenuIcon } from "lucide-react";
 
 const adminLinks = [
   { to: "/admin", label: "Übersicht", icon: LayoutDashboard, end: true },
   { to: "/admin/slider", label: "Slider-Bilder", icon: Image },
+  { to: "/admin/nav", label: "Menüpunkte", icon: MenuIcon },
   { to: "/admin/content", label: "Seitentexte", icon: FileText },
   { to: "/admin/team", label: "Team", icon: Users },
   { to: "/admin/jobs", label: "Stellen", icon: Briefcase },

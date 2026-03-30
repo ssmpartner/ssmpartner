@@ -1,18 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Language } from "@/i18n/translations";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown, Globe } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import ssmLogo from "@/assets/ssm-logo-green.png";
 
-const languages: Language[] = ["de", "fr", "it", "en"];
+const languages: { code: Language; label: string }[] = [
+  { code: "de", label: "Deutsch" },
+  { code: "fr", label: "Français" },
+  { code: "it", label: "Italiano" },
+  { code: "en", label: "English" },
+];
 
 const Navbar = () => {
   const { lang, setLang, t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  const { data: navItems } = useQuery({
+    queryKey: ["nav-items"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("nav_items").select("*").eq("active", true).order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -24,15 +42,22 @@ const Navbar = () => {
     setMenuOpen(false);
   }, [location]);
 
-  const navLinks = [
-    { to: "/", label: t("nav.home") },
-    { to: "/ueber-uns", label: t("nav.about") },
-    { to: "/team", label: t("nav.team") },
-    { to: "/karriere", label: t("nav.career") },
-    { to: "/kontakt", label: t("nav.vag") },
-  ];
+  // Close lang dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const getLabel = (item: any) => {
+    const key = `label_${lang}` as string;
+    return item[key] || item.label_de;
+  };
 
   const isActive = (path: string) => location.pathname === path;
+  const currentLang = languages.find((l) => l.code === lang)!;
 
   return (
     <>
@@ -60,45 +85,57 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Nav links */}
+          {/* Nav links from DB */}
           <div className="flex items-center gap-1">
-            {navLinks.map((link) => (
+            {navItems?.map((item) => (
               <Link
-                key={link.to}
-                to={link.to}
+                key={item.id}
+                to={item.url}
                 className="font-body transition-all duration-200 rounded-full px-4 py-2"
                 style={{
                   fontSize: "13.5px",
-                  backgroundColor: isActive(link.to) ? "#e8f0ef" : "transparent",
-                  color: isActive(link.to) ? "#243e3a" : "#4a5568",
-                  fontWeight: isActive(link.to) ? 500 : 400,
+                  backgroundColor: isActive(item.url) ? "#e8f0ef" : "transparent",
+                  color: isActive(item.url) ? "#243e3a" : "#4a5568",
+                  fontWeight: isActive(item.url) ? 500 : 400,
                 }}
               >
-                {link.label}
+                {getLabel(item)}
               </Link>
             ))}
           </div>
 
-          {/* Language switcher */}
-          <div className="flex items-center gap-0.5 ml-2">
-            {languages.map((l, i) => (
-              <span key={l} className="flex items-center">
-                <button
-                  onClick={() => setLang(l)}
-                  className="font-body uppercase transition-colors px-0.5"
-                  style={{
-                    fontSize: "11px",
-                    color: lang === l ? "#243e3a" : "#a0aab0",
-                    fontWeight: lang === l ? 600 : 400,
-                  }}
-                >
-                  {l}
-                </button>
-                {i < languages.length - 1 && (
-                  <span style={{ color: "#d1d5db", fontSize: "11px" }}>|</span>
-                )}
-              </span>
-            ))}
+          {/* Language dropdown */}
+          <div ref={langRef} className="relative ml-2">
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="flex items-center gap-1.5 font-body text-xs rounded-full px-3 py-2 transition-colors hover:bg-muted"
+              style={{ color: "#4a5568" }}
+            >
+              <Globe size={14} />
+              <span className="uppercase font-medium" style={{ color: "#243e3a" }}>{lang}</span>
+              <ChevronDown size={12} className={`transition-transform ${langOpen ? "rotate-180" : ""}`} />
+            </button>
+            {langOpen && (
+              <div
+                className="absolute top-full right-0 mt-2 bg-white rounded-xl py-1 min-w-[140px] z-50"
+                style={{
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06)",
+                  border: "0.5px solid rgba(36,62,58,0.1)",
+                }}
+              >
+                {languages.map((l) => (
+                  <button
+                    key={l.code}
+                    onClick={() => { setLang(l.code); setLangOpen(false); }}
+                    className="w-full text-left px-4 py-2 font-body text-sm transition-colors hover:bg-muted flex items-center justify-between"
+                    style={{ color: lang === l.code ? "#243e3a" : "#4a5568", fontWeight: lang === l.code ? 500 : 400 }}
+                  >
+                    {l.label}
+                    <span className="uppercase text-xs text-muted-foreground">{l.code}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Contact button */}
@@ -144,18 +181,18 @@ const Navbar = () => {
           >
             <img src={ssmLogo} alt="SSM Partner AG" className="h-8 mb-4" />
 
-            {navLinks.map((link) => (
+            {navItems?.map((item) => (
               <Link
-                key={link.to}
-                to={link.to}
+                key={item.id}
+                to={item.url}
                 className="font-body text-lg transition-colors rounded-full px-6 py-2"
                 style={{
-                  backgroundColor: isActive(link.to) ? "#e8f0ef" : "transparent",
-                  color: isActive(link.to) ? "#243e3a" : "#4a5568",
-                  fontWeight: isActive(link.to) ? 500 : 400,
+                  backgroundColor: isActive(item.url) ? "#e8f0ef" : "transparent",
+                  color: isActive(item.url) ? "#243e3a" : "#4a5568",
+                  fontWeight: isActive(item.url) ? 500 : 400,
                 }}
               >
-                {link.label}
+                {getLabel(item)}
               </Link>
             ))}
 
@@ -167,23 +204,17 @@ const Navbar = () => {
               {t("nav.cta")}
             </Link>
 
-            <div className="flex items-center gap-2 text-sm font-body mt-4">
-              {languages.map((l, i) => (
-                <span key={l} className="flex items-center">
-                  <button
-                    onClick={() => setLang(l)}
-                    className="px-1 uppercase"
-                    style={{
-                      color: lang === l ? "#243e3a" : "#a0aab0",
-                      fontWeight: lang === l ? 600 : 400,
-                    }}
-                  >
-                    {l}
-                  </button>
-                  {i < languages.length - 1 && <span style={{ color: "#d1d5db" }}>|</span>}
-                </span>
+            {/* Mobile language dropdown */}
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value as Language)}
+              className="mt-4 font-body text-sm border rounded-full px-4 py-2 bg-white"
+              style={{ color: "#243e3a" }}
+            >
+              {languages.map((l) => (
+                <option key={l.code} value={l.code}>{l.label}</option>
               ))}
-            </div>
+            </select>
           </motion.div>
         )}
       </AnimatePresence>

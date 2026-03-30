@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, GripVertical } from "lucide-react";
+import { Trash2, Plus, GripVertical, Pencil, X, Check } from "lucide-react";
 import { toast } from "sonner";
 
 const AdminSlider = () => {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ headline: "", subline: "", alt_text: "" });
 
   const { data: images, isLoading } = useQuery({
     queryKey: ["admin-slider"],
@@ -33,8 +35,18 @@ const AdminSlider = () => {
       const { error } = await supabase.from("slider_images").update({ active }).eq("id", id);
       if (error) throw error;
     },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-slider"] }),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ id, ...data }: { id: string; headline: string; subline: string; alt_text: string }) => {
+      const { error } = await supabase.from("slider_images").update(data).eq("id", id);
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-slider"] });
+      setEditingId(null);
+      toast.success("Gespeichert");
     },
   });
 
@@ -69,6 +81,11 @@ const AdminSlider = () => {
     }
   };
 
+  const startEdit = (img: any) => {
+    setEditingId(img.id);
+    setEditForm({ headline: img.headline || "", subline: img.subline || "", alt_text: img.alt_text || "" });
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -83,11 +100,11 @@ const AdminSlider = () => {
       {isLoading ? (
         <p className="font-body text-sm text-muted-foreground">Laden...</p>
       ) : !images?.length ? (
-        <p className="font-body text-sm text-muted-foreground">Noch keine Slider-Bilder. Laden Sie Bilder hoch, um den Hero-Slider zu füllen.</p>
+        <p className="font-body text-sm text-muted-foreground">Noch keine Slider-Bilder vorhanden.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {images.map((img) => (
-            <div key={img.id} className="bg-card border rounded-xl overflow-hidden group">
+            <div key={img.id} className="bg-card border rounded-xl overflow-hidden">
               <div className="relative aspect-video">
                 <img src={img.image_url} alt={img.alt_text || ""} className="w-full h-full object-cover" />
                 {!img.active && (
@@ -96,26 +113,52 @@ const AdminSlider = () => {
                   </div>
                 )}
               </div>
-              <div className="p-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <GripVertical size={16} className="text-muted-foreground" />
-                  <span className="font-body text-xs text-muted-foreground">#{img.sort_order + 1}</span>
+
+              {editingId === img.id ? (
+                <div className="p-4 space-y-3">
+                  <div>
+                    <label className="font-body text-xs text-muted-foreground mb-1 block">Headline</label>
+                    <input value={editForm.headline} onChange={e => setEditForm({ ...editForm, headline: e.target.value })} className="w-full border rounded px-3 py-2 text-sm" placeholder="Slide-Überschrift" />
+                  </div>
+                  <div>
+                    <label className="font-body text-xs text-muted-foreground mb-1 block">Subline</label>
+                    <input value={editForm.subline} onChange={e => setEditForm({ ...editForm, subline: e.target.value })} className="w-full border rounded px-3 py-2 text-sm" placeholder="Untertitel" />
+                  </div>
+                  <div>
+                    <label className="font-body text-xs text-muted-foreground mb-1 block">Alt-Text</label>
+                    <input value={editForm.alt_text} onChange={e => setEditForm({ ...editForm, alt_text: e.target.value })} className="w-full border rounded px-3 py-2 text-sm" placeholder="Bildbeschreibung" />
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => updateMutation.mutate({ id: img.id, ...editForm })} className="flex items-center gap-1 bg-primary text-primary-foreground text-sm px-3 py-1.5 rounded-lg"><Check size={14} /> Speichern</button>
+                    <button onClick={() => setEditingId(null)} className="text-sm text-muted-foreground px-3 py-1.5">Abbrechen</button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => toggleMutation.mutate({ id: img.id, active: !img.active })}
-                    className={`font-body text-xs px-2 py-1 rounded ${img.active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
-                  >
-                    {img.active ? "Aktiv" : "Inaktiv"}
-                  </button>
-                  <button
-                    onClick={() => deleteMutation.mutate(img.id)}
-                    className="text-muted-foreground hover:text-destructive transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+              ) : (
+                <div className="p-3">
+                  {(img.headline || img.subline) && (
+                    <div className="mb-2">
+                      {img.headline && <p className="font-body text-sm font-medium">{img.headline}</p>}
+                      {img.subline && <p className="font-body text-xs text-muted-foreground">{img.subline}</p>}
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <GripVertical size={16} className="text-muted-foreground" />
+                      <span className="font-body text-xs text-muted-foreground">#{img.sort_order + 1}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => startEdit(img)} className="text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
+                      <button
+                        onClick={() => toggleMutation.mutate({ id: img.id, active: !img.active })}
+                        className={`font-body text-xs px-2 py-1 rounded ${img.active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
+                      >
+                        {img.active ? "Aktiv" : "Inaktiv"}
+                      </button>
+                      <button onClick={() => deleteMutation.mutate(img.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={16} /></button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
