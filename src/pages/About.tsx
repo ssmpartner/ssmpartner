@@ -3,6 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 
 const About = () => {
   const { lang, t } = useLanguage();
@@ -13,7 +20,6 @@ const About = () => {
     { title: t("about.values.3.title"), desc: t("about.values.3.desc") },
   ];
 
-  // Fetch about page image from page_heroes
   const { data: aboutImage } = useQuery({
     queryKey: ["page-hero", "about-intro"],
     queryFn: async () => {
@@ -27,7 +33,6 @@ const About = () => {
     },
   });
 
-  // Fetch team members by category
   const { data: members } = useQuery({
     queryKey: ["team-members"],
     queryFn: async () => {
@@ -52,25 +57,46 @@ const About = () => {
 
   const introImageUrl = aboutImage?.image_url || "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80";
 
-  const TeamCard = ({ member, delay }: { member: any; delay: number }) => (
+  const TeamCard = ({ member, delay, size = "lg" }: { member: any; delay: number; size?: "lg" | "sm" }) => {
+    const isSmall = size === "sm";
+    return (
+      <AnimatedSection delay={delay}>
+        <div className="flex flex-col items-center text-center">
+          <div
+            className={`${isSmall ? "w-28 h-28 lg:w-32 lg:h-32" : "w-36 h-36 lg:w-44 lg:h-44"} rounded-full overflow-hidden bg-muted`}
+            style={{
+              boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)",
+            }}
+          >
+            {member.image_url ? (
+              <img
+                src={member.image_url}
+                alt={member.name}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                style={{ imageRendering: "auto" }}
+              />
+            ) : (
+              <div className={`w-full h-full flex items-center justify-center text-muted-foreground font-heading ${isSmall ? "text-2xl" : "text-3xl"}`}>
+                {member.name.charAt(0)}
+              </div>
+            )}
+          </div>
+          <h3 className={`font-heading font-semibold text-foreground ${isSmall ? "text-sm mt-3" : "text-base mt-4"}`}>{member.name}</h3>
+          <p className={`font-body text-muted-foreground ${isSmall ? "text-xs mt-0.5" : "text-sm mt-1"}`}>{getRole(member)}</p>
+        </div>
+      </AnimatedSection>
+    );
+  };
+
+  const PlaceholderCard = ({ delay }: { delay: number }) => (
     <AnimatedSection delay={delay}>
       <div className="flex flex-col items-center text-center">
         <div
-          className="w-40 h-40 lg:w-44 lg:h-44 rounded-full overflow-hidden bg-muted"
-          style={{
-            boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)",
-          }}
-        >
-          {member.image_url ? (
-            <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-3xl">
-              {member.name.charAt(0)}
-            </div>
-          )}
-        </div>
-        <h3 className="font-heading text-base font-semibold text-foreground mt-5">{member.name}</h3>
-        <p className="font-body text-sm text-muted-foreground mt-1">{getRole(member)}</p>
+          className="w-36 h-36 lg:w-44 lg:h-44 rounded-full bg-muted"
+          style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)" }}
+        />
+        <p className="font-body text-sm text-muted-foreground mt-4">Wird ergänzt</p>
       </div>
     </AnimatedSection>
   );
@@ -79,41 +105,33 @@ const About = () => {
     <main>
       <PageHero pageKey="about" fallbackImage="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" />
 
-      {/* Intro with side image */}
-      <section className="py-24 lg:py-32">
+      {/* Intro */}
+      <section className="py-20 lg:py-28">
         <div className="container mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-6xl">
           <AnimatedSection>
             <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">{t("about.title")}</h1>
             <div className="brand-rule mt-4" />
-            <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">
-              {t("about.text")}
-            </p>
+            <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">{t("about.text")}</p>
           </AnimatedSection>
           <AnimatedSection delay={0.2}>
             <div
               className="w-full aspect-[4/3] rounded-2xl overflow-hidden"
-              style={{
-                boxShadow: "0 8px 32px rgba(36,62,58,0.15), 0 2px 8px rgba(0,0,0,0.06)",
-              }}
+              style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.15), 0 2px 8px rgba(0,0,0,0.06)" }}
             >
-              <img
-                src={introImageUrl}
-                alt={aboutImage?.alt_text || "Über uns"}
-                className="w-full h-full object-cover"
-              />
+              <img src={introImageUrl} alt={aboutImage?.alt_text || "Über uns"} className="w-full h-full object-cover" />
             </div>
           </AnimatedSection>
         </div>
       </section>
 
       {/* Values */}
-      <section className="py-24 lg:py-32 border-t bg-card">
+      <section className="py-20 lg:py-28 border-t bg-card">
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("about.values.title")}</h2>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
-          <div className="grid md:grid-cols-3 gap-12 lg:gap-16 mt-16">
+          <div className="grid md:grid-cols-3 gap-10 lg:gap-14 mt-14">
             {values.map((v, i) => (
               <AnimatedSection key={i} delay={i * 0.1}>
                 <div className="w-10 h-1 rounded-full gradient-accent mb-4" />
@@ -126,94 +144,68 @@ const About = () => {
       </section>
 
       {/* Geschäftsleitung */}
-      <section className="py-24 lg:py-32 border-t">
-        <div className="container mx-auto px-6 lg:px-8">
+      <section className="py-20 lg:py-28 border-t">
+        <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Geschäftsleitung</h2>
-            <div className="brand-rule mt-4" />
+            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Geschäftsleitung</h2>
+            <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 lg:gap-14 mt-16">
-            {geschaeftsleitung.length > 0 ? (
-              geschaeftsleitung.map((member, i) => (
-                <TeamCard key={member.id} member={member} delay={i * 0.1} />
-              ))
-            ) : (
-              [1, 2, 3, 4].map((_, i) => (
-                <AnimatedSection key={i} delay={i * 0.1}>
-                  <div className="flex flex-col items-center text-center">
-                    <div
-                      className="w-40 h-40 lg:w-44 lg:h-44 rounded-full bg-muted"
-                      style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)" }}
-                    />
-                    <p className="font-body text-sm text-muted-foreground mt-5">Wird ergänzt</p>
-                  </div>
-                </AnimatedSection>
-              ))
-            )}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mt-14">
+            {geschaeftsleitung.length > 0
+              ? geschaeftsleitung.map((member, i) => (
+                  <TeamCard key={member.id} member={member} delay={i * 0.1} />
+                ))
+              : [1, 2, 3, 4].map((_, i) => <PlaceholderCard key={i} delay={i * 0.1} />)}
           </div>
         </div>
       </section>
 
       {/* Fachführung */}
-      <section className="py-24 lg:py-32 border-t bg-card">
-        <div className="container mx-auto px-6 lg:px-8">
+      <section className="py-20 lg:py-28 border-t bg-card">
+        <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Fachführung</h2>
-            <div className="brand-rule mt-4" />
+            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Fachführung</h2>
+            <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 lg:gap-14 mt-16">
-            {fachfuehrung.length > 0 ? (
-              fachfuehrung.map((member, i) => (
-                <TeamCard key={member.id} member={member} delay={i * 0.1} />
-              ))
-            ) : (
-              [1, 2, 3, 4].map((_, i) => (
-                <AnimatedSection key={i} delay={i * 0.1}>
-                  <div className="flex flex-col items-center text-center">
-                    <div
-                      className="w-40 h-40 lg:w-44 lg:h-44 rounded-full bg-muted"
-                      style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)" }}
-                    />
-                    <p className="font-body text-sm text-muted-foreground mt-5">Wird ergänzt</p>
-                  </div>
-                </AnimatedSection>
-              ))
-            )}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12 mt-14">
+            {fachfuehrung.length > 0
+              ? fachfuehrung.map((member, i) => (
+                  <TeamCard key={member.id} member={member} delay={i * 0.1} />
+                ))
+              : [1, 2, 3, 4].map((_, i) => <PlaceholderCard key={i} delay={i * 0.1} />)}
           </div>
         </div>
       </section>
 
-      {/* Erweitertes Team */}
+      {/* Erweitertes Team – Carousel */}
       {erweitertesTeam.length > 0 && (
-        <section className="py-24 lg:py-32 border-t">
-          <div className="container mx-auto px-6 lg:px-8">
+        <section className="py-20 lg:py-28 border-t">
+          <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Erweitertes Team</h2>
-              <div className="brand-rule mt-4" />
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Erweitertes Team</h2>
+              <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
-            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-8 lg:gap-10 mt-16">
-              {erweitertesTeam.map((member, i) => (
-                <AnimatedSection key={member.id} delay={i * 0.05}>
-                  <div className="flex flex-col items-center text-center">
-                    <div
-                      className="w-24 h-24 lg:w-28 lg:h-28 rounded-full overflow-hidden bg-muted"
-                      style={{
-                        boxShadow: "0 6px 24px rgba(36,62,58,0.15), 0 2px 6px rgba(0,0,0,0.05)",
-                      }}
+            <div className="mt-14 px-12">
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-6">
+                  {erweitertesTeam.map((member, i) => (
+                    <CarouselItem
+                      key={member.id}
+                      className="pl-6 basis-1/3 md:basis-1/4 lg:basis-1/5"
                     >
-                      {member.image_url ? (
-                        <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-2xl">
-                          {member.name.charAt(0)}
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="font-heading text-sm font-semibold text-foreground mt-3">{member.name}</h3>
-                    <p className="font-body text-xs text-muted-foreground mt-0.5">{getRole(member)}</p>
-                  </div>
-                </AnimatedSection>
-              ))}
+                      <TeamCard member={member} delay={i * 0.05} size="sm" />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="-left-6 bg-background border-border hover:bg-muted" />
+                <CarouselNext className="-right-6 bg-background border-border hover:bg-muted" />
+              </Carousel>
             </div>
           </div>
         </section>
