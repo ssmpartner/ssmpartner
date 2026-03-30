@@ -75,10 +75,10 @@ const Navbar = () => {
           }}
         >
           {/* Logo block */}
-          <Link to="/" className="flex items-center gap-3 pr-3">
-            <img src={ssmLogo} alt="SSM Partner AG" className="h-7" />
-            <div className="w-px h-9 bg-border" />
-            <div className="leading-tight" style={{ fontSize: "9.5px" }}>
+          <Link to="/" className="flex items-center gap-3">
+            <img src={ssmLogo} alt="SSM Partner AG" className="h-8" />
+            <div className="w-px h-10 bg-border" />
+            <div className="leading-tight" style={{ fontSize: "10px" }}>
               <span style={{ color: "#243e3a" }}>Eine Tochtergesellschaft der Visana-Gruppe.</span>
               <br />
               <span className="text-muted-foreground">Gebundener Vermittler gemäss VAG.</span>
