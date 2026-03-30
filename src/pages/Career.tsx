@@ -54,6 +54,7 @@ const Career = () => {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [showProcess, setShowProcess] = useState(false);
   const [activePhase, setActivePhase] = useState(0);
+  const [showApply, setShowApply] = useState(false);
 
   const { data: recruitingPartner } = useQuery({
     queryKey: ["recruiting-partner"],
@@ -112,13 +113,13 @@ const Career = () => {
               {t("career.hero.sub")}
             </p>
             <div className="flex flex-wrap gap-3 mt-8">
-              <Link
-                to="/kontakt?subject=career"
+              <button
+                onClick={() => setShowApply(true)}
                 className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl text-white hover:opacity-90 transition-colors"
                 style={{ backgroundColor: "#6A9387" }}
               >
                 <Mail size={16} /> {t("career.hero.cta")}
-              </Link>
+              </button>
               <button
                 onClick={() => { setShowProcess(true); setActivePhase(0); }}
                 className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl border border-border text-foreground hover:bg-muted transition-colors"
@@ -267,9 +268,9 @@ const Career = () => {
                       Spontane Bewerbung? Oder hast du eine Frage? {recruitingPartner.name.split(" ")[0]} nimmt sich für deine offenen Fragen Zeit. Entdecke unten die nächsten Schritte im Bewerbungsprozess.
                     </p>
                     <div className="flex flex-wrap gap-3 mt-6">
-                      <Link to="/kontakt?subject=career" className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
+                      <button onClick={() => setShowApply(true)} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
                         <Mail size={16} /> Jetzt bewerben
-                      </Link>
+                      </button>
                       <Link to="/agenturen" className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted transition-colors">
                         <Building2 size={16} /> Unsere Agenturen
                       </Link>
@@ -432,14 +433,53 @@ const Career = () => {
                           {phases[activePhase + 1].label} <ChevronRight size={14} />
                         </button>
                       ) : (
-                        <Link to="/kontakt?subject=career" onClick={() => setShowProcess(false)} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
+                        <button onClick={() => { setShowProcess(false); setShowApply(true); }} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
                           <Send size={14} /> Jetzt bewerben
-                        </Link>
+                        </button>
                       )}
                     </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Bewerbung iFrame Modal ── */}
+      <AnimatePresence>
+        {showApply && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 md:p-8"
+            onClick={() => setShowApply(false)}
+          >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <motion.div
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40, scale: 0.97 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-3xl bg-background rounded-2xl shadow-2xl my-8 overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-5 border-b">
+                <div>
+                  <h2 className="font-heading text-xl font-bold text-foreground">Jetzt bewerben</h2>
+                  <p className="font-body text-xs text-muted-foreground mt-0.5">SSM Partner — Bewerbungsformular</p>
+                </div>
+                <button onClick={() => setShowApply(false)} className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors">
+                  <X size={18} className="text-foreground" />
+                </button>
+              </div>
+              <iframe
+                src="https://recruit.ssmpartner.ch/bewerbung"
+                className="w-full border-0"
+                style={{ height: "80vh" }}
+                title="Bewerbungsformular"
+              />
             </motion.div>
           </motion.div>
         )}
