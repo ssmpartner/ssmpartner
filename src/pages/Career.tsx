@@ -298,7 +298,7 @@ const Career = () => {
       {/* ── Image Divider 2 ── */}
       <div className="relative h-64 lg:h-80 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"
+          src={dividerImages?.["career-divider-2"] || "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80"}
           alt="Moderne Büros"
           className="w-full h-full object-cover"
         />
