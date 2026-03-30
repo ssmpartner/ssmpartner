@@ -15,7 +15,7 @@ const TABS = [
 const Legal = () => {
   const { lang, t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get("tab") === "datenschutz" ? "datenschutz" : "impressum";
+  const initialTab = (searchParams.get("tab") as string) || "impressum";
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const { data: content, isLoading } = useQuery({
