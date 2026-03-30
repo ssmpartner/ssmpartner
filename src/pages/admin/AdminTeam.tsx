@@ -117,35 +117,63 @@ const AdminTeam = () => {
       {isLoading ? (
         <p className="font-body text-sm text-muted-foreground">Laden...</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {members?.map((m) => (
-            <div key={m.id} className="bg-card border rounded-xl overflow-hidden">
-              <div className="aspect-square bg-muted relative group">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          {members?.map((m, idx) => (
+            <div key={m.id} className="bg-card border rounded-lg overflow-hidden">
+              <div className="aspect-[4/3] bg-muted relative group">
                 {m.image_url ? (
                   <img src={m.image_url} alt={m.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-4xl">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-2xl">
                     {m.name.charAt(0)}
                   </div>
                 )}
                 <label className="absolute inset-0 flex items-center justify-center bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                  <span className="font-body text-xs text-primary-foreground bg-foreground/80 px-3 py-1.5 rounded-lg">
-                    {uploading ? "..." : "Foto ändern"}
+                  <span className="font-body text-xs text-primary-foreground bg-foreground/80 px-2 py-1 rounded">
+                    {uploading ? "..." : "Foto"}
                   </span>
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleImageUpload(m.id, e.target.files[0])} />
                 </label>
               </div>
-              <div className="p-4 flex items-center justify-between">
-                <div onClick={() => startEdit(m)} role="button" className="cursor-pointer">
-                  <h3 className="font-heading text-sm font-semibold text-foreground">{m.name}</h3>
-                  <p className="font-body text-xs text-muted-foreground">{m.role_de}</p>
-                  <span className="font-body text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground mt-1 inline-block">
-                    {m.category === "fachfuehrung" ? "Fachführung" : "Geschäftsleitung"}
+              <div className="p-2.5 flex items-center justify-between gap-1">
+                <div onClick={() => startEdit(m)} role="button" className="cursor-pointer min-w-0 flex-1">
+                  <h3 className="font-heading text-xs font-semibold text-foreground truncate">{m.name}</h3>
+                  <p className="font-body text-[10px] text-muted-foreground truncate">{m.role_de}</p>
+                  <span className="font-body text-[9px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground mt-0.5 inline-block">
+                    {m.category === "fachfuehrung" ? "Fachführung" : m.category === "erweitertes_team" ? "Erw. Team" : "GL"}
                   </span>
                 </div>
-                <button onClick={() => deleteMutation.mutate(m.id)} className="text-muted-foreground hover:text-destructive">
-                  <Trash2 size={16} />
-                </button>
+                <div className="flex flex-col gap-1 items-center shrink-0">
+                  <button
+                    onClick={() => {
+                      if (idx > 0 && members) {
+                        const prev = members[idx - 1];
+                        Promise.all([
+                          supabase.from("team_members").update({ sort_order: prev.sort_order }).eq("id", m.id),
+                          supabase.from("team_members").update({ sort_order: m.sort_order }).eq("id", prev.id),
+                        ]).then(() => queryClient.invalidateQueries({ queryKey: ["admin-team"] }));
+                      }
+                    }}
+                    className="text-muted-foreground hover:text-foreground text-xs"
+                    title="Nach oben"
+                  >▲</button>
+                  <button
+                    onClick={() => {
+                      if (members && idx < members.length - 1) {
+                        const next = members[idx + 1];
+                        Promise.all([
+                          supabase.from("team_members").update({ sort_order: next.sort_order }).eq("id", m.id),
+                          supabase.from("team_members").update({ sort_order: m.sort_order }).eq("id", next.id),
+                        ]).then(() => queryClient.invalidateQueries({ queryKey: ["admin-team"] }));
+                      }
+                    }}
+                    className="text-muted-foreground hover:text-foreground text-xs"
+                    title="Nach unten"
+                  >▼</button>
+                  <button onClick={() => deleteMutation.mutate(m.id)} className="text-muted-foreground hover:text-destructive">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
