@@ -27,16 +27,17 @@ const Career = () => {
   return (
     <main className="pt-20 lg:pt-24">
       {/* Hero */}
-      <section className="py-24 lg:py-32">
-        <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
+      <section className="py-24 lg:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 gradient-hero opacity-[0.03]" />
+        <div className="container mx-auto px-6 lg:px-8 max-w-3xl relative">
           <AnimatedSection>
-            <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl text-foreground leading-tight">
+            <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
               {t("career.hero.title")}
             </h1>
-            <p className="font-body text-base text-muted-foreground mt-6 font-light leading-relaxed">
+            <p className="font-body text-base text-muted-foreground mt-6 leading-relaxed">
               {t("career.hero.sub")}
             </p>
-            <Link to="/kontakt" className="inline-block mt-6 font-body text-sm text-accent hover:text-accent/80 transition-colors">
+            <Link to="/kontakt" className="inline-block mt-6 font-body text-sm font-medium text-primary hover:text-primary/80 transition-colors">
               {t("career.hero.cta")}
             </Link>
           </AnimatedSection>
@@ -44,13 +45,13 @@ const Career = () => {
       </section>
 
       {/* Why SSM */}
-      <section className="py-24 lg:py-32 border-t">
+      <section className="py-24 lg:py-32 border-t bg-card">
         <div className="container mx-auto px-6 lg:px-8 grid md:grid-cols-3 gap-12 lg:gap-16">
           {reasons.map((r, i) => (
             <AnimatedSection key={i} delay={i * 0.1}>
-              <span className="font-heading text-5xl text-secondary">{r.num}</span>
-              <h3 className="font-body text-sm font-semibold uppercase tracking-widest text-foreground mt-4">{r.title}</h3>
-              <p className="font-body text-sm text-muted-foreground mt-3 leading-relaxed font-light">{r.desc}</p>
+              <span className="font-heading text-5xl font-bold text-primary/20">{r.num}</span>
+              <h3 className="font-heading text-base font-semibold text-foreground mt-3">{r.title}</h3>
+              <p className="font-body text-sm text-muted-foreground mt-3 leading-relaxed">{r.desc}</p>
             </AnimatedSection>
           ))}
         </div>
@@ -60,12 +61,11 @@ const Career = () => {
       <section className="py-24 lg:py-32 border-t">
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl text-foreground">{t("career.positions.title")}</h2>
-            <div className="gold-rule mt-4" />
+            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("career.positions.title")}</h2>
+            <div className="brand-rule mt-4" />
           </AnimatedSection>
 
           <div className="mt-12">
-            {/* Header */}
             <div className="hidden md:grid grid-cols-4 gap-4 pb-3 border-b text-xs font-body text-muted-foreground uppercase tracking-widest">
               <span>{t("career.positions.role")}</span>
               <span>{t("career.positions.location")}</span>
@@ -74,18 +74,18 @@ const Career = () => {
             </div>
             {positions.map((p, i) => (
               <AnimatedSection key={i} delay={i * 0.05}>
-                <div className="grid md:grid-cols-4 gap-2 md:gap-4 py-5 border-b items-center">
+                <div className="grid md:grid-cols-4 gap-2 md:gap-4 py-5 border-b items-center hover:bg-muted/50 transition-colors px-2 -mx-2 rounded-lg">
                   <span className="font-body text-sm font-medium text-foreground">{p.role}</span>
                   <span className="font-body text-sm text-muted-foreground">{p.location}</span>
                   <span className="font-body text-sm text-muted-foreground">{p.workload}</span>
-                  <Link to="/kontakt" className="font-body text-sm text-accent hover:text-accent/80 transition-colors">
+                  <Link to="/kontakt" className="font-body text-sm font-medium text-primary hover:text-primary/80 transition-colors">
                     {t("career.positions.more")}
                   </Link>
                 </div>
               </AnimatedSection>
             ))}
             <AnimatedSection className="mt-6">
-              <Link to="/kontakt" className="font-body text-sm text-accent hover:text-accent/80 transition-colors">
+              <Link to="/kontakt" className="font-body text-sm font-medium text-primary hover:text-primary/80 transition-colors">
                 {t("career.positions.spontaneous")}
               </Link>
             </AnimatedSection>
@@ -94,21 +94,21 @@ const Career = () => {
       </section>
 
       {/* Onboarding */}
-      <section className="py-24 lg:py-32 border-t">
+      <section className="py-24 lg:py-32 border-t bg-card">
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl text-foreground">{t("career.onboarding.title")}</h2>
-            <div className="gold-rule mt-4" />
+            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("career.onboarding.title")}</h2>
+            <div className="brand-rule mt-4" />
           </AnimatedSection>
           <div className="grid md:grid-cols-4 gap-8 lg:gap-12 mt-16">
             {steps.map((s, i) => (
               <AnimatedSection key={i} delay={i * 0.1}>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="font-heading text-3xl text-accent">{i + 1}</span>
+                  <span className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center font-heading text-sm font-bold text-primary-foreground">{i + 1}</span>
                   <div className="h-px flex-1 bg-border" />
                 </div>
-                <h3 className="font-body text-sm font-semibold uppercase tracking-widest text-foreground">{s.title}</h3>
-                <p className="font-body text-sm text-muted-foreground mt-2 leading-relaxed font-light">{s.desc}</p>
+                <h3 className="font-heading text-sm font-semibold text-foreground">{s.title}</h3>
+                <p className="font-body text-sm text-muted-foreground mt-2 leading-relaxed">{s.desc}</p>
               </AnimatedSection>
             ))}
           </div>
