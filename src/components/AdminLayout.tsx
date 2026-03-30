@@ -11,6 +11,7 @@ const adminLinks = [
   { to: "/admin/team", label: "Team", icon: Users },
   { to: "/admin/agencies", label: "Agenturen", icon: Building2 },
   { to: "/admin/jobs", label: "Stellen", icon: Briefcase },
+  { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
 ];
 
 const AdminLayout = () => {
