@@ -30,6 +30,8 @@ import AdminDocs from "./pages/admin/AdminDocs";
 import AdminCareerVideos from "./pages/admin/AdminCareerVideos";
 import AdminCareerFaqs from "./pages/admin/AdminCareerFaqs";
 import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
+import AdminChatKnowledge from "./pages/admin/AdminChatKnowledge";
+import ChatWidget from "@/components/ChatWidget";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
