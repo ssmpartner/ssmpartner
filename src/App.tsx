@@ -46,6 +46,7 @@ const App = () => (
             <Route path="/team" element={<PublicLayout><Team /></PublicLayout>} />
             <Route path="/karriere" element={<PublicLayout><Career /></PublicLayout>} />
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
+            <Route path="/rechtliches" element={<PublicLayout><Legal /></PublicLayout>} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />
