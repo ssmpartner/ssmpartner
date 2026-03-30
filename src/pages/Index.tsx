@@ -33,7 +33,7 @@ const fallbackSlides = [
 const serviceIcons = [Shield, TrendingUp, Building2];
 
 const Index = () => {
-  const { t, language } = useLanguage();
+  const { t, lang: language } = useLanguage();
   const [current, setCurrent] = useState(0);
 
   // Slider images
