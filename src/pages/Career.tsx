@@ -5,11 +5,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
-import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake } from "lucide-react";
+import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake, Mail, Building2, MessageCircleQuestion } from "lucide-react";
 
 const Career = () => {
   const { t } = useLanguage();
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+
+  const { data: recruitingPartner } = useQuery({
+    queryKey: ["recruiting-partner"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("*")
+        .eq("is_recruiting_partner", true)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data: videoCards } = useQuery({
     queryKey: ["career-videos"],
