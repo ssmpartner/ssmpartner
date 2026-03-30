@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
-import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake, Mail, Building2, MessageCircleQuestion } from "lucide-react";
+import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake, Mail, Building2, MessageCircleQuestion, ArrowRight } from "lucide-react";
 
 const Career = () => {
   const { t } = useLanguage();
