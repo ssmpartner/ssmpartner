@@ -5,16 +5,19 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 const tables = [
-  { name: "agencies", label: "Agenturen", description: "Alle Agentur-Standorte mit Kontaktdaten und Beschreibung." },
-  { name: "team_members", label: "Team-Mitglieder", description: "Mitglieder aller Teams inkl. Kategorie und Agentur-Zuweisung." },
-  { name: "job_positions", label: "Stellenangebote", description: "Offene Stellen mit Beschreibung und Standort." },
-  { name: "slider_images", label: "Slider-Bilder", description: "Hero-Slider auf der Startseite." },
-  { name: "page_heroes", label: "Hero-Bilder", description: "Hero-Bilder pro Seite." },
-  { name: "site_content", label: "Seitentexte", description: "CMS-Inhalte für alle Seiten." },
-  { name: "nav_items", label: "Navigation", description: "Menüpunkte der Hauptnavigation." },
-  { name: "inquiries", label: "Anfragen", description: "Kontaktanfragen von der Website." },
-  { name: "agency_members", label: "Agentur-Mitglieder", description: "Direkt zugewiesene Agentur-Mitglieder." },
-  { name: "agency_reviews", label: "Bewertungen", description: "Kundenbewertungen pro Agentur." },
+  { name: "agencies", label: "Agenturen", description: "Alle Agentur-Standorte mit Kontaktdaten, Koordinaten, Öffnungszeiten und Beschreibung (mehrsprachig)." },
+  { name: "team_members", label: "Team-Mitglieder", description: "Mitglieder aller Teams inkl. Kategorie, Agentur-Zuweisung, Badge und Kontaktdaten." },
+  { name: "job_positions", label: "Stellenangebote", description: "Offene Stellen mit Titel, Standort, Pensum und mehrsprachiger Beschreibung." },
+  { name: "slider_images", label: "Slider-Bilder", description: "Hero-Slider auf der Startseite mit Headline und Subline." },
+  { name: "page_heroes", label: "Hero-Bilder", description: "Hero-Bilder pro Seite und Agentur, inkl. Karriere-Hintergrundbilder." },
+  { name: "site_content", label: "Seitentexte", description: "CMS-Inhalte für alle Seiten, mehrsprachig (DE, FR, IT, EN)." },
+  { name: "nav_items", label: "Navigation", description: "Menüpunkte der Hauptnavigation mit mehrsprachigen Labels." },
+  { name: "inquiries", label: "Anfragen", description: "Kontaktanfragen von der Website, Agenturen und Chatbot." },
+  { name: "agency_members", label: "Agentur-Mitglieder", description: "Direkt zugewiesene Agentur-Mitglieder mit Kontaktdaten." },
+  { name: "agency_reviews", label: "Bewertungen", description: "Kundenbewertungen pro Agentur mit Sternebewertung." },
+  { name: "career_faqs", label: "Karriere-FAQs", description: "Häufig gestellte Fragen zur Karriere mit Frage und Antwort." },
+  { name: "career_videos", label: "Karriere-Videos", description: "Video-Testimonials mit Titel, Vorschaubild und Video-URL." },
+  { name: "chatbot_knowledge", label: "KI-Chat Wissen", description: "Wissensbasis für den KI-Chatbot mit Kategorie, Frage und Antwort." },
 ];
 
 const CopyButton = ({ text }: { text: string }) => {
@@ -91,13 +94,30 @@ const AdminApiDocs = () => {
 );
 const agencies = await res.json();`}
         />
+        <CodeBlock
+          label="Beispiel: KI-Chat Edge Function aufrufen"
+          code={`const res = await fetch(
+  '${SUPABASE_URL}/functions/v1/ai-chat',
+  {
+    method: 'POST',
+    headers: {
+      'apikey': '${ANON_KEY}',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      messages: [{ role: 'user', content: 'Welche Agenturen gibt es?' }]
+    }),
+  }
+);
+// Streaming response (text/event-stream)`}
+        />
       </div>
 
       {/* Tables */}
       <div className="bg-card border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <Database size={20} className="text-primary" />
-          <h2 className="font-heading text-lg font-semibold text-foreground">Verfügbare Endpunkte</h2>
+          <h2 className="font-heading text-lg font-semibold text-foreground">Verfügbare Endpunkte ({tables.length} Tabellen)</h2>
         </div>
         <div className="space-y-2">
           {tables.map((t) => (
