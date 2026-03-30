@@ -177,6 +177,65 @@ export type Database = {
           },
         ]
       }
+      inquiries: {
+        Row: {
+          agency_id: string | null
+          agency_name: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          notes: string | null
+          phone: string | null
+          recipient_name: string | null
+          source: string
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id?: string | null
+          agency_name?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          recipient_name?: string | null
+          source?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string | null
+          agency_name?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          recipient_name?: string | null
+          source?: string
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_positions: {
         Row: {
           active: boolean

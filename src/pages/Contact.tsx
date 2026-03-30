@@ -1,5 +1,7 @@
 import { useState, FormEvent } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 
@@ -7,8 +9,9 @@ const Contact = () => {
   const { t } = useLanguage();
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
@@ -25,7 +28,24 @@ const Contact = () => {
     }
 
     setErrors({});
-    setSubmitted(true);
+    setSending(true);
+    try {
+      const { error } = await supabase.from("inquiries").insert({
+        source: "contact",
+        name: data.get("name") as string,
+        email: data.get("email") as string,
+        phone: (data.get("phone") as string) || null,
+        subject: data.get("subject") as string,
+        message: data.get("message") as string,
+      });
+      if (error) throw error;
+      setSubmitted(true);
+      toast.success("Anfrage wurde gesendet!");
+    } catch {
+      toast.error("Ein Fehler ist aufgetreten.");
+    } finally {
+      setSending(false);
+    }
   };
 
   const inputClass = (field: string) =>
@@ -80,9 +100,10 @@ const Contact = () => {
 
                 <button
                   type="submit"
-                  className="w-full gradient-primary text-primary-foreground font-body text-sm font-medium py-4 rounded-lg hover:opacity-90 transition-opacity"
+                  disabled={sending}
+                  className="w-full gradient-primary text-primary-foreground font-body text-sm font-medium py-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  {t("contact.form.submit")}
+                  {sending ? "Wird gesendet..." : t("contact.form.submit")}
                 </button>
               </form>
             )}

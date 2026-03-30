@@ -80,21 +80,18 @@ const AgencyDetail = () => {
     }
     setSending(true);
     try {
-      // For now, open mailto with pre-filled data
-      // Build recipient list from all available people
-      const allPeople = [
-        ...(teamMembers?.filter(tm => tm.is_agency_leader).map(tm => ({ name: tm.name, email: null })) || []),
-        ...(teamMembers?.filter(tm => !tm.is_agency_leader).map(tm => ({ name: tm.name, email: null })) || []),
-        ...(members?.map(m => ({ name: m.name, email: m.email })) || []),
-      ];
-      const selectedPerson = allPeople.find(p => p.name === contactForm.recipient);
-      const recipientLine = contactForm.recipient ? `\nAnsprechperson: ${contactForm.recipient}` : "";
-      const subject = encodeURIComponent(`Anfrage über Website – Agentur ${agency?.name}`);
-      const body = encodeURIComponent(
-        `Name: ${contactForm.name}\nE-Mail: ${contactForm.email}\nTelefon: ${contactForm.phone}${recipientLine}\n\n${contactForm.message}`
-      );
-      const mailto = (selectedPerson?.email) || agency?.email || "info@ssmpartner.ch";
-      window.open(`mailto:${mailto}?subject=${subject}&body=${body}`, "_self");
+      // Save to inquiries table
+      const { error } = await supabase.from("inquiries").insert({
+        source: "agency",
+        agency_id: agency?.id,
+        agency_name: agency?.name,
+        recipient_name: contactForm.recipient || null,
+        name: contactForm.name,
+        email: contactForm.email,
+        phone: contactForm.phone || null,
+        message: contactForm.message,
+      });
+      if (error) throw error;
       toast.success("Vielen Dank für Ihre Anfrage!");
       setContactForm({ name: "", email: "", phone: "", message: "", recipient: "" });
     } catch {
