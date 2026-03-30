@@ -2,11 +2,12 @@ export type Language = "de" | "fr" | "it" | "en";
 
 export const translations: Record<string, Record<Language, string>> = {
   // Nav
-  "nav.home": { de: "HOME", fr: "ACCUEIL", it: "HOME", en: "HOME" },
-  "nav.team": { de: "TEAM", fr: "ÉQUIPE", it: "TEAM", en: "TEAM" },
-  "nav.career": { de: "KARRIERE", fr: "CARRIÈRE", it: "CARRIERA", en: "CAREERS" },
-  "nav.vag": { de: "VAG 45", fr: "LSA 45", it: "LSA 45", en: "ISA 45" },
-  "nav.cta": { de: "Kontakt aufnehmen", fr: "Nous contacter", it: "Contattaci", en: "Contact us" },
+  "nav.home": { de: "Home", fr: "Accueil", it: "Home", en: "Home" },
+  "nav.about": { de: "Über uns", fr: "À propos", it: "Chi siamo", en: "About" },
+  "nav.team": { de: "Team", fr: "Équipe", it: "Team", en: "Team" },
+  "nav.career": { de: "Karriere", fr: "Carrière", it: "Carriera", en: "Careers" },
+  "nav.vag": { de: "VAG45", fr: "LSA45", it: "LSA45", en: "ISA45" },
+  "nav.cta": { de: "Kontakt", fr: "Contact", it: "Contatto", en: "Contact" },
 
   // Phone bar
   "home.phone.title": { de: "Sie haben eine Frage?", fr: "Vous avez une question?", it: "Avete una domanda?", en: "Do you have a question?" },
