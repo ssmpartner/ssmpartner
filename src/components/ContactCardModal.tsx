@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { X, Download, Phone, Mail } from "lucide-react";
+import { X, Download, Phone, Mail, MapPin } from "lucide-react";
 
 interface TeamMember {
   name: string;
@@ -8,6 +8,8 @@ interface TeamMember {
   phone?: string | null;
   email?: string | null;
   image_url?: string | null;
+  agency_name?: string | null;
+  agency_address?: string | null;
 }
 
 interface ContactCardModalProps {
@@ -20,10 +22,12 @@ const generateVCard = (member: TeamMember) => {
   const parts = member.name.split(" ");
   const lastName = parts.pop() || "";
   const firstName = parts.join(" ");
-  let vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${lastName};${firstName};;;\nFN:${member.name}\nORG:SSM Partner AG\n`;
+  const org = member.agency_name ? `SSM Partner AG – ${member.agency_name}` : "SSM Partner AG";
+  let vcard = `BEGIN:VCARD\nVERSION:3.0\nN:${lastName};${firstName};;;\nFN:${member.name}\nORG:${org}\n`;
   if (member.role_de) vcard += `TITLE:${member.role_de}\n`;
   if (member.phone) vcard += `TEL;TYPE=WORK,VOICE:${member.phone}\n`;
   if (member.email) vcard += `EMAIL;TYPE=WORK:${member.email}\n`;
+  if (member.agency_address) vcard += `ADR;TYPE=WORK:;;${member.agency_address.replace(/\n/g, ";")}\n`;
   vcard += `END:VCARD`;
   return vcard;
 };
@@ -78,7 +82,12 @@ const ContactCardModal = ({ member, open, onClose }: ContactCardModalProps) => {
         <div className="px-6 pt-3 pb-2 text-center">
           <h3 className="font-heading text-lg font-bold text-foreground">{member.name}</h3>
           {member.role_de && <p className="font-body text-sm text-muted-foreground mt-0.5">{member.role_de}</p>}
-          <p className="font-body text-xs text-primary mt-1">SSM Partner AG</p>
+          <p className="font-body text-xs text-primary mt-1">
+            SSM Partner AG{member.agency_name ? ` – ${member.agency_name}` : ""}
+          </p>
+          {member.agency_address && (
+            <p className="font-body text-[11px] text-muted-foreground mt-0.5">{member.agency_address}</p>
+          )}
         </div>
 
         {/* Contact details */}

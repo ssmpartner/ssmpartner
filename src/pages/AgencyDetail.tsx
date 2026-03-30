@@ -364,7 +364,7 @@ const AgencyDetail = () => {
                 <AnimatedSection key={member.id} delay={i * 0.05}>
                   <div
                     className={`group relative flex flex-col items-center text-center ${hasContact ? "cursor-pointer" : ""}`}
-                    onClick={() => hasContact && setSelectedContact({ ...member, role_de: member.role })}
+                    onClick={() => hasContact && setSelectedContact({ ...member, role_de: member.role, agency_name: agency.name, agency_address: agency.address })}
                   >
                     <div
                       className="w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted relative"
@@ -398,7 +398,7 @@ const AgencyDetail = () => {
                 <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
                   <div
                     className={`group relative flex flex-col items-center text-center ${hasContact ? "cursor-pointer" : ""}`}
-                    onClick={() => hasContact && setSelectedContact(member)}
+                    onClick={() => hasContact && setSelectedContact({ ...member, agency_name: agency.name, agency_address: agency.address })}
                   >
                     <div
                       className="w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted relative"
