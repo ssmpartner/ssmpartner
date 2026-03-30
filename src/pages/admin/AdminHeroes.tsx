@@ -26,6 +26,20 @@ const AdminHeroes = () => {
     },
   });
 
+  const { data: agencies } = useQuery({
+    queryKey: ["admin-agencies-for-heroes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("agencies").select("slug, name").order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const pages = [
+    ...staticPages,
+    ...(agencies?.map((a) => ({ key: `agency-${a.slug}`, label: `Agentur: ${a.name}` })) || []),
+  ];
+
   const updateMutation = useMutation({
     mutationFn: async ({ pageKey, image_url }: { pageKey: string; image_url: string }) => {
       const existing = heroes?.find((h) => h.page_key === pageKey);
