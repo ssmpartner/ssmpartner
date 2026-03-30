@@ -42,6 +42,7 @@ const App = () => (
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
             <Route path="/ueber-uns" element={<PublicLayout><About /></PublicLayout>} />
+            <Route path="/team" element={<PublicLayout><Team /></PublicLayout>} />
             <Route path="/karriere" element={<PublicLayout><Career /></PublicLayout>} />
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
 
