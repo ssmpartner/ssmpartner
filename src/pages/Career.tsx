@@ -445,6 +445,45 @@ const Career = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ── Bewerbung iFrame Modal ── */}
+      <AnimatePresence>
+        {showApply && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 md:p-8"
+            onClick={() => setShowApply(false)}
+          >
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+            <motion.div
+              initial={{ opacity: 0, y: 40, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40, scale: 0.97 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-3xl bg-background rounded-2xl shadow-2xl my-8 overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between p-5 border-b">
+                <div>
+                  <h2 className="font-heading text-xl font-bold text-foreground">Jetzt bewerben</h2>
+                  <p className="font-body text-xs text-muted-foreground mt-0.5">SSM Partner — Bewerbungsformular</p>
+                </div>
+                <button onClick={() => setShowApply(false)} className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors">
+                  <X size={18} className="text-foreground" />
+                </button>
+              </div>
+              <iframe
+                src="https://recruit.ssmpartner.ch/bewerbung"
+                className="w-full border-0"
+                style={{ height: "80vh" }}
+                title="Bewerbungsformular"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 };
