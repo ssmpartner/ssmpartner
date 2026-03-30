@@ -1,0 +1,1 @@
+ALTER TABLE public.team_members ADD COLUMN agency_id uuid REFERENCES public.agencies(id) ON DELETE SET NULL DEFAULT NULL;
