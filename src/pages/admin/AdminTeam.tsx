@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const AdminTeam = () => {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "" });
+  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung" });
   const [uploading, setUploading] = useState(false);
 
   const { data: members, isLoading } = useQuery({
