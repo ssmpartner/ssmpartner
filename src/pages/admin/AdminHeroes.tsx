@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Image as ImageIcon } from "lucide-react";
+import { Upload, Image as ImageIcon, FolderOpen } from "lucide-react";
 import { toast } from "sonner";
+import MediaPickerModal from "@/components/MediaPickerModal";
 
 const staticPages = [
   // Home
