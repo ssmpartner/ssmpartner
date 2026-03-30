@@ -1,9 +1,50 @@
-import { useState, FormEvent } from "react";
+import { useState, useEffect, useRef, FormEvent } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import mapboxgl from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { Clock } from "lucide-react";
+
+const MAPBOX_TOKEN = "pk.eyJ1Ijoic3NtcGFydG5lciIsImEiOiJjbW40bDI4engwMWg3MnFzbnp4emJua2hhIn0.5u0JuVsRDe6DSNBOEpSh1A";
 import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
+
+const ContactMap = () => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+
+  useEffect(() => {
+    if (!mapContainer.current || mapRef.current) return;
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+
+    mapRef.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/light-v11",
+      center: [8.2683, 47.0933],
+      zoom: 14,
+      attributionControl: false,
+    });
+
+    mapRef.current.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
+
+    const el = document.createElement("div");
+    el.innerHTML = `<div style="width:40px;height:40px;background:#243e3a;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(36,62,58,0.35);cursor:pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>`;
+
+    new mapboxgl.Marker({ element: el })
+      .setLngLat([8.2683, 47.0933])
+      .setPopup(new mapboxgl.Popup({ offset: 25, closeButton: false }).setHTML(`<div style="padding:4px 0"><strong style="font-size:14px;color:#243e3a">SSM Partner AG</strong><p style="font-size:12px;margin:2px 0 0;color:#666">Stationsstrasse 92, 6023 Rothenburg</p></div>`))
+      .addTo(mapRef.current);
+
+    return () => { mapRef.current?.remove(); mapRef.current = null; };
+  }, []);
+
+  return (
+    <section className="w-full h-[400px] lg:h-[500px]">
+      <div ref={mapContainer} className="w-full h-full" />
+    </section>
+  );
+};
 
 const Contact = () => {
   const { t } = useLanguage();
@@ -110,7 +151,7 @@ const Contact = () => {
           </AnimatedSection>
 
           {/* Info */}
-          <AnimatedSection delay={0.15} className="lg:pt-16">
+          <AnimatedSection delay={0.15} className="lg:pt-16 space-y-6">
             <div className="bg-card border rounded-2xl p-8">
               <div className="font-body text-sm text-foreground space-y-1">
                 <p className="font-semibold">SSM Partner AG</p>
@@ -134,23 +175,32 @@ const Contact = () => {
                 </a>
               </div>
             </div>
+
+            {/* Öffnungszeiten */}
+            <div className="bg-card border rounded-2xl p-8">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Clock className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-heading text-lg font-semibold text-foreground">Öffnungszeiten</h3>
+              </div>
+              <div className="font-body text-sm text-muted-foreground space-y-2">
+                <div className="flex justify-between">
+                  <span>Montag – Freitag</span>
+                  <span className="font-medium text-foreground">08:00 – 12:00 / 13:30 – 17:00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Samstag – Sonntag</span>
+                  <span className="font-medium text-foreground">Geschlossen</span>
+                </div>
+              </div>
+            </div>
           </AnimatedSection>
         </div>
       </section>
 
-      {/* Map */}
-      <section className="w-full h-[400px] lg:h-[500px]">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2718.5!2d8.2683!3d47.0933!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x478ffd43d4e5b8ed%3A0x0!2sStationsstrasse%2092%2C%206023%20Rothenburg!5e0!3m2!1sde!2sch!4v1700000000000"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          title="SSM Partner AG Standort"
-        />
-      </section>
+      {/* Mapbox Map */}
+      <ContactMap />
     </main>
   );
 };
