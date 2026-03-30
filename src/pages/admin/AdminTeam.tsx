@@ -128,7 +128,15 @@ const AdminTeam = () => {
     });
   };
 
-  const filteredMembers = members?.filter((m) => !filter || m.category === filter);
+  const filteredMembers = members?.filter((m) => {
+    if (!filter) return true;
+    if (filter === "agentur") return m.category === "agentur";
+    if (filter.startsWith("agency-")) {
+      const agencyId = filter.replace("agency-", "");
+      return m.category === "agentur" && (m as any).agency_id === agencyId;
+    }
+    return m.category === filter;
+  });
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
 
