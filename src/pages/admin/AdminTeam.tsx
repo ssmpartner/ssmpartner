@@ -96,6 +96,7 @@ const AdminTeam = () => {
           <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
             <option value="geschaeftsleitung">Geschäftsleitung</option>
             <option value="fachfuehrung">Fachführung</option>
+            <option value="erweitertes_team">Erweitertes Team</option>
           </select>
           <div className="grid grid-cols-2 gap-4">
             <input placeholder="Rolle (DE)" value={form.role_de} onChange={(e) => setForm({ ...form, role_de: e.target.value })} className={inputClass} />
