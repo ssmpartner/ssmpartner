@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const AdminTeam = () => {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "" });
+  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung" });
   const [uploading, setUploading] = useState(false);
 
   const { data: members, isLoading } = useQuery({
@@ -23,12 +23,12 @@ const AdminTeam = () => {
     mutationFn: async (item: typeof form & { id?: string }) => {
       if (item.id) {
         const { error } = await supabase.from("team_members").update({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: item.category,
         }).eq("id", item.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("team_members").insert({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: item.category,
           sort_order: (members?.length || 0),
         });
         if (error) throw error;
@@ -37,7 +37,7 @@ const AdminTeam = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-team"] });
       setEditingId(null);
-      setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "" });
+      setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung" });
       toast.success("Gespeichert");
     },
     onError: (err: any) => toast.error(err.message),
@@ -75,7 +75,7 @@ const AdminTeam = () => {
 
   const startEdit = (m: any) => {
     setEditingId(m.id);
-    setForm({ name: m.name, role_de: m.role_de || "", role_fr: m.role_fr || "", role_it: m.role_it || "", role_en: m.role_en || "" });
+    setForm({ name: m.name, role_de: m.role_de || "", role_fr: m.role_fr || "", role_it: m.role_it || "", role_en: m.role_en || "", category: m.category || "geschaeftsleitung" });
   };
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
@@ -84,7 +84,7 @@ const AdminTeam = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-heading text-2xl font-bold text-foreground">Team</h1>
-        <button onClick={() => { setEditingId("new"); setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "" }); }}
+        <button onClick={() => { setEditingId("new"); setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung" }); }}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90">
           <Plus size={18} /> Mitglied hinzufügen
         </button>
@@ -93,6 +93,10 @@ const AdminTeam = () => {
       {editingId && (
         <div className="bg-card border rounded-xl p-6 mb-6 space-y-4">
           <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputClass} />
+          <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
+            <option value="geschaeftsleitung">Geschäftsleitung</option>
+            <option value="fachfuehrung">Fachführung</option>
+          </select>
           <div className="grid grid-cols-2 gap-4">
             <input placeholder="Rolle (DE)" value={form.role_de} onChange={(e) => setForm({ ...form, role_de: e.target.value })} className={inputClass} />
             <input placeholder="Rolle (FR)" value={form.role_fr} onChange={(e) => setForm({ ...form, role_fr: e.target.value })} className={inputClass} />
@@ -134,6 +138,9 @@ const AdminTeam = () => {
                 <div onClick={() => startEdit(m)} role="button" className="cursor-pointer">
                   <h3 className="font-heading text-sm font-semibold text-foreground">{m.name}</h3>
                   <p className="font-body text-xs text-muted-foreground">{m.role_de}</p>
+                  <span className="font-body text-[10px] bg-muted px-2 py-0.5 rounded text-muted-foreground mt-1 inline-block">
+                    {m.category === "fachfuehrung" ? "Fachführung" : "Geschäftsleitung"}
+                  </span>
                 </div>
                 <button onClick={() => deleteMutation.mutate(m.id)} className="text-muted-foreground hover:text-destructive">
                   <Trash2 size={16} />

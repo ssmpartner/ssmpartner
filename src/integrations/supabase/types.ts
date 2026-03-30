@@ -206,6 +206,7 @@ export type Database = {
       team_members: {
         Row: {
           active: boolean
+          category: string
           created_at: string
           id: string
           image_url: string | null
@@ -219,6 +220,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          category?: string
           created_at?: string
           id?: string
           image_url?: string | null
@@ -232,6 +234,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          category?: string
           created_at?: string
           id?: string
           image_url?: string | null
