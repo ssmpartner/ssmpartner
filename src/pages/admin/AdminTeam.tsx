@@ -30,14 +30,16 @@ const AdminTeam = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (item: typeof form & { id?: string }) => {
+      const agencyId = item.agency_id || null;
+      const cat = agencyId ? "agentur" : item.category;
       if (item.id) {
         const { error } = await supabase.from("team_members").update({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: item.category,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId,
         }).eq("id", item.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("team_members").insert({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: item.category,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId,
           sort_order: (members?.length || 0),
         });
         if (error) throw error;
