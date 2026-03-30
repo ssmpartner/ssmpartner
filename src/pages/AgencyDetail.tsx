@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MapPin, Phone, Mail, ArrowLeft, Star, Building2 } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowLeft, Star, Building2, Send } from "lucide-react";
+import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
@@ -9,6 +11,8 @@ import SwissMap from "@/components/SwissMap";
 const AgencyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [sending, setSending] = useState(false);
 
   const { data: agency, isLoading } = useQuery({
     queryKey: ["agency", slug],
@@ -53,6 +57,30 @@ const AgencyDetail = () => {
     enabled: !!agency?.id,
   });
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactForm.name.trim() || !contactForm.email.trim() || !contactForm.message.trim()) {
+      toast.error("Bitte füllen Sie alle Pflichtfelder aus.");
+      return;
+    }
+    setSending(true);
+    try {
+      // For now, open mailto with pre-filled data
+      const subject = encodeURIComponent(`Anfrage über Website – Agentur ${agency?.name}`);
+      const body = encodeURIComponent(
+        `Name: ${contactForm.name}\nE-Mail: ${contactForm.email}\nTelefon: ${contactForm.phone}\n\n${contactForm.message}`
+      );
+      const mailto = agency?.email || "info@ssmpartner.ch";
+      window.open(`mailto:${mailto}?subject=${subject}&body=${body}`, "_self");
+      toast.success("Vielen Dank für Ihre Anfrage!");
+      setContactForm({ name: "", email: "", phone: "", message: "" });
+    } catch {
+      toast.error("Ein Fehler ist aufgetreten.");
+    } finally {
+      setSending(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
@@ -87,7 +115,6 @@ const AgencyDetail = () => {
               <ArrowLeft size={16} />
               Alle Agenturen
             </button>
-
             <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">
               Agentur {agency.name}
             </h1>
@@ -96,8 +123,8 @@ const AgencyDetail = () => {
 
           {/* Main layout */}
           <div className="grid lg:grid-cols-5 gap-10 lg:gap-16 mt-14">
-            {/* Left: Image + Map */}
-            <div className="lg:col-span-3 space-y-6">
+            {/* Left: Image + Description */}
+            <div className="lg:col-span-3 space-y-8">
               <AnimatedSection>
                 <div
                   className="w-full aspect-[16/10] rounded-2xl overflow-hidden bg-muted"
@@ -121,21 +148,48 @@ const AgencyDetail = () => {
                 </AnimatedSection>
               )}
 
-              {/* Map */}
-              {agency.map_lat && agency.map_lng && (
-                <AnimatedSection delay={0.2}>
+              {/* Agenturleiter – prominent */}
+              {agency.leader_name && (
+                <AnimatedSection delay={0.15}>
                   <div
-                    className="w-full aspect-[16/9] rounded-2xl overflow-hidden"
-                    style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.12)" }}
+                    className="bg-card border rounded-2xl p-6 lg:p-8 flex items-center gap-6"
+                    style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.08)" }}
                   >
-                    <SwissMap agencies={[agency]} />
+                    <div
+                      className="w-24 h-24 lg:w-32 lg:h-32 rounded-2xl overflow-hidden bg-muted shrink-0"
+                      style={{ boxShadow: "0 4px 16px rgba(36,62,58,0.15)" }}
+                    >
+                      {agency.leader_image_url ? (
+                        <img src={agency.leader_image_url} alt={agency.leader_name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-3xl">
+                          {agency.leader_name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-body text-xs font-medium text-primary uppercase tracking-wider mb-1">Agenturleitung</p>
+                      <h3 className="font-heading text-xl lg:text-2xl font-bold text-foreground">{agency.leader_name}</h3>
+                      {agency.leader_role && (
+                        <p className="font-body text-sm text-muted-foreground mt-1">{agency.leader_role}</p>
+                      )}
+                      {agency.email && (
+                        <a
+                          href={`mailto:${agency.email}`}
+                          className="inline-flex items-center gap-2 font-body text-sm text-primary hover:underline mt-3"
+                        >
+                          <Mail size={14} />
+                          Kontakt aufnehmen
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </AnimatedSection>
               )}
             </div>
 
-            {/* Right: Contact card */}
-            <div className="lg:col-span-2">
+            {/* Right: Contact sidebar */}
+            <div className="lg:col-span-2 space-y-6">
               <AnimatedSection delay={0.1}>
                 <div
                   className="bg-card border rounded-2xl p-6 lg:p-8 sticky top-32"
@@ -175,35 +229,61 @@ const AgencyDetail = () => {
                     )}
                   </div>
 
-                  {/* Agency leader */}
-                  {agency.leader_name && (
-                    <div className="mt-8 pt-6 border-t">
-                      <p className="font-body text-xs font-medium text-foreground mb-3">Agenturleitung</p>
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-muted shrink-0">
-                          {agency.leader_image_url ? (
-                            <img src={agency.leader_image_url} alt={agency.leader_name} className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-lg">
-                              {agency.leader_name.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-heading text-sm font-semibold text-foreground">{agency.leader_name}</p>
-                          {agency.leader_role && (
-                            <p className="font-body text-xs text-muted-foreground">{agency.leader_role}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {!agency.address && !agency.phone && !agency.email && !agency.leader_name && (
+                  {!agency.address && !agency.phone && !agency.email && (
                     <p className="font-body text-sm text-muted-foreground mt-6 italic">
                       Kontaktdaten werden in Kürze ergänzt.
                     </p>
                   )}
+
+                  {/* Mini Contact Form */}
+                  <div className="mt-8 pt-6 border-t">
+                    <h4 className="font-heading text-sm font-semibold text-foreground mb-4">Schnellanfrage</h4>
+                    <form onSubmit={handleContactSubmit} className="space-y-3">
+                      <input
+                        type="text"
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                        placeholder="Ihr Name *"
+                        required
+                        maxLength={100}
+                        className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      />
+                      <input
+                        type="email"
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        placeholder="E-Mail *"
+                        required
+                        maxLength={255}
+                        className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      />
+                      <input
+                        type="tel"
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                        placeholder="Telefon (optional)"
+                        maxLength={30}
+                        className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      />
+                      <textarea
+                        value={contactForm.message}
+                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                        placeholder="Ihre Nachricht *"
+                        required
+                        maxLength={1000}
+                        rows={3}
+                        className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
+                      />
+                      <button
+                        type="submit"
+                        disabled={sending}
+                        className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                      >
+                        <Send size={14} />
+                        {sending ? "Wird gesendet..." : "Anfrage senden"}
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </AnimatedSection>
             </div>
@@ -238,10 +318,7 @@ const AgencyDetail = () => {
                       )}
                       {member.email && (
                         <div className="absolute inset-0 bg-[#243e3a]/0 group-hover:bg-[#243e3a]/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <a
-                            href={`mailto:${member.email}`}
-                            className="bg-white/20 backdrop-blur-sm rounded-full p-3"
-                          >
+                          <a href={`mailto:${member.email}`} className="bg-white/20 backdrop-blur-sm rounded-full p-3">
                             <Mail className="text-white" size={20} />
                           </a>
                         </div>
@@ -257,9 +334,29 @@ const AgencyDetail = () => {
         </section>
       )}
 
+      {/* Map */}
+      {agency.map_lat && agency.map_lng && (
+        <section className="py-20 lg:py-28 border-t">
+          <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+            <AnimatedSection>
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Standort</h2>
+              <div className="brand-rule mt-4 mx-auto" />
+            </AnimatedSection>
+            <div className="mt-14">
+              <div
+                className="w-full aspect-[21/9] rounded-2xl overflow-hidden"
+                style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.12)" }}
+              >
+                <SwissMap agencies={[agency]} />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Reviews */}
       {reviews && reviews.length > 0 && (
-        <section className="py-20 lg:py-28 border-t">
+        <section className="py-20 lg:py-28 border-t bg-card">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <AnimatedSection>
               <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">
@@ -271,7 +368,7 @@ const AgencyDetail = () => {
               {reviews.map((review, i) => (
                 <AnimatedSection key={review.id} delay={i * 0.05}>
                   <div
-                    className="bg-card border rounded-2xl p-6"
+                    className="bg-background border rounded-2xl p-6"
                     style={{ boxShadow: "0 2px 12px rgba(36,62,58,0.06)" }}
                   >
                     <div className="flex items-center gap-1 mb-3">
