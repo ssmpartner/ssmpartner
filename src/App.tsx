@@ -26,6 +26,7 @@ import AdminInquiries from "./pages/admin/AdminInquiries";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminApiDocs from "./pages/admin/AdminApiDocs";
 import AdminDocs from "./pages/admin/AdminDocs";
+import AdminCareerVideos from "./pages/admin/AdminCareerVideos";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
