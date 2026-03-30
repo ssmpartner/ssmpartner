@@ -9,7 +9,7 @@ const categories = [
   { value: "geschaeftsleitung", label: "Geschäftsleitung" },
   { value: "fachfuehrung", label: "Fachführung" },
   { value: "erweitertes_team", label: "Erweitertes Team" },
-  { value: "agentur", label: "Agentur" },
+  { value: "agentur", label: "Alle Agenturen" },
 ];
 
 const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, image_url: "" };
@@ -128,7 +128,15 @@ const AdminTeam = () => {
     });
   };
 
-  const filteredMembers = members?.filter((m) => !filter || m.category === filter);
+  const filteredMembers = members?.filter((m) => {
+    if (!filter) return true;
+    if (filter === "agentur") return m.category === "agentur";
+    if (filter.startsWith("agency-")) {
+      const agencyId = filter.replace("agency-", "");
+      return m.category === "agentur" && (m as any).agency_id === agencyId;
+    }
+    return m.category === filter;
+  });
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
 
@@ -157,9 +165,25 @@ const AdminTeam = () => {
             }`}
           >
             {c.label}
-            {c.value === "" ? ` (${members?.length || 0})` : ` (${members?.filter((m) => m.category === c.value).length || 0})`}
+            {c.value === "" ? ` (${members?.length || 0})` : c.value === "agentur" ? ` (${members?.filter((m) => m.category === "agentur").length || 0})` : ` (${members?.filter((m) => m.category === c.value).length || 0})`}
           </button>
         ))}
+        {agencies?.map((a) => {
+          const count = members?.filter((m) => m.category === "agentur" && (m as any).agency_id === a.id).length || 0;
+          return (
+            <button
+              key={`agency-${a.id}`}
+              onClick={() => setFilter(`agency-${a.id}`)}
+              className={`font-body text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                filter === `agency-${a.id}`
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card text-muted-foreground border-border hover:border-primary/50"
+              }`}
+            >
+              {a.name} ({count})
+            </button>
+          );
+        })}
       </div>
 
       {/* Edit / Add Form */}
