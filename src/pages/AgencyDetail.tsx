@@ -412,7 +412,7 @@ const AgencyDetail = () => {
                         </div>
                       )}
                       {badgeLabel && (
-                        <span className="absolute top-2 left-2 bg-primary text-primary-foreground font-body text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-lg">
+                        <span className="absolute top-2 left-2 text-white font-body text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-lg" style={{ background: "#B3B69C" }}>
                           {badgeLabel}
                         </span>
                       )}
