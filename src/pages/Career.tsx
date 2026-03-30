@@ -13,6 +13,32 @@ import {
   ChevronRight, CheckCircle2, ChevronDown,
 } from "lucide-react";
 
+/* ── FAQ Accordion Item ── */
+const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-border rounded-2xl overflow-hidden bg-card" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
+      <button onClick={() => setOpen(!open)} className="w-full flex items-center justify-between gap-4 p-5 text-left">
+        <span className="font-heading text-sm font-semibold text-foreground">{question}</span>
+        <ChevronDown size={18} className={`shrink-0 text-muted-foreground transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden"
+          >
+            <p className="font-body text-sm text-muted-foreground px-5 pb-5 leading-relaxed">{answer}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 /* ── Bewerbungsprozess phases ── */
 const phases = [
   {
