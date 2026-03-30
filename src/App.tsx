@@ -20,6 +20,7 @@ import AdminTeam from "./pages/admin/AdminTeam";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminNav from "./pages/admin/AdminNav";
 import AdminHeroes from "./pages/admin/AdminHeroes";
+import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
