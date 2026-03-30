@@ -393,6 +393,7 @@ const AgencyDetail = () => {
               })}
               {teamMembers?.filter((tm: any) => !tm.is_agency_leader).map((member, i) => {
                 const hasContact = (member as any).email || (member as any).phone;
+                const badgeLabel = (member as any).badge === "verkaufsleiter" ? "Verkaufsleiter" : (member as any).badge === "teamleiter" ? "Teamleiter" : (member as any).badge === "finanzexperte" ? "Finanzexperte" : null;
                 return (
                 <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
                   <div
@@ -409,6 +410,11 @@ const AgencyDetail = () => {
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-3xl">
                           {member.name.charAt(0)}
                         </div>
+                      )}
+                      {badgeLabel && (
+                        <span className="absolute top-2 left-2 bg-primary text-primary-foreground font-body text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-lg">
+                          {badgeLabel}
+                        </span>
                       )}
                       {hasContact && (
                         <div className="absolute inset-0 bg-[#243e3a]/0 group-hover:bg-[#243e3a]/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">

@@ -12,7 +12,14 @@ const categories = [
   { value: "agentur", label: "Alle Agenturen" },
 ];
 
-const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "" };
+const badgeOptions = [
+  { value: "", label: "– Kein Badge –" },
+  { value: "verkaufsleiter", label: "Verkaufsleiter" },
+  { value: "teamleiter", label: "Teamleiter" },
+  { value: "finanzexperte", label: "Finanzexperte" },
+];
+
+const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "", badge: "" };
 
 const AdminTeam = () => {
   const queryClient = useQueryClient();
@@ -56,6 +63,7 @@ const AdminTeam = () => {
         image_url: item.image_url || null,
         phone: item.phone || null,
         email: item.email || null,
+        badge: item.badge || null,
       };
       if (item.id) {
         const { error } = await supabase.from("team_members").update(payload).eq("id", item.id);
@@ -131,6 +139,7 @@ const AdminTeam = () => {
       image_url: m.image_url || "",
       phone: m.phone || "",
       email: m.email || "",
+      badge: m.badge || "",
     });
   };
 
@@ -253,6 +262,11 @@ const AdminTeam = () => {
                 <input type="checkbox" checked={form.is_recruiting_partner} onChange={(e) => setForm({ ...form, is_recruiting_partner: e.target.checked })} className="rounded border-border" />
                 Recruiting Partner (Karriereseite)
               </label>
+              {form.category === "agentur" && (
+                <select value={form.badge} onChange={(e) => setForm({ ...form, badge: e.target.value })} className={inputClass}>
+                  {badgeOptions.map(b => <option key={b.value} value={b.value}>{b.label}</option>)}
+                </select>
+              )}
             </div>
           </div>
 
@@ -322,6 +336,11 @@ const AdminTeam = () => {
                       ? `${agencies?.find((a) => a.id === (m as any).agency_id)?.name || "Agentur"}${(m as any).is_agency_leader ? " ★" : ""}`
                       : "GL"}
                   </span>
+                  {(m as any).badge && (
+                    <span className="font-body text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded mt-0.5 inline-block ml-1">
+                      {badgeOptions.find(b => b.value === (m as any).badge)?.label || (m as any).badge}
+                    </span>
+                  )}
                 </div>
                 <div className="flex flex-col gap-1 items-center shrink-0">
                   <button
