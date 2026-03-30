@@ -5,11 +5,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
-import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake } from "lucide-react";
+import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake, Mail, Building2, MessageCircleQuestion } from "lucide-react";
 
 const Career = () => {
   const { t } = useLanguage();
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+
+  const { data: recruitingPartner } = useQuery({
+    queryKey: ["recruiting-partner"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("*")
+        .eq("is_recruiting_partner", true)
+        .eq("active", true)
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const { data: videoCards } = useQuery({
     queryKey: ["career-videos"],
@@ -151,6 +166,66 @@ const Career = () => {
             />
           </div>
         </div>
+      )}
+
+      {/* Ansprechpartner Floating Box */}
+      {recruitingPartner && (
+        <section className="py-16 lg:py-24 border-t">
+          <div className="container mx-auto px-6 lg:px-8">
+            <AnimatedSection>
+              <div className="relative rounded-2xl border border-border overflow-hidden" style={{ boxShadow: "0 16px 48px -12px hsl(var(--primary) / 0.12)" }}>
+                <div className="flex flex-col md:flex-row items-stretch">
+                  {/* Photo */}
+                  <div className="md:w-64 lg:w-72 shrink-0">
+                    {recruitingPartner.image_url ? (
+                      <img
+                        src={recruitingPartner.image_url}
+                        alt={recruitingPartner.name}
+                        className="w-full h-full object-cover min-h-[240px] md:min-h-full"
+                      />
+                    ) : (
+                      <div className="w-full h-full min-h-[240px] bg-muted flex items-center justify-center">
+                        <span className="font-heading text-4xl text-muted-foreground">{recruitingPartner.name.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Content */}
+                  <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
+                    <span className="font-body text-xs font-medium uppercase tracking-widest text-muted-foreground">Dein Ansprechpartner</span>
+                    <h3 className="font-heading text-2xl lg:text-3xl font-bold text-foreground mt-2">{recruitingPartner.name}</h3>
+                    <p className="font-body text-sm font-medium mt-1" style={{ color: "#6A9387" }}>
+                      {recruitingPartner.role_de || "Recruiting Partner"}
+                    </p>
+                    <p className="font-body text-sm text-muted-foreground mt-4 leading-relaxed max-w-lg">
+                      Spontane Bewerbung? Oder hast du eine Frage? {recruitingPartner.name.split(" ")[0]} nimmt sich für deine offenen Fragen Zeit. Entdecke unten die nächsten Schritte im Bewerbungsprozess.
+                    </p>
+                    <div className="flex flex-wrap gap-3 mt-6">
+                      <Link
+                        to="/kontakt?subject=career"
+                        className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white transition-colors hover:opacity-90"
+                        style={{ backgroundColor: "#6A9387" }}
+                      >
+                        <Mail size={16} /> Jetzt bewerben
+                      </Link>
+                      <Link
+                        to="/agenturen"
+                        className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted transition-colors"
+                      >
+                        <Building2 size={16} /> Unsere Agenturen
+                      </Link>
+                      <Link
+                        to="/kontakt?subject=other"
+                        className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted transition-colors"
+                      >
+                        <MessageCircleQuestion size={16} /> Frage stellen
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
+        </section>
       )}
 
       {/* Why SSM */}

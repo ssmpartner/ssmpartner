@@ -468,6 +468,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_agency_leader: boolean
+          is_recruiting_partner: boolean
           name: string
           phone: string | null
           role_de: string | null
@@ -486,6 +487,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_agency_leader?: boolean
+          is_recruiting_partner?: boolean
           name: string
           phone?: string | null
           role_de?: string | null
@@ -504,6 +506,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_agency_leader?: boolean
+          is_recruiting_partner?: boolean
           name?: string
           phone?: string | null
           role_de?: string | null

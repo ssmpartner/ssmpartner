@@ -12,7 +12,7 @@ const categories = [
   { value: "agentur", label: "Alle Agenturen" },
 ];
 
-const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, image_url: "", phone: "", email: "" };
+const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "" };
 
 const AdminTeam = () => {
   const queryClient = useQueryClient();
@@ -52,6 +52,7 @@ const AdminTeam = () => {
         category: cat,
         agency_id: agencyId,
         is_agency_leader: item.is_agency_leader,
+        is_recruiting_partner: item.is_recruiting_partner,
         image_url: item.image_url || null,
         phone: item.phone || null,
         email: item.email || null,
@@ -126,6 +127,7 @@ const AdminTeam = () => {
       category: m.category || "geschaeftsleitung",
       agency_id: m.agency_id || "",
       is_agency_leader: m.is_agency_leader || false,
+      is_recruiting_partner: m.is_recruiting_partner || false,
       image_url: m.image_url || "",
       phone: m.phone || "",
       email: m.email || "",
@@ -247,6 +249,10 @@ const AdminTeam = () => {
                   Agenturleiter/in
                 </label>
               )}
+              <label className="flex items-center gap-2 font-body text-sm text-foreground cursor-pointer">
+                <input type="checkbox" checked={form.is_recruiting_partner} onChange={(e) => setForm({ ...form, is_recruiting_partner: e.target.checked })} className="rounded border-border" />
+                Recruiting Partner (Karriereseite)
+              </label>
             </div>
           </div>
 

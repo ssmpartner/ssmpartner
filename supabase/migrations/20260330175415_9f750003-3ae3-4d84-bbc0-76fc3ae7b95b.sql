@@ -1,0 +1,1 @@
+ALTER TABLE public.team_members ADD COLUMN is_recruiting_partner boolean NOT NULL DEFAULT false;
