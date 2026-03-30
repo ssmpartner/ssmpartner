@@ -78,9 +78,9 @@ const Footer = () => {
             © 2025 SSM Partner AG — Alle Rechte vorbehalten.
           </span>
           <div className="flex items-center gap-4 font-body text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
-            <Link to="#" className="hover:text-white transition-colors">{t("footer.imprint")}</Link>
-            <Link to="#" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
-            <Link to="#" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
+            <Link to="/rechtliches?tab=impressum" className="hover:text-white transition-colors">{t("footer.imprint")}</Link>
+            <Link to="/rechtliches?tab=datenschutz" className="hover:text-white transition-colors">{t("footer.privacy")}</Link>
+            <Link to="/rechtliches" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
           </div>
         </div>
       </div>
