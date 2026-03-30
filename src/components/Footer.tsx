@@ -42,9 +42,9 @@ const Footer = () => {
             <h4 className="font-heading text-xs font-semibold uppercase tracking-widest text-white mb-4">Kontakt</h4>
             <div className="font-body text-sm space-y-2" style={{ color: "rgba(255,255,255,0.6)" }}>
               <p>SSM Partner AG</p>
-              <p>Riedmattstrasse 12</p>
-              <p>6032 Ebikon, Schweiz</p>
-              <p className="pt-2">+41 41 220 20 50</p>
+              <p>Stationsstrasse 92</p>
+              <p>CH-6023 Rothenburg</p>
+              <p className="pt-2">041 220 20 50</p>
               <p>info@ssmpartner.ch</p>
             </div>
           </div>
