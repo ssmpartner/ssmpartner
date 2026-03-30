@@ -33,6 +33,12 @@ import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
 const queryClient = new QueryClient();
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
