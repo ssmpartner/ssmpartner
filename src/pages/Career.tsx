@@ -65,35 +65,37 @@ const Career = () => {
       </section>
 
       {/* Video Cards */}
-      <section className="py-16 lg:py-24 border-t">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            {videoCards.map((card, i) => (
-              <AnimatedSection key={i} delay={i * 0.15}>
-                <button
-                  onClick={() => setActiveVideo(card.videoUrl)}
-                  className="group relative w-full aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer border border-border"
-                  style={{ boxShadow: "0 12px 40px -8px hsl(var(--primary) / 0.15)" }}
-                >
-                  <img
-                    src={card.image}
-                    alt={card.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-foreground/30 group-hover:bg-primary/60 transition-colors duration-300 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-primary-foreground/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <Play size={28} className="text-primary ml-1" />
+      {videoCards && videoCards.length > 0 && (
+        <section className="py-16 lg:py-24 border-t">
+          <div className="container mx-auto px-6 lg:px-8">
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+              {videoCards.map((card, i) => (
+                <AnimatedSection key={card.id} delay={i * 0.15}>
+                  <button
+                    onClick={() => card.video_url && setActiveVideo(card.video_url)}
+                    className="group relative w-full aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer border border-border"
+                    style={{ boxShadow: "0 12px 40px -8px hsl(var(--primary) / 0.15)" }}
+                  >
+                    {card.image_url ? (
+                      <img src={card.image_url} alt={card.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="w-full h-full bg-muted" />
+                    )}
+                    <div className="absolute inset-0 bg-foreground/30 group-hover:bg-primary/60 transition-colors duration-300 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-full bg-primary-foreground/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Play size={28} className="text-primary ml-1" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <h3 className="font-heading text-lg font-semibold text-primary-foreground drop-shadow-lg">{card.title}</h3>
-                  </div>
-                </button>
-              </AnimatedSection>
-            ))}
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <h3 className="font-heading text-lg font-semibold text-primary-foreground drop-shadow-lg">{card.title}</h3>
+                    </div>
+                  </button>
+                </AnimatedSection>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Video Modal */}
       {activeVideo && (

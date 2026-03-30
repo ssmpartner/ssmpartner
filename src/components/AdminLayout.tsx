@@ -11,6 +11,7 @@ const adminLinks = [
   { to: "/admin/team", label: "Team", icon: Users },
   { to: "/admin/agencies", label: "Agenturen", icon: Building2 },
   { to: "/admin/jobs", label: "Stellen", icon: Briefcase },
+  { to: "/admin/career-videos", label: "Karriere-Videos", icon: Video },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },
   { to: "/admin/api-docs", label: "API-Docs", icon: Code2 },
