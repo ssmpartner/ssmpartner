@@ -102,8 +102,6 @@ const Navbar = () => {
                 {getLabel(item)}
               </Link>
             ))}
-          </div>
-
           {/* Language dropdown */}
           <div ref={langRef} className="relative ml-1">
             <button
