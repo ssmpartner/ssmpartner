@@ -160,7 +160,7 @@ const AdminTeam = () => {
                   <h3 className="font-heading text-xs font-semibold text-foreground truncate">{m.name}</h3>
                   <p className="font-body text-[10px] text-muted-foreground truncate">{m.role_de}</p>
                   <span className="font-body text-[9px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground mt-0.5 inline-block">
-                    {m.category === "fachfuehrung" ? "Fachführung" : m.category === "erweitertes_team" ? "Erw. Team" : "GL"}
+                    {m.category === "fachfuehrung" ? "Fachführung" : m.category === "erweitertes_team" ? "Erw. Team" : m.category === "agentur" ? (agencies?.find(a => a.id === (m as any).agency_id)?.name || "Agentur") : "GL"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 items-center shrink-0">
