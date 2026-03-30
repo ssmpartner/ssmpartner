@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Image as ImageIcon } from "lucide-react";
+import { Upload, Image as ImageIcon, FolderOpen } from "lucide-react";
 import { toast } from "sonner";
+import MediaPickerModal from "@/components/MediaPickerModal";
 
 const staticPages = [
   // Home
@@ -32,6 +33,7 @@ const staticPages = [
 const AdminHeroes = () => {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState<string | null>(null);
+  const [mediaPickerKey, setMediaPickerKey] = useState<string | null>(null);
 
   const { data: heroes, isLoading } = useQuery({
     queryKey: ["admin-heroes"],
@@ -135,23 +137,45 @@ const AdminHeroes = () => {
                     <h3 className="font-body text-sm font-medium text-foreground">{page.label}</h3>
                     <p className="font-body text-xs text-muted-foreground">Seite: /{page.key}</p>
                   </div>
-                  <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-xs font-medium px-3 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
-                    <Upload size={14} />
-                    {uploading === page.key ? "Hochladen..." : "Bild ändern"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleUpload(page.key, e)}
-                      className="hidden"
-                      disabled={uploading === page.key}
-                    />
-                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setMediaPickerKey(page.key)}
+                      className="inline-flex items-center gap-2 bg-muted text-foreground font-body text-xs font-medium px-3 py-2 rounded-lg hover:bg-muted/80 transition-colors"
+                    >
+                      <FolderOpen size={14} />
+                      Mediathek
+                    </button>
+                    <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-xs font-medium px-3 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
+                      <Upload size={14} />
+                      {uploading === page.key ? "Hochladen..." : "Hochladen"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleUpload(page.key, e)}
+                        className="hidden"
+                        disabled={uploading === page.key}
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
       )}
+
+      <MediaPickerModal
+        open={!!mediaPickerKey}
+        onClose={() => setMediaPickerKey(null)}
+        onSelect={(url) => {
+          if (mediaPickerKey) {
+            updateMutation.mutate({ pageKey: mediaPickerKey, image_url: url });
+          }
+          setMediaPickerKey(null);
+        }}
+        accept="image"
+        title="Bild aus Mediathek wählen"
+      />
     </div>
   );
 };
