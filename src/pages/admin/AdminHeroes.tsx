@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 const pages = [
   { key: "about", label: "Über uns" },
+  { key: "about-intro", label: "Über uns – Intro-Bild" },
   { key: "career", label: "Karriere" },
   { key: "contact", label: "Kontakt" },
   { key: "team", label: "Team" },
