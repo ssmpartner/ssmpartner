@@ -368,26 +368,28 @@ const Career = () => {
                 <div className="brand-rule mt-4" />
               </AnimatedSection>
 
-              <div className="mt-10 space-y-6">
-                {steps.map((s, i) => (
-                  <AnimatedSection key={i} delay={i * 0.1}>
-                    <div className="flex gap-4 items-start">
-                      <div className="flex flex-col items-center shrink-0">
-                        <span
-                          className="w-10 h-10 rounded-xl flex items-center justify-center font-heading text-sm font-bold text-white"
-                          style={{ backgroundColor: "#6A9387" }}
-                        >
-                          {i + 1}
-                        </span>
-                        {i < steps.length - 1 && (
-                          <div className="w-px h-full min-h-[24px] bg-border mt-2" />
-                        )}
-                      </div>
-                      <div className="pb-2">
-                        <h3 className="font-heading text-sm font-semibold text-foreground">{s.title}</h3>
-                        <p className="font-body text-sm text-muted-foreground mt-1 leading-relaxed">{s.desc}</p>
-                      </div>
-                    </div>
+              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                  { icon: Rocket, title: "Start", desc: "Stell dich neuen Herausforderungen und wachse mit uns." },
+                  { icon: HeartHandshake, title: "Empower", desc: "Inspiriere andere durch starke Werte und Visionen." },
+                  { icon: Scale, title: "Lead", desc: "Setze neue Massstäbe und mische mit uns die Branche auf." },
+                ].map((card, i) => (
+                  <AnimatedSection key={card.title} delay={i * 0.15}>
+                    <motion.div
+                      animate={{ y: [0, -10, 0] }}
+                      transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
+                      className="bg-white rounded-2xl p-6 flex flex-col items-center text-center gap-4"
+                      style={{ boxShadow: "0 8px 30px rgba(106,147,135,0.15)" }}
+                    >
+                      <span
+                        className="w-12 h-12 rounded-xl flex items-center justify-center text-white"
+                        style={{ backgroundColor: "#6A9387" }}
+                      >
+                        <card.icon size={22} />
+                      </span>
+                      <h3 className="font-heading text-lg font-bold text-foreground">{card.title}</h3>
+                      <p className="font-body text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
+                    </motion.div>
                   </AnimatedSection>
                 ))}
               </div>
