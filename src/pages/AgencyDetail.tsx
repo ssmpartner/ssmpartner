@@ -42,6 +42,21 @@ const AgencyDetail = () => {
     enabled: !!agency?.id,
   });
 
+  const { data: teamMembers } = useQuery({
+    queryKey: ["agency-team-members", agency?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("*")
+        .eq("agency_id", agency!.id)
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!agency?.id,
+  });
+
   const { data: reviews } = useQuery({
     queryKey: ["agency-reviews", agency?.id],
     queryFn: async () => {
