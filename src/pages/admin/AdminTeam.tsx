@@ -75,7 +75,7 @@ const AdminTeam = () => {
 
   const startEdit = (m: any) => {
     setEditingId(m.id);
-    setForm({ name: m.name, role_de: m.role_de || "", role_fr: m.role_fr || "", role_it: m.role_it || "", role_en: m.role_en || "" });
+    setForm({ name: m.name, role_de: m.role_de || "", role_fr: m.role_fr || "", role_it: m.role_it || "", role_en: m.role_en || "", category: m.category || "geschaeftsleitung" });
   };
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
