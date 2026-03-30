@@ -93,6 +93,10 @@ const AdminTeam = () => {
       {editingId && (
         <div className="bg-card border rounded-xl p-6 mb-6 space-y-4">
           <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputClass} />
+          <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
+            <option value="geschaeftsleitung">Geschäftsleitung</option>
+            <option value="fachfuehrung">Fachführung</option>
+          </select>
           <div className="grid grid-cols-2 gap-4">
             <input placeholder="Rolle (DE)" value={form.role_de} onChange={(e) => setForm({ ...form, role_de: e.target.value })} className={inputClass} />
             <input placeholder="Rolle (FR)" value={form.role_fr} onChange={(e) => setForm({ ...form, role_fr: e.target.value })} className={inputClass} />
