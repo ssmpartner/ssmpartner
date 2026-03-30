@@ -113,13 +113,13 @@ const Career = () => {
               {t("career.hero.sub")}
             </p>
             <div className="flex flex-wrap gap-3 mt-8">
-              <Link
-                to="/kontakt?subject=career"
+              <button
+                onClick={() => setShowApply(true)}
                 className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl text-white hover:opacity-90 transition-colors"
                 style={{ backgroundColor: "#6A9387" }}
               >
                 <Mail size={16} /> {t("career.hero.cta")}
-              </Link>
+              </button>
               <button
                 onClick={() => { setShowProcess(true); setActivePhase(0); }}
                 className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl border border-border text-foreground hover:bg-muted transition-colors"
