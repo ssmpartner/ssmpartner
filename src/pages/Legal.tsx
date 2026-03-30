@@ -7,8 +7,9 @@ import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 
 const TABS = [
-  { key: "impressum", labelKey: "legal.impressum" },
-  { key: "datenschutz", labelKey: "legal.datenschutz" },
+  { key: "impressum", label: "Impressum" },
+  { key: "datenschutz", label: "Datenschutz" },
+  { key: "socialmedia", label: "Social Media" },
 ] as const;
 
 const Legal = () => {
