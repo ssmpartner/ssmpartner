@@ -1,0 +1,155 @@
+import { useState } from "react";
+import { Copy, Check, ExternalLink, Code2, Database, Lock } from "lucide-react";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+const tables = [
+  { name: "agencies", label: "Agenturen", description: "Alle Agentur-Standorte mit Kontaktdaten und Beschreibung." },
+  { name: "team_members", label: "Team-Mitglieder", description: "Mitglieder aller Teams inkl. Kategorie und Agentur-Zuweisung." },
+  { name: "job_positions", label: "Stellenangebote", description: "Offene Stellen mit Beschreibung und Standort." },
+  { name: "slider_images", label: "Slider-Bilder", description: "Hero-Slider auf der Startseite." },
+  { name: "page_heroes", label: "Hero-Bilder", description: "Hero-Bilder pro Seite." },
+  { name: "site_content", label: "Seitentexte", description: "CMS-Inhalte für alle Seiten." },
+  { name: "nav_items", label: "Navigation", description: "Menüpunkte der Hauptnavigation." },
+  { name: "inquiries", label: "Anfragen", description: "Kontaktanfragen von der Website." },
+  { name: "agency_members", label: "Agentur-Mitglieder", description: "Direkt zugewiesene Agentur-Mitglieder." },
+  { name: "agency_reviews", label: "Bewertungen", description: "Kundenbewertungen pro Agentur." },
+];
+
+const CopyButton = ({ text }: { text: string }) => {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+      className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+      title="Kopieren"
+    >
+      {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+    </button>
+  );
+};
+
+const CodeBlock = ({ label, code }: { label: string; code: string }) => (
+  <div className="mt-3">
+    <div className="flex items-center justify-between mb-1">
+      <span className="font-body text-xs text-muted-foreground">{label}</span>
+      <CopyButton text={code} />
+    </div>
+    <pre className="bg-muted/70 border border-border rounded-lg p-3 font-mono text-xs text-foreground overflow-x-auto whitespace-pre-wrap break-all">
+      {code}
+    </pre>
+  </div>
+);
+
+const AdminApiDocs = () => {
+  const [expandedTable, setExpandedTable] = useState<string | null>(null);
+
+  return (
+    <div className="max-w-4xl">
+      <h1 className="font-heading text-2xl font-bold text-foreground mb-1">API-Dokumentation</h1>
+      <p className="font-body text-sm text-muted-foreground mb-8">
+        Greifen Sie auf alle Inhalte über die REST-API zu — ideal für externe Tools, Automationen oder mobile Apps.
+      </p>
+
+      {/* Base Info */}
+      <div className="bg-card border rounded-xl p-6 mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Lock size={20} className="text-primary" />
+          <h2 className="font-heading text-lg font-semibold text-foreground">Authentifizierung</h2>
+        </div>
+        <p className="font-body text-sm text-muted-foreground mb-4">
+          Alle API-Aufrufe benötigen den <code className="bg-muted px-1 rounded text-xs">apikey</code> Header.
+          Für schreibende Zugriffe zusätzlich den <code className="bg-muted px-1 rounded text-xs">Authorization: Bearer</code> Header mit einem gültigen JWT-Token.
+        </p>
+        <CodeBlock label="Base URL" code={`${SUPABASE_URL}/rest/v1`} />
+        <CodeBlock label="API Key (anon/public)" code={ANON_KEY} />
+      </div>
+
+      {/* Quick Start */}
+      <div className="bg-card border rounded-xl p-6 mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Code2 size={20} className="text-primary" />
+          <h2 className="font-heading text-lg font-semibold text-foreground">Schnellstart</h2>
+        </div>
+        <CodeBlock
+          label="Beispiel: Alle Agenturen abrufen (cURL)"
+          code={`curl '${SUPABASE_URL}/rest/v1/agencies?select=*&active=eq.true&order=sort_order' \\
+  -H "apikey: ${ANON_KEY}" \\
+  -H "Accept: application/json"`}
+        />
+        <CodeBlock
+          label="Beispiel: JavaScript / fetch"
+          code={`const res = await fetch(
+  '${SUPABASE_URL}/rest/v1/agencies?select=*&active=eq.true&order=sort_order',
+  {
+    headers: {
+      'apikey': '${ANON_KEY}',
+      'Accept': 'application/json',
+    },
+  }
+);
+const agencies = await res.json();`}
+        />
+      </div>
+
+      {/* Tables */}
+      <div className="bg-card border rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Database size={20} className="text-primary" />
+          <h2 className="font-heading text-lg font-semibold text-foreground">Verfügbare Endpunkte</h2>
+        </div>
+        <div className="space-y-2">
+          {tables.map((t) => (
+            <div key={t.name} className="border border-border rounded-lg overflow-hidden">
+              <button
+                onClick={() => setExpandedTable(expandedTable === t.name ? null : t.name)}
+                className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+              >
+                <div>
+                  <span className="font-body text-sm font-medium text-foreground">{t.label}</span>
+                  <span className="font-body text-xs text-muted-foreground ml-2">/{t.name}</span>
+                </div>
+                <span className="font-body text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
+                  GET / POST / PATCH / DELETE
+                </span>
+              </button>
+              {expandedTable === t.name && (
+                <div className="px-4 pb-4 border-t border-border pt-3">
+                  <p className="font-body text-xs text-muted-foreground mb-3">{t.description}</p>
+                  <CodeBlock
+                    label="Alle lesen (GET)"
+                    code={`GET ${SUPABASE_URL}/rest/v1/${t.name}?select=*`}
+                  />
+                  <CodeBlock
+                    label="Gefiltert lesen"
+                    code={`GET ${SUPABASE_URL}/rest/v1/${t.name}?select=*&active=eq.true`}
+                  />
+                  <CodeBlock
+                    label="Einzelnen Datensatz lesen"
+                    code={`GET ${SUPABASE_URL}/rest/v1/${t.name}?id=eq.{uuid}`}
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* PostgREST Docs Link */}
+      <div className="mt-6 text-center">
+        <a
+          href="https://postgrest.org/en/stable/references/api.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 font-body text-sm text-primary hover:underline"
+        >
+          <ExternalLink size={14} />
+          Vollständige API-Referenz (PostgREST)
+        </a>
+      </div>
+    </div>
+  );
+};
+
+export default AdminApiDocs;

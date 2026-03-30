@@ -23,6 +23,9 @@ import AdminJobs from "./pages/admin/AdminJobs";
 import AdminNav from "./pages/admin/AdminNav";
 import AdminHeroes from "./pages/admin/AdminHeroes";
 import AdminInquiries from "./pages/admin/AdminInquiries";
+import AdminSettings from "./pages/admin/AdminSettings";
+import AdminApiDocs from "./pages/admin/AdminApiDocs";
+import AdminDocs from "./pages/admin/AdminDocs";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
@@ -67,6 +70,9 @@ const App = () => (
                 <Route path="/admin/agencies" element={<AdminAgencies />} />
                 <Route path="/admin/jobs" element={<AdminJobs />} />
                 <Route path="/admin/inquiries" element={<AdminInquiries />} />
+                <Route path="/admin/settings" element={<AdminSettings />} />
+                <Route path="/admin/api-docs" element={<AdminApiDocs />} />
+                <Route path="/admin/docs" element={<AdminDocs />} />
               </Route>
             </Route>
 
