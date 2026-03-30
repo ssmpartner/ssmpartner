@@ -160,10 +160,12 @@ const Career = () => {
             <div className="grid md:grid-cols-2 gap-6 lg:gap-8 mt-12">
               {videoCards.map((card, i) => (
                 <AnimatedSection key={card.id} delay={i * 0.15}>
-                  <button
+                  <motion.button
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" }}
                     onClick={() => card.video_url && setActiveVideo(card.video_url)}
-                    className="group relative w-full aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer border border-border"
-                    style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}
+                    className="group relative w-full aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer border border-border hover:shadow-2xl transition-shadow duration-300"
+                    style={{ boxShadow: "0 16px 48px -8px rgba(0,0,0,0.15), 0 8px 24px -4px rgba(106,147,135,0.2)" }}
                   >
                     {card.image_url ? (
                       <img src={card.image_url} alt={card.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
