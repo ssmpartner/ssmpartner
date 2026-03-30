@@ -134,7 +134,7 @@ const Index = () => {
           <ChevronRight size={20} />
         </button>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -142,7 +142,7 @@ const Index = () => {
               aria-label={`Slide ${i + 1}`}
               className="w-2.5 h-2.5 rounded-full transition-all duration-300"
               style={{
-                backgroundColor: i === current ? "#ffffff" : "rgba(255,255,255,0.4)",
+                backgroundColor: i === current ? "#B3B69C" : "rgba(179,182,156,0.45)",
                 transform: i === current ? "scale(1.2)" : "scale(1)",
               }}
             />
@@ -151,20 +151,21 @@ const Index = () => {
       </section>
 
       {/* Overlap CTA Bar */}
-      <div className="relative z-20 -mt-7 px-6 lg:px-8">
+      <div className="relative z-20 -mt-9 px-6 lg:px-8">
         <div
-          className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-8 py-4 rounded-full"
+          className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 px-10 py-5"
           style={{
             backgroundColor: "#B3B69C",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)",
+            borderRadius: "18px",
+            boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)",
           }}
         >
-          <p className="font-body text-sm sm:text-base font-medium text-white text-center sm:text-left">
+          <p className="font-body text-base sm:text-lg font-medium text-white text-center sm:text-left">
             Persönliche Beratung — wir sind für Sie da.
           </p>
           <Link
             to="/kontakt"
-            className="shrink-0 font-body text-sm font-semibold px-6 py-2.5 rounded-full transition-all hover:opacity-90 uppercase tracking-wider"
+            className="shrink-0 font-body text-sm font-semibold px-7 py-3 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider"
             style={{ backgroundColor: "#243e3a", color: "#ffffff" }}
           >
             Jetzt Kontakt aufnehmen
