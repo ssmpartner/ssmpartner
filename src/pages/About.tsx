@@ -9,6 +9,7 @@ import { ContactCardModal } from "@/components/ContactCardModal";
 
 const About = () => {
   const { lang, t } = useLanguage();
+  const [selectedMember, setSelectedMember] = useState<any>(null);
 
   const values = [
     { title: t("about.values.1.title"), desc: t("about.values.1.desc") },
