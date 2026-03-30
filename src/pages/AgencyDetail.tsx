@@ -351,7 +351,7 @@ const AgencyDetail = () => {
                   </div>
                 </AnimatedSection>
               ))}
-              {teamMembers?.map((member, i) => (
+              {teamMembers?.filter((tm: any) => !tm.is_agency_leader).map((member, i) => (
                 <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
                   <div className="group relative flex flex-col items-center text-center">
                     <div
