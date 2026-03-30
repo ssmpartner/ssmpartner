@@ -164,43 +164,50 @@ const AgencyDetail = () => {
               )}
 
               {/* Agenturleiter – prominent */}
-              {agency.leader_name && (
-                <AnimatedSection delay={0.15}>
-                  <div
-                    className="bg-card border rounded-2xl p-6 lg:p-8 flex items-center gap-6"
-                    style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.08)" }}
-                  >
+              {(() => {
+                const leader = teamMembers?.find((tm: any) => tm.is_agency_leader);
+                const leaderName = leader?.name || agency.leader_name;
+                const leaderRole = leader?.role_de || agency.leader_role;
+                const leaderImage = leader?.image_url || agency.leader_image_url;
+                if (!leaderName) return null;
+                return (
+                  <AnimatedSection delay={0.15}>
                     <div
-                      className="w-24 h-24 lg:w-32 lg:h-32 rounded-2xl overflow-hidden bg-muted shrink-0"
-                      style={{ boxShadow: "0 4px 16px rgba(36,62,58,0.15)" }}
+                      className="bg-card border rounded-2xl p-6 lg:p-8 flex items-center gap-6"
+                      style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.08)" }}
                     >
-                      {agency.leader_image_url ? (
-                        <img src={agency.leader_image_url} alt={agency.leader_name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-3xl">
-                          {agency.leader_name.charAt(0)}
-                        </div>
-                      )}
+                      <div
+                        className="w-24 h-24 lg:w-32 lg:h-32 rounded-2xl overflow-hidden bg-muted shrink-0"
+                        style={{ boxShadow: "0 4px 16px rgba(36,62,58,0.15)" }}
+                      >
+                        {leaderImage ? (
+                          <img src={leaderImage} alt={leaderName} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-3xl">
+                            {leaderName.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-body text-xs font-medium text-primary uppercase tracking-wider mb-1">Agenturleitung</p>
+                        <h3 className="font-heading text-xl lg:text-2xl font-bold text-foreground">{leaderName}</h3>
+                        {leaderRole && (
+                          <p className="font-body text-sm text-muted-foreground mt-1">{leaderRole}</p>
+                        )}
+                        {agency.email && (
+                          <a
+                            href={`mailto:${agency.email}`}
+                            className="inline-flex items-center gap-2 font-body text-sm text-primary hover:underline mt-3"
+                          >
+                            <Mail size={14} />
+                            Kontakt aufnehmen
+                          </a>
+                        )}
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-body text-xs font-medium text-primary uppercase tracking-wider mb-1">Agenturleitung</p>
-                      <h3 className="font-heading text-xl lg:text-2xl font-bold text-foreground">{agency.leader_name}</h3>
-                      {agency.leader_role && (
-                        <p className="font-body text-sm text-muted-foreground mt-1">{agency.leader_role}</p>
-                      )}
-                      {agency.email && (
-                        <a
-                          href={`mailto:${agency.email}`}
-                          className="inline-flex items-center gap-2 font-body text-sm text-primary hover:underline mt-3"
-                        >
-                          <Mail size={14} />
-                          Kontakt aufnehmen
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </AnimatedSection>
-              )}
+                  </AnimatedSection>
+                );
+              })()}
             </div>
 
             {/* Right: Contact sidebar */}
@@ -344,7 +351,7 @@ const AgencyDetail = () => {
                   </div>
                 </AnimatedSection>
               ))}
-              {teamMembers?.map((member, i) => (
+              {teamMembers?.filter((tm: any) => !tm.is_agency_leader).map((member, i) => (
                 <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
                   <div className="group relative flex flex-col items-center text-center">
                     <div

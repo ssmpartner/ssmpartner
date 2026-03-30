@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const AdminTeam = () => {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "" });
+  const [form, setForm] = useState({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false });
   const [uploading, setUploading] = useState(false);
 
   const { data: agencies } = useQuery({
@@ -34,12 +34,12 @@ const AdminTeam = () => {
       const cat = agencyId ? "agentur" : item.category;
       if (item.id) {
         const { error } = await supabase.from("team_members").update({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId, is_agency_leader: item.is_agency_leader,
         }).eq("id", item.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("team_members").insert({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId, is_agency_leader: item.is_agency_leader,
           sort_order: (members?.length || 0),
         });
         if (error) throw error;
@@ -48,7 +48,7 @@ const AdminTeam = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-team"] });
       setEditingId(null);
-      setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "" });
+      setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false });
       toast.success("Gespeichert");
     },
     onError: (err: any) => toast.error(err.message),
@@ -86,7 +86,7 @@ const AdminTeam = () => {
 
   const startEdit = (m: any) => {
     setEditingId(m.id);
-    setForm({ name: m.name, role_de: m.role_de || "", role_fr: m.role_fr || "", role_it: m.role_it || "", role_en: m.role_en || "", category: m.category || "geschaeftsleitung", agency_id: (m as any).agency_id || "" });
+    setForm({ name: m.name, role_de: m.role_de || "", role_fr: m.role_fr || "", role_it: m.role_it || "", role_en: m.role_en || "", category: m.category || "geschaeftsleitung", agency_id: (m as any).agency_id || "", is_agency_leader: (m as any).is_agency_leader || false });
   };
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
@@ -95,7 +95,7 @@ const AdminTeam = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-heading text-2xl font-bold text-foreground">Team</h1>
-        <button onClick={() => { setEditingId("new"); setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "" }); }}
+        <button onClick={() => { setEditingId("new"); setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false }); }}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90">
           <Plus size={18} /> Mitglied hinzufügen
         </button>
@@ -111,12 +111,18 @@ const AdminTeam = () => {
             <option value="agentur">Agentur-Zuweisung</option>
           </select>
           {form.category === "agentur" && (
-            <select value={form.agency_id} onChange={(e) => setForm({ ...form, agency_id: e.target.value })} className={inputClass}>
-              <option value="">– Agentur wählen –</option>
-              {agencies?.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
+            <>
+              <select value={form.agency_id} onChange={(e) => setForm({ ...form, agency_id: e.target.value })} className={inputClass}>
+                <option value="">– Agentur wählen –</option>
+                {agencies?.map((a) => (
+                  <option key={a.id} value={a.id}>{a.name}</option>
+                ))}
+              </select>
+              <label className="flex items-center gap-2 font-body text-sm text-foreground cursor-pointer">
+                <input type="checkbox" checked={form.is_agency_leader} onChange={(e) => setForm({ ...form, is_agency_leader: e.target.checked })} className="rounded border-border" />
+                Agenturleiter/in
+              </label>
+            </>
           )}
           <div className="grid grid-cols-2 gap-4">
             <input placeholder="Rolle (DE)" value={form.role_de} onChange={(e) => setForm({ ...form, role_de: e.target.value })} className={inputClass} />
@@ -160,7 +166,7 @@ const AdminTeam = () => {
                   <h3 className="font-heading text-xs font-semibold text-foreground truncate">{m.name}</h3>
                   <p className="font-body text-[10px] text-muted-foreground truncate">{m.role_de}</p>
                   <span className="font-body text-[9px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground mt-0.5 inline-block">
-                    {m.category === "fachfuehrung" ? "Fachführung" : m.category === "erweitertes_team" ? "Erw. Team" : m.category === "agentur" ? (agencies?.find(a => a.id === (m as any).agency_id)?.name || "Agentur") : "GL"}
+                    {m.category === "fachfuehrung" ? "Fachführung" : m.category === "erweitertes_team" ? "Erw. Team" : m.category === "agentur" ? `${agencies?.find(a => a.id === (m as any).agency_id)?.name || "Agentur"}${(m as any).is_agency_leader ? " ★" : ""}` : "GL"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 items-center shrink-0">
