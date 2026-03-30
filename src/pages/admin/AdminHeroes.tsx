@@ -5,6 +5,14 @@ import { Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
 const staticPages = [
+  // Home
+  { key: "home_who_1", label: "Home – Wer wir sind Bild 1" },
+  { key: "home_who_2", label: "Home – Wer wir sind Bild 2" },
+  { key: "home_career", label: "Home – Karriere-Bild" },
+  { key: "home_trust_bg", label: "Home – Vertrauen Hintergrund" },
+  { key: "home_quickstart_1", label: "Home – Quickstart Karte 1" },
+  { key: "home_quickstart_2", label: "Home – Quickstart Karte 2" },
+  // Unterseiten
   { key: "about", label: "Über uns" },
   { key: "about-intro", label: "Über uns – Intro-Bild" },
   { key: "career", label: "Karriere" },
