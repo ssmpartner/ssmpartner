@@ -262,6 +262,11 @@ const AdminTeam = () => {
                 <input type="checkbox" checked={form.is_recruiting_partner} onChange={(e) => setForm({ ...form, is_recruiting_partner: e.target.checked })} className="rounded border-border" />
                 Recruiting Partner (Karriereseite)
               </label>
+              {form.category === "agentur" && (
+                <select value={form.badge} onChange={(e) => setForm({ ...form, badge: e.target.value })} className={inputClass}>
+                  {badgeOptions.map(b => <option key={b.value} value={b.value}>{b.label}</option>)}
+                </select>
+              )}
             </div>
           </div>
 
