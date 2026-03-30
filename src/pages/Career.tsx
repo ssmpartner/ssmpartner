@@ -200,7 +200,7 @@ const Career = () => {
       {/* ── Image Divider ── */}
       <div className="relative h-64 lg:h-80 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80"
+          src={dividerImages?.["career-divider-1"] || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80"}
           alt="Teamarbeit"
           className="w-full h-full object-cover"
         />
