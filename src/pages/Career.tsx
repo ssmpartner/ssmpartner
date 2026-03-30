@@ -54,6 +54,7 @@ const Career = () => {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [showProcess, setShowProcess] = useState(false);
   const [activePhase, setActivePhase] = useState(0);
+  const [showApply, setShowApply] = useState(false);
 
   const { data: recruitingPartner } = useQuery({
     queryKey: ["recruiting-partner"],
