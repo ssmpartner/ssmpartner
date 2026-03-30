@@ -137,17 +137,26 @@ const AdminHeroes = () => {
                     <h3 className="font-body text-sm font-medium text-foreground">{page.label}</h3>
                     <p className="font-body text-xs text-muted-foreground">Seite: /{page.key}</p>
                   </div>
-                  <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-xs font-medium px-3 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
-                    <Upload size={14} />
-                    {uploading === page.key ? "Hochladen..." : "Bild ändern"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleUpload(page.key, e)}
-                      className="hidden"
-                      disabled={uploading === page.key}
-                    />
-                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setMediaPickerKey(page.key)}
+                      className="inline-flex items-center gap-2 bg-muted text-foreground font-body text-xs font-medium px-3 py-2 rounded-lg hover:bg-muted/80 transition-colors"
+                    >
+                      <FolderOpen size={14} />
+                      Mediathek
+                    </button>
+                    <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-xs font-medium px-3 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
+                      <Upload size={14} />
+                      {uploading === page.key ? "Hochladen..." : "Hochladen"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleUpload(page.key, e)}
+                        className="hidden"
+                        disabled={uploading === page.key}
+                      />
+                    </label>
+                  </div>
                 </div>
               </div>
             );
