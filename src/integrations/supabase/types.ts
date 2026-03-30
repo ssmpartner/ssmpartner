@@ -492,6 +492,7 @@ export type Database = {
         Row: {
           active: boolean
           agency_id: string | null
+          badge: string | null
           category: string
           created_at: string
           email: string | null
@@ -511,6 +512,7 @@ export type Database = {
         Insert: {
           active?: boolean
           agency_id?: string | null
+          badge?: string | null
           category?: string
           created_at?: string
           email?: string | null
@@ -530,6 +532,7 @@ export type Database = {
         Update: {
           active?: boolean
           agency_id?: string | null
+          badge?: string | null
           category?: string
           created_at?: string
           email?: string | null
