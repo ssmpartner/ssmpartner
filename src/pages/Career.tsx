@@ -68,7 +68,14 @@ const Career = () => {
       {videoCards && videoCards.length > 0 && (
         <section className="py-16 lg:py-24 border-t">
           <div className="container mx-auto px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+            <AnimatedSection>
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Einblick in unsere Welt</h2>
+              <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
+                Erleben Sie, wie der Arbeitsalltag bei SSM Partner aussieht — authentisch, motivierend und voller Möglichkeiten.
+              </p>
+              <div className="brand-rule mt-4" />
+            </AnimatedSection>
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-8 mt-12">
               {videoCards.map((card, i) => (
                 <AnimatedSection key={card.id} delay={i * 0.15}>
                   <button
@@ -96,6 +103,34 @@ const Career = () => {
           </div>
         </section>
       )}
+
+      {/* Was dich erwartet */}
+      <section className="py-16 lg:py-24 border-t">
+        <div className="container mx-auto px-6 lg:px-8">
+          <AnimatedSection>
+            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Was dich erwartet bei SSM</h2>
+            <div className="brand-rule mt-4" />
+          </AnimatedSection>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mt-12">
+            {[
+              { icon: HeartHandshake, label: "Work-Life-Balance" },
+              { icon: Scale, label: "Faire Vergütung" },
+              { icon: Palmtree, label: "Ferien" },
+              { icon: BadgePercent, label: "Rabatte" },
+              { icon: GraduationCap, label: "Aus- & Weiterbildung" },
+            ].map((item, i) => (
+              <AnimatedSection key={i} delay={i * 0.08}>
+                <div className="flex flex-col items-center text-center gap-4 rounded-2xl border border-border p-6 lg:p-8 hover:shadow-lg transition-shadow">
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ backgroundColor: "#6A9387" }}>
+                    <item.icon size={28} className="text-white" />
+                  </div>
+                  <span className="font-heading text-sm font-semibold text-foreground">{item.label}</span>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Video Modal */}
       {activeVideo && (
