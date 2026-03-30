@@ -48,6 +48,7 @@ const About = () => {
 
   const geschaeftsleitung = members?.filter((m) => m.category === "geschaeftsleitung") || [];
   const fachfuehrung = members?.filter((m) => m.category === "fachfuehrung") || [];
+  const erweitertesTeam = members?.filter((m) => m.category === "erweitertes_team") || [];
 
   const introImageUrl = aboutImage?.image_url || "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80";
 
@@ -181,6 +182,42 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      {/* Erweitertes Team */}
+      {erweitertesTeam.length > 0 && (
+        <section className="py-24 lg:py-32 border-t">
+          <div className="container mx-auto px-6 lg:px-8">
+            <AnimatedSection>
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Erweitertes Team</h2>
+              <div className="brand-rule mt-4" />
+            </AnimatedSection>
+            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-8 lg:gap-10 mt-16">
+              {erweitertesTeam.map((member, i) => (
+                <AnimatedSection key={member.id} delay={i * 0.05}>
+                  <div className="flex flex-col items-center text-center">
+                    <div
+                      className="w-24 h-24 lg:w-28 lg:h-28 rounded-full overflow-hidden bg-muted"
+                      style={{
+                        boxShadow: "0 6px 24px rgba(36,62,58,0.15), 0 2px 6px rgba(0,0,0,0.05)",
+                      }}
+                    >
+                      {member.image_url ? (
+                        <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-2xl">
+                          {member.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="font-heading text-sm font-semibold text-foreground mt-3">{member.name}</h3>
+                    <p className="font-body text-xs text-muted-foreground mt-0.5">{getRole(member)}</p>
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </main>
   );
 };
