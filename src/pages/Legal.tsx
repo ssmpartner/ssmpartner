@@ -7,14 +7,15 @@ import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 
 const TABS = [
-  { key: "impressum", labelKey: "legal.impressum" },
-  { key: "datenschutz", labelKey: "legal.datenschutz" },
+  { key: "impressum", label: "Impressum" },
+  { key: "datenschutz", label: "Datenschutz" },
+  { key: "socialmedia", label: "Social Media" },
 ] as const;
 
 const Legal = () => {
   const { lang, t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get("tab") === "datenschutz" ? "datenschutz" : "impressum";
+  const initialTab = (searchParams.get("tab") as string) || "impressum";
   const [activeTab, setActiveTab] = useState(initialTab);
 
   const { data: content, isLoading } = useQuery({
@@ -44,7 +45,7 @@ const Legal = () => {
       <AnimatedSection>
         <section className="max-w-4xl mx-auto px-6 py-16 lg:py-24">
           {/* Tab Switch */}
-          <div className="flex bg-muted rounded-xl p-1 mb-12 max-w-md mx-auto">
+          <div className="flex bg-muted rounded-xl p-1 mb-12 max-w-xl mx-auto">
             {TABS.map((tab) => (
               <button
                 key={tab.key}
@@ -55,7 +56,7 @@ const Legal = () => {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {tab.key === "impressum" ? "Impressum" : "Datenschutz"}
+                {tab.label}
               </button>
             ))}
           </div>
