@@ -39,7 +39,7 @@ const AdminTeam = () => {
         if (error) throw error;
       } else {
         const { error } = await supabase.from("team_members").insert({
-          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId,
+          name: item.name, role_de: item.role_de, role_fr: item.role_fr, role_it: item.role_it, role_en: item.role_en, category: cat, agency_id: agencyId, is_agency_leader: item.is_agency_leader,
           sort_order: (members?.length || 0),
         });
         if (error) throw error;
