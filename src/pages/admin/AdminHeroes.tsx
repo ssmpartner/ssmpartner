@@ -9,6 +9,7 @@ const pages = [
   { key: "career", label: "Karriere" },
   { key: "contact", label: "Kontakt" },
   { key: "team", label: "Team" },
+  { key: "legal", label: "Impressum / Datenschutz" },
 ];
 
 const AdminHeroes = () => {

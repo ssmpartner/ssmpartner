@@ -20,6 +20,7 @@ import AdminTeam from "./pages/admin/AdminTeam";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminNav from "./pages/admin/AdminNav";
 import AdminHeroes from "./pages/admin/AdminHeroes";
+import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/team" element={<PublicLayout><Team /></PublicLayout>} />
             <Route path="/karriere" element={<PublicLayout><Career /></PublicLayout>} />
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
+            <Route path="/rechtliches" element={<PublicLayout><Legal /></PublicLayout>} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />

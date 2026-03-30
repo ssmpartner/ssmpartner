@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-const PAGES = ["home", "about", "career", "contact"] as const;
+const PAGES = ["home", "about", "career", "contact", "legal"] as const;
 const LANGS = ["de", "fr", "it", "en"] as const;
 
 const AdminContent = () => {
