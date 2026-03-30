@@ -484,6 +484,11 @@ const AgencyDetail = () => {
           </div>
         </section>
       )}
+      <ContactCardModal
+        member={selectedContact || { name: "" }}
+        open={!!selectedContact}
+        onClose={() => setSelectedContact(null)}
+      />
     </main>
   );
 };
