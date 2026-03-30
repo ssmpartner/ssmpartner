@@ -431,10 +431,12 @@ export type Database = {
           agency_id: string | null
           category: string
           created_at: string
+          email: string | null
           id: string
           image_url: string | null
           is_agency_leader: boolean
           name: string
+          phone: string | null
           role_de: string | null
           role_en: string | null
           role_fr: string | null
@@ -447,10 +449,12 @@ export type Database = {
           agency_id?: string | null
           category?: string
           created_at?: string
+          email?: string | null
           id?: string
           image_url?: string | null
           is_agency_leader?: boolean
           name: string
+          phone?: string | null
           role_de?: string | null
           role_en?: string | null
           role_fr?: string | null
@@ -463,10 +467,12 @@ export type Database = {
           agency_id?: string | null
           category?: string
           created_at?: string
+          email?: string | null
           id?: string
           image_url?: string | null
           is_agency_leader?: boolean
           name?: string
+          phone?: string | null
           role_de?: string | null
           role_en?: string | null
           role_fr?: string | null

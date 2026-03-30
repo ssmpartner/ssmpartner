@@ -1,0 +1,2 @@
+ALTER TABLE public.team_members ADD COLUMN phone text;
+ALTER TABLE public.team_members ADD COLUMN email text;

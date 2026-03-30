@@ -12,7 +12,7 @@ const categories = [
   { value: "agentur", label: "Alle Agenturen" },
 ];
 
-const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, image_url: "" };
+const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, image_url: "", phone: "", email: "" };
 
 const AdminTeam = () => {
   const queryClient = useQueryClient();
@@ -53,6 +53,8 @@ const AdminTeam = () => {
         agency_id: agencyId,
         is_agency_leader: item.is_agency_leader,
         image_url: item.image_url || null,
+        phone: item.phone || null,
+        email: item.email || null,
       };
       if (item.id) {
         const { error } = await supabase.from("team_members").update(payload).eq("id", item.id);
@@ -125,6 +127,8 @@ const AdminTeam = () => {
       agency_id: m.agency_id || "",
       is_agency_leader: m.is_agency_leader || false,
       image_url: m.image_url || "",
+      phone: m.phone || "",
+      email: m.email || "",
     });
   };
 
@@ -244,6 +248,11 @@ const AdminTeam = () => {
                 </label>
               )}
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <input placeholder="Telefon" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} />
+            <input placeholder="E-Mail" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">

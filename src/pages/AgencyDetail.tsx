@@ -7,12 +7,14 @@ import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
+import { ContactCardModal } from "@/components/ContactCardModal";
 
 const AgencyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "", recipient: "" });
   const [sending, setSending] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
 
   const { data: agency, isLoading } = useQuery({
     queryKey: ["agency", slug],
@@ -356,9 +358,14 @@ const AgencyDetail = () => {
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8 mt-14">
-              {members?.map((member, i) => (
+              {members?.map((member, i) => {
+                const hasContact = member.email || member.phone;
+                return (
                 <AnimatedSection key={member.id} delay={i * 0.05}>
-                  <div className="group relative flex flex-col items-center text-center">
+                  <div
+                    className={`group relative flex flex-col items-center text-center ${hasContact ? "cursor-pointer" : ""}`}
+                    onClick={() => hasContact && setSelectedContact({ ...member, role_de: member.role })}
+                  >
                     <div
                       className="w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted relative"
                       style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.12)" }}
@@ -370,11 +377,11 @@ const AgencyDetail = () => {
                           {member.name.charAt(0)}
                         </div>
                       )}
-                      {member.email && (
+                      {hasContact && (
                         <div className="absolute inset-0 bg-[#243e3a]/0 group-hover:bg-[#243e3a]/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <a href={`mailto:${member.email}`} className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                          <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
                             <Mail className="text-white" size={20} />
-                          </a>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -382,10 +389,16 @@ const AgencyDetail = () => {
                     {member.role && <p className="font-body text-sm text-muted-foreground mt-1">{member.role}</p>}
                   </div>
                 </AnimatedSection>
-              ))}
-              {teamMembers?.filter((tm: any) => !tm.is_agency_leader).map((member, i) => (
+                );
+              })}
+              {teamMembers?.filter((tm: any) => !tm.is_agency_leader).map((member, i) => {
+                const hasContact = (member as any).email || (member as any).phone;
+                return (
                 <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
-                  <div className="group relative flex flex-col items-center text-center">
+                  <div
+                    className={`group relative flex flex-col items-center text-center ${hasContact ? "cursor-pointer" : ""}`}
+                    onClick={() => hasContact && setSelectedContact(member)}
+                  >
                     <div
                       className="w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted relative"
                       style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.12)" }}
@@ -397,12 +410,20 @@ const AgencyDetail = () => {
                           {member.name.charAt(0)}
                         </div>
                       )}
+                      {hasContact && (
+                        <div className="absolute inset-0 bg-[#243e3a]/0 group-hover:bg-[#243e3a]/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                          <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                            <Mail className="text-white" size={20} />
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <h3 className="font-heading text-base font-semibold text-foreground mt-4">{member.name}</h3>
                     {member.role_de && <p className="font-body text-sm text-muted-foreground mt-1">{member.role_de}</p>}
                   </div>
                 </AnimatedSection>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
@@ -463,6 +484,11 @@ const AgencyDetail = () => {
           </div>
         </section>
       )}
+      <ContactCardModal
+        member={selectedContact || { name: "" }}
+        open={!!selectedContact}
+        onClose={() => setSelectedContact(null)}
+      />
     </main>
   );
 };

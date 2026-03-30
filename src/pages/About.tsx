@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
+import { ContactCardModal } from "@/components/ContactCardModal";
 
 const About = () => {
   const { lang, t } = useLanguage();
+  const [selectedMember, setSelectedMember] = useState<any>(null);
 
   const values = [
     { title: t("about.values.1.title"), desc: t("about.values.1.desc") },
@@ -53,11 +56,15 @@ const About = () => {
 
   const TeamCard = ({ member, delay, size = "lg" }: { member: any; delay: number; size?: "lg" | "sm" }) => {
     const isSmall = size === "sm";
+    const hasContact = member.phone || member.email;
     return (
       <AnimatedSection delay={delay}>
-        <div className="group relative flex flex-col items-center text-center">
+        <div
+          className={`group relative flex flex-col items-center text-center ${hasContact ? "cursor-pointer" : ""}`}
+          onClick={() => hasContact && setSelectedMember(member)}
+        >
           <div
-            className={`${isSmall ? "w-full aspect-[3/4]" : "w-full aspect-[3/4]"} rounded-2xl overflow-hidden bg-muted relative`}
+            className={`w-full aspect-[3/4] rounded-2xl overflow-hidden bg-muted relative`}
             style={{
               boxShadow: "0 4px 24px rgba(36,62,58,0.12), 0 2px 8px rgba(0,0,0,0.04)",
             }}
@@ -74,12 +81,13 @@ const About = () => {
                 {member.name.charAt(0)}
               </div>
             )}
-            {/* Hover overlay with email icon */}
-            <div className="absolute inset-0 bg-[#243e3a]/0 group-hover:bg-[#243e3a]/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                <Mail className="text-white" size={isSmall ? 18 : 22} />
+            {hasContact && (
+              <div className="absolute inset-0 bg-[#243e3a]/0 group-hover:bg-[#243e3a]/70 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                  <Mail className="text-white" size={isSmall ? 18 : 22} />
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <h3 className={`font-heading font-semibold text-foreground ${isSmall ? "text-sm mt-3" : "text-base mt-4"}`}>{member.name}</h3>
           <p className={`font-body text-muted-foreground ${isSmall ? "text-xs mt-0.5" : "text-sm mt-1"}`}>{getRole(member)}</p>
@@ -192,6 +200,12 @@ const About = () => {
           </div>
         </section>
       )}
+
+      <ContactCardModal
+        member={selectedMember || { name: "" }}
+        open={!!selectedMember}
+        onClose={() => setSelectedMember(null)}
+      />
     </main>
   );
 };
