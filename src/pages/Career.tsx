@@ -1,22 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import { Play, X } from "lucide-react";
-
-const videoCards = [
-  {
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80",
-    title: "Arbeiten bei SSM Partner",
-    videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80",
-    title: "Dein Karriereweg",
-    videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-];
 
 const Career = () => {
   const { t } = useLanguage();
