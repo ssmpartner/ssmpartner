@@ -8,9 +8,12 @@ import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
 
+const hqImageKeys = ["hq-1", "hq-2", "hq-3", "hq-4", "hq-5"];
+
 const Agencies = () => {
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   const { data: agencies, isLoading } = useQuery({
     queryKey: ["agencies"],
