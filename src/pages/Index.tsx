@@ -148,7 +148,7 @@ const Index = () => {
           <ChevronRight size={20} />
         </button>
 
-        <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
           {slides.map((_, i) => (
             <button
               key={i}
