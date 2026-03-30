@@ -9,7 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import About from "./pages/About";
-import Team from "./pages/Team";
+import Agencies from "./pages/Agencies";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSlider from "./pages/admin/AdminSlider";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminTeam from "./pages/admin/AdminTeam";
+import AdminAgencies from "./pages/admin/AdminAgencies";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminNav from "./pages/admin/AdminNav";
 import AdminHeroes from "./pages/admin/AdminHeroes";
@@ -43,7 +44,7 @@ const App = () => (
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
             <Route path="/ueber-uns" element={<PublicLayout><About /></PublicLayout>} />
-            <Route path="/team" element={<PublicLayout><Team /></PublicLayout>} />
+            <Route path="/agenturen" element={<PublicLayout><Agencies /></PublicLayout>} />
             <Route path="/karriere" element={<PublicLayout><Career /></PublicLayout>} />
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
             <Route path="/rechtliches" element={<PublicLayout><Legal /></PublicLayout>} />
@@ -60,6 +61,7 @@ const App = () => (
                 <Route path="/admin/nav" element={<AdminNav />} />
                 <Route path="/admin/content" element={<AdminContent />} />
                 <Route path="/admin/team" element={<AdminTeam />} />
+                <Route path="/admin/agencies" element={<AdminAgencies />} />
                 <Route path="/admin/jobs" element={<AdminJobs />} />
               </Route>
             </Route>
