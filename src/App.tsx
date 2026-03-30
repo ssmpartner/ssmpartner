@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSlider from "./pages/admin/AdminSlider";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminTeam from "./pages/admin/AdminTeam";
+import AdminAgencies from "./pages/admin/AdminAgencies";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminNav from "./pages/admin/AdminNav";
 import AdminHeroes from "./pages/admin/AdminHeroes";
