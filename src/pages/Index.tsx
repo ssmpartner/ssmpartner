@@ -201,26 +201,8 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Stats */}
-      <section className="py-20 lg:py-24">
-        <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-            {[
-              { end: 100, suffix: "+", label: t("home.stats.coaches") },
-              { end: 10000, suffix: "+", label: t("home.stats.consultations") },
-              { end: 10, suffix: "+", label: "Standorte" },
-              { end: 20, suffix: "+", label: t("home.stats.years") },
-            ].map((stat, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
-                <div className="text-center">
-                  <CountUp end={stat.end} suffix={stat.suffix} />
-                  <p className="font-body text-sm text-muted-foreground mt-2">{stat.label}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Animated Quote Banner */}
+      <QuoteBanner />
 
       {/* Wer wir sind */}
       <section className="py-24 lg:py-32 bg-card">
