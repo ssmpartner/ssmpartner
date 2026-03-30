@@ -433,9 +433,9 @@ const Career = () => {
                           {phases[activePhase + 1].label} <ChevronRight size={14} />
                         </button>
                       ) : (
-                        <Link to="/kontakt?subject=career" onClick={() => setShowProcess(false)} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
+                        <button onClick={() => { setShowProcess(false); setShowApply(true); }} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
                           <Send size={14} /> Jetzt bewerben
-                        </Link>
+                        </button>
                       )}
                     </div>
                   </motion.div>
