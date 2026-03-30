@@ -48,6 +48,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
     <Navbar />
     {children}
     <Footer />
+    <ChatWidget />
   </>
 );
 
