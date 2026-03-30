@@ -25,7 +25,7 @@ const Legal = () => {
         .select("*")
         .eq("page", "legal")
         .eq("lang", lang)
-        .eq("section_key", activeTab)
+        .like("section_key", `${activeTab}%`)
         .order("sort_order");
       if (error) throw error;
       return data;
