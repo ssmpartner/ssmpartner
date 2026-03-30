@@ -59,6 +59,45 @@ export type Database = {
         }
         Relationships: []
       }
+      nav_items: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          label_de: string
+          label_en: string | null
+          label_fr: string | null
+          label_it: string | null
+          sort_order: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label_de: string
+          label_en?: string | null
+          label_fr?: string | null
+          label_it?: string | null
+          sort_order?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          label_de?: string
+          label_en?: string | null
+          label_fr?: string | null
+          label_it?: string | null
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       site_content: {
         Row: {
           body: string | null
@@ -106,27 +145,33 @@ export type Database = {
           active: boolean
           alt_text: string | null
           created_at: string
+          headline: string | null
           id: string
           image_url: string
           sort_order: number
+          subline: string | null
           updated_at: string
         }
         Insert: {
           active?: boolean
           alt_text?: string | null
           created_at?: string
+          headline?: string | null
           id?: string
           image_url: string
           sort_order?: number
+          subline?: string | null
           updated_at?: string
         }
         Update: {
           active?: boolean
           alt_text?: string | null
           created_at?: string
+          headline?: string | null
           id?: string
           image_url?: string
           sort_order?: number
+          subline?: string | null
           updated_at?: string
         }
         Relationships: []
