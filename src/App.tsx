@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminLayout from "@/components/AdminLayout";
 import Index from "./pages/Index";
 import About from "./pages/About";
+import Team from "./pages/Team";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
