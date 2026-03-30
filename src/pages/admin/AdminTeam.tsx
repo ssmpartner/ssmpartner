@@ -37,7 +37,7 @@ const AdminTeam = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-team"] });
       setEditingId(null);
-      setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "" });
+      setForm({ name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung" });
       toast.success("Gespeichert");
     },
     onError: (err: any) => toast.error(err.message),
