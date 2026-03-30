@@ -200,6 +200,12 @@ const About = () => {
           </div>
         </section>
       )}
+
+      <ContactCardModal
+        member={selectedMember || { name: "" }}
+        open={!!selectedMember}
+        onClose={() => setSelectedMember(null)}
+      />
     </main>
   );
 };
