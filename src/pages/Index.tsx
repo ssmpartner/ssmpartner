@@ -4,7 +4,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AnimatedSection from "@/components/AnimatedSection";
-import CountUp from "@/components/CountUp";
+
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Phone, Send, ChevronLeft, ChevronRight, MapPin,
