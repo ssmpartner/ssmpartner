@@ -33,8 +33,8 @@ const CountUp: React.FC<Props> = ({ end, suffix = "", prefix = "", duration = 20
   }, [end, duration]);
 
   return (
-    <span ref={ref} className="font-heading text-4xl lg:text-5xl text-foreground">
-      {prefix}{count}{suffix}
+    <span ref={ref} className="font-heading text-4xl lg:text-5xl font-bold text-foreground">
+      {prefix}{count.toLocaleString("de-CH")}{suffix}
     </span>
   );
 };
