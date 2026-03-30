@@ -177,6 +177,39 @@ export type Database = {
           },
         ]
       }
+      career_videos: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          image_url: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           agency_id: string | null
