@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
-import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake, Mail, Building2, MessageCircleQuestion } from "lucide-react";
+import { Play, X, Scale, Palmtree, BadgePercent, GraduationCap, HeartHandshake, Mail, Building2, MessageCircleQuestion, ArrowRight } from "lucide-react";
 
 const Career = () => {
   const { t } = useLanguage();
@@ -282,13 +282,16 @@ const Career = () => {
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
             <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("career.onboarding.title")}</h2>
+            <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
+              Von der Bewerbung bis zum ersten Arbeitstag — wir begleiten dich durch jeden Schritt.
+            </p>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
           <div className="grid md:grid-cols-4 gap-8 lg:gap-12 mt-16">
             {steps.map((s, i) => (
               <AnimatedSection key={i} delay={i * 0.1}>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center font-heading text-sm font-bold text-primary-foreground">{i + 1}</span>
+                  <span className="w-10 h-10 rounded-xl flex items-center justify-center font-heading text-sm font-bold text-white" style={{ backgroundColor: "#6A9387" }}>{i + 1}</span>
                   <div className="h-px flex-1 bg-border" />
                 </div>
                 <h3 className="font-heading text-sm font-semibold text-foreground">{s.title}</h3>
@@ -296,6 +299,15 @@ const Career = () => {
               </AnimatedSection>
             ))}
           </div>
+          <AnimatedSection delay={0.4} className="mt-12">
+            <Link
+              to="/karriere/bewerbungsprozess"
+              className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl text-white transition-colors hover:opacity-90"
+              style={{ backgroundColor: "#6A9387" }}
+            >
+              Bewerbungsprozess erkunden <ArrowRight size={16} />
+            </Link>
+          </AnimatedSection>
         </div>
       </section>
     </main>
