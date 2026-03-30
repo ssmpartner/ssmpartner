@@ -90,6 +90,7 @@ const App = () => (
                 <Route path="/admin/settings" element={<AdminSettings />} />
                 <Route path="/admin/api-docs" element={<AdminApiDocs />} />
                 <Route path="/admin/docs" element={<AdminDocs />} />
+                <Route path="/admin/chat-knowledge" element={<AdminChatKnowledge />} />
               </Route>
             </Route>
 

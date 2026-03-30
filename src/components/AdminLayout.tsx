@@ -14,6 +14,7 @@ const adminLinks = [
   { to: "/admin/career-videos", label: "Karriere-Videos", icon: Video },
   { to: "/admin/career-faqs", label: "Karriere-FAQ", icon: HelpCircle },
   { to: "/admin/media", label: "Mediathek", icon: FolderOpen },
+  { to: "/admin/chat-knowledge", label: "KI-Chat Wissen", icon: Bot },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },
   { to: "/admin/api-docs", label: "API-Docs", icon: Code2 },
