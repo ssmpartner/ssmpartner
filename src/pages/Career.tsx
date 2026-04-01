@@ -169,8 +169,7 @@ const Career = () => {
       <PageHero pageKey="career" fallbackImage="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=80" />
 
       {/* ── Hero Text ── */}
-      <section className="py-24 lg:py-32 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-hero opacity-[0.03]" />
+      <section className="py-24 lg:py-32 relative overflow-hidden bg-background">
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "right bottom", backgroundRepeat: "no-repeat", opacity: 0.07, mixBlendMode: "multiply", transform: "scaleY(-1)" }} />
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl relative z-10">
           <AnimatedSection>
