@@ -33,13 +33,11 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
           alt={hero?.alt_text || ""}
           className="w-full h-full object-cover"
         />
-        {/* Rounded bg overlay at bottom of hero */}
-        <div className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 overflow-hidden">
-          {/* Green line follows the curve */}
-          <div className="absolute top-0 left-0 right-0 h-1 rounded-t-[2rem] lg:rounded-t-[2.5rem]" style={{ backgroundColor: "#B3B69C" }} />
-          {/* Background fill below line */}
-          <div className="absolute top-1 left-0 right-0 bottom-0 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background" />
-        </div>
+        {/* Floating rounded overlap with shadow */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
+          style={{ boxShadow: "0 -10px 30px rgba(0,0,0,0.15)" }}
+        />
       </div>
     </div>
   );
