@@ -32,6 +32,7 @@ import AdminCareerFaqs from "./pages/admin/AdminCareerFaqs";
 import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
 import AdminChatKnowledge from "./pages/admin/AdminChatKnowledge";
 import ChatWidget from "@/components/ChatWidget";
+import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/karriere" element={<PublicLayout><Career /></PublicLayout>} />
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
             <Route path="/rechtliches" element={<PublicLayout><Legal /></PublicLayout>} />
+            <Route path="/vag45" element={<PublicLayout><Vag45 /></PublicLayout>} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />
