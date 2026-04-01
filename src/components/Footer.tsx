@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import ssmLogo from "@/assets/ssm-logo-green.png";
+import ssmPattern from "@/assets/ssm-structure-pattern.png";
 
 const Footer = () => {
   const { t } = useLanguage();
