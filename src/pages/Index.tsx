@@ -591,22 +591,24 @@ const Index = () => {
 
       {/* Phone CTA */}
       <section className="py-16 bg-primary">
-        <div className="container mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl">
-          <div>
-            <h3 className="font-heading text-lg font-semibold text-white">
-              {phoneTitle}
-            </h3>
-            <p className="font-body text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
-              {phoneSub}
-            </p>
+        <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-8 py-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="font-heading text-lg font-semibold text-white">
+                {phoneTitle}
+              </h3>
+              <p className="font-body text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
+                {phoneSub}
+              </p>
+            </div>
+            <a
+              href={`tel:${phoneNumber.replace(/\s/g, "")}`}
+              className="font-heading text-2xl lg:text-3xl font-bold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex items-center gap-3"
+            >
+              <Phone size={24} />
+              {phoneNumber}
+            </a>
           </div>
-          <a
-            href={`tel:${phoneNumber.replace(/\s/g, "")}`}
-            className="font-heading text-2xl lg:text-3xl font-bold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex items-center gap-3"
-          >
-            <Phone size={24} />
-            {phoneNumber}
-          </a>
         </div>
       </section>
 
