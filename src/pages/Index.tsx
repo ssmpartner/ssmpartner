@@ -345,7 +345,7 @@ const Index = () => {
       </section>
 
       {/* Overlap CTA Bar */}
-      <div className="relative z-20 -mt-12 px-6 lg:px-8">
+      <div className="relative z-20 -mt-24 lg:-mt-26 px-6 lg:px-8">
         <div
           className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 px-10 lg:px-14 py-7"
           style={{
