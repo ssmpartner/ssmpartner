@@ -4,6 +4,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, ArrowRight, Building2, Users, Phone, X } from "lucide-react";
+import ssmPattern from "@/assets/ssm-structure-pattern.png";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
@@ -38,8 +39,9 @@ const Agencies = () => {
       <PageHero pageKey="team" fallbackImage="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" />
 
       {/* Intro Section */}
-      <section className="py-20 lg:py-28">
-        <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
+      <section className="py-20 lg:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "left top", backgroundRepeat: "no-repeat", opacity: 0.07, mixBlendMode: "multiply", transform: "scaleX(-1)" }} />
+        <div className="container mx-auto px-6 lg:px-8 max-w-6xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <AnimatedSection>
               <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">
