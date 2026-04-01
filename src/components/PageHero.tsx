@@ -25,24 +25,21 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
   if (!imageUrl) return null;
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {/* Hero image — full top, behind navbar */}
-      <div className="w-full h-[35vh] lg:h-[42vh] overflow-hidden">
+      <div className="w-full h-[35vh] lg:h-[42vh] overflow-hidden relative">
         <img
           src={imageUrl}
           alt={hero?.alt_text || ""}
           className="w-full h-full object-cover"
         />
-      </div>
-      {/* Green line */}
-      <div className="w-full h-1.5" style={{ backgroundColor: "#B3B69C" }} />
-      {/* Rounded overlap — content slides over hero */}
-      <div className="relative -mt-8 lg:-mt-12">
+        {/* Rounded bg overlay at bottom of hero */}
         <div
-          className="w-full h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
-          style={{ boxShadow: "0 -8px 24px rgba(0,0,0,0.06)" }}
+          className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
         />
       </div>
+      {/* Green line sits on the curve */}
+      <div className="w-full h-1" style={{ backgroundColor: "#B3B69C", marginTop: "-1px" }} />
     </div>
   );
 };
