@@ -32,6 +32,7 @@ import AdminCareerFaqs from "./pages/admin/AdminCareerFaqs";
 import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
 import AdminChatKnowledge from "./pages/admin/AdminChatKnowledge";
 import ChatWidget from "@/components/ChatWidget";
+import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
