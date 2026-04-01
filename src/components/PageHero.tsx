@@ -34,12 +34,11 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
           className="w-full h-full object-cover"
         />
         {/* Rounded bg overlay at bottom of hero */}
-        <div
-          className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
-        />
+        <div className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background">
+          {/* Green line follows the curve */}
+          <div className="absolute top-0 left-0 right-0 h-1 rounded-t-[2rem] lg:rounded-t-[2.5rem]" style={{ backgroundColor: "#B3B69C" }} />
+        </div>
       </div>
-      {/* Green line sits on the curve */}
-      <div className="w-full h-1" style={{ backgroundColor: "#B3B69C", marginTop: "-1px" }} />
     </div>
   );
 };
