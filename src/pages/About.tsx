@@ -114,8 +114,8 @@ const About = () => {
       <PageHero pageKey="about" fallbackImage="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" />
 
       {/* Intro */}
-      <section className="py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "left center", backgroundRepeat: "repeat-y", opacity: 0.07, mixBlendMode: "multiply" }} />
+      <section className="py-20 lg:py-28 relative overflow-hidden -mt-10 lg:-mt-14 pt-24 lg:pt-32">
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "right top", backgroundRepeat: "repeat-y", opacity: 0.07, mixBlendMode: "multiply" }} />
         <div className="container mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-6xl relative z-10">
           <AnimatedSection>
             <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">{t("about.title")}</h1>
