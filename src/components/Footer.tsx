@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import ssmLogo from "@/assets/ssm-logo-green.png";
+import ssmPattern from "@/assets/ssm-structure-pattern.png";
 
 const Footer = () => {
   const { t } = useLanguage();
 
   return (
-    <footer className="w-full" style={{ backgroundColor: "#243e3a" }}>
-      <div className="container mx-auto px-6 lg:px-8 max-w-[1340px] py-16">
+    <footer className="w-full relative overflow-hidden" style={{ backgroundColor: "#243e3a" }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "800px auto", backgroundPosition: "right bottom", backgroundRepeat: "no-repeat", opacity: 0.06, mixBlendMode: "soft-light" }} />
+      <div className="container mx-auto px-6 lg:px-8 max-w-[1340px] py-16 relative z-10">
         {/* Top section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16">
           {/* Logo & info */}

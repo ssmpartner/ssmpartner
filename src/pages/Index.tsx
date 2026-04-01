@@ -11,6 +11,7 @@ import {
   Shield, TrendingUp, Building2, Users, Briefcase,
   ArrowRight, Star, HeartHandshake, Award
 } from "lucide-react";
+import ssmPattern from "@/assets/ssm-structure-pattern.png";
 
 const fallbackSlides = [
   {
@@ -200,6 +201,7 @@ const Index = () => {
               loading={i === 0 ? "eager" : "lazy"}
             />
             <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
+            <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.08, mixBlendMode: "soft-light" }} />
             {(slide.headline || slide.subline) && (
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 pb-32">
                 {slide.headline && (
