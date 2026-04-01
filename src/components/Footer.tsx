@@ -8,7 +8,7 @@ const Footer = () => {
 
   return (
     <footer className="w-full relative overflow-hidden" style={{ backgroundColor: "#243e3a" }}>
-      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "800px auto", backgroundPosition: "right bottom", backgroundRepeat: "no-repeat", opacity: 0.12, mixBlendMode: "overlay" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "800px auto", backgroundPosition: "right bottom", backgroundRepeat: "no-repeat", opacity: 0.22, mixBlendMode: "overlay" }} />
       <div className="container mx-auto px-6 lg:px-8 max-w-[1340px] py-16 relative z-10">
         {/* Top section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-16">
