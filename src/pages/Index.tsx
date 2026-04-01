@@ -482,8 +482,9 @@ const Index = () => {
 
       {/* Agenturen Teaser */}
       {agencies && agencies.length > 0 && (
-        <section className="py-24 lg:py-32 bg-card">
-          <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
+        <section className="py-24 lg:py-32 bg-card relative overflow-hidden">
+          <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "left center", backgroundRepeat: "no-repeat", opacity: 0.07, mixBlendMode: "multiply" }} />
+          <div className="container mx-auto px-6 lg:px-8 max-w-5xl relative z-10">
             <AnimatedSection>
               <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-14">
                 <div>
