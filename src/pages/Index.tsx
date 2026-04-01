@@ -11,6 +11,7 @@ import {
   Shield, TrendingUp, Building2, Users, Briefcase,
   ArrowRight, Star, HeartHandshake, Award
 } from "lucide-react";
+import ssmPattern from "@/assets/ssm-structure-pattern.png";
 
 const fallbackSlides = [
   {
