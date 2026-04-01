@@ -12,6 +12,7 @@ import {
   Users, MessageSquare, Handshake, FileCheck, Rocket, PartyPopper,
   ChevronRight, CheckCircle2, ChevronDown,
 } from "lucide-react";
+import ssmPattern from "@/assets/ssm-structure-pattern.png";
 
 /* ── FAQ Accordion Item ── */
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
