@@ -36,8 +36,13 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
       </div>
       {/* Green line */}
       <div className="w-full h-1.5" style={{ backgroundColor: "#B3B69C" }} />
-      {/* Shadow transition */}
-      <div className="w-full h-6" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.08), transparent)" }} />
+      {/* Rounded overlap — content slides over hero */}
+      <div className="relative -mt-8 lg:-mt-12">
+        <div
+          className="w-full h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
+          style={{ boxShadow: "0 -8px 24px rgba(0,0,0,0.06)" }}
+        />
+      </div>
     </div>
   );
 };
