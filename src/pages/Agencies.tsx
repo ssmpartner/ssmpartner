@@ -40,7 +40,7 @@ const Agencies = () => {
 
       {/* Intro Section */}
       <section className="py-20 lg:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "left top", backgroundRepeat: "no-repeat", opacity: 0.07, mixBlendMode: "multiply", transform: "scaleX(-1)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "right bottom", backgroundRepeat: "no-repeat", opacity: 0.07, mixBlendMode: "multiply", transform: "scaleY(-1)" }} />
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <AnimatedSection>
