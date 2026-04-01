@@ -430,12 +430,12 @@ const Index = () => {
       </section>
 
       {/* Services */}
-      <section className="py-24 lg:py-32">
+      <section className="py-24 lg:py-32" style={{ backgroundColor: "#6A9387" }}>
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{servicesLabel}</p>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
+              <p className="font-body text-sm font-medium uppercase tracking-wider mb-3" style={{ color: "rgba(255,255,255,0.7)" }}>{servicesLabel}</p>
+              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-white">
                 {servicesTitle}
               </h2>
               <div className="w-16 h-1 rounded-full mt-4 mx-auto" style={{ backgroundColor: "#B3B69C" }} />
