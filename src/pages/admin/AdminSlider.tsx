@@ -185,8 +185,9 @@ const AdminSlider = () => {
                   )}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <GripVertical size={16} className="text-muted-foreground" />
-                      <span className="font-body text-xs text-muted-foreground">#{img.sort_order + 1}</span>
+                      <button onClick={() => handleMove(idx, "up")} disabled={idx === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Nach oben"><ArrowUp size={14} /></button>
+                      <button onClick={() => handleMove(idx, "down")} disabled={idx === images.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Nach unten"><ArrowDown size={14} /></button>
+                      <span className="font-body text-xs text-muted-foreground">#{idx + 1}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Zuschnitt anpassen"><Crop size={14} /></button>
