@@ -356,14 +356,13 @@ const Index = () => {
             boxShadow: "0 8px 32px rgba(36,62,58,0.18), 0 2px 8px rgba(0,0,0,0.06)",
           }}
         >
-          <div>
-            <p className="font-heading text-lg sm:text-xl font-semibold text-white text-center sm:text-left">
-              {overlapTitle}
-            </p>
-            <p className="font-body text-sm text-white/70 text-center sm:text-left mt-1">
-              {overlapBody}
-            </p>
-          </div>
+          <a
+            href="tel:+41412202050"
+            className="flex items-center gap-3 text-white hover:opacity-80 transition-opacity"
+          >
+            <Phone size={24} className="shrink-0" />
+            <span className="font-heading text-2xl lg:text-3xl font-bold tracking-wide">041 220 20 50</span>
+          </a>
           <Link
             to="/kontakt"
             className="shrink-0 font-body text-sm font-semibold px-8 py-3.5 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider"
