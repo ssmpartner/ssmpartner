@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop } from "lucide-react";
+import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import ImageCropModal from "@/components/ImageCropModal";
+import MediaPickerModal from "@/components/MediaPickerModal";
 
 const AdminSlider = () => {
   const queryClient = useQueryClient();
@@ -11,6 +12,7 @@ const AdminSlider = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ headline: "", subline: "", alt_text: "" });
   const [cropModal, setCropModal] = useState<{ src: string; existingId?: string } | null>(null);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const { data: images, isLoading } = useQuery({
     queryKey: ["admin-slider"],
