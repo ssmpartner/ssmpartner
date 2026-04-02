@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
+import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft, Lock, Award, Clock, Globe, Smartphone, Briefcase } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -250,16 +250,99 @@ const wizardCategories = [
   { id: "auto", label: "Autoversicherung", icon: Car, color: "from-emerald-500 to-emerald-600", desc: "Haftpflicht, Teil- & Vollkasko" },
   { id: "rechtsschutz", label: "Rechtsschutz", icon: Scale, color: "from-purple-500 to-purple-600", desc: "Rechtliche Absicherung für alle Fälle" },
   { id: "vorsorge", label: "Vorsorge / Säule 3a", icon: PiggyBank, color: "from-amber-500 to-amber-600", desc: "Steueroptimierte Altersvorsorge" },
+  { id: "leben", label: "Lebensversicherung", icon: Briefcase, color: "from-teal-500 to-teal-600", desc: "Absicherung für Ihre Familie" },
   { id: "krankenkasse", label: "Krankenkasse", icon: Heart, color: "from-rose-500 to-rose-600", desc: "Grund- & Zusatzversicherung vergleichen" },
 ];
+
+/* ─── Product-specific questions ─── */
+type ProductQuestion = { key: string; label: string; type: "text" | "select" | "number"; options?: string[]; placeholder?: string };
+
+const productQuestions: Record<string, ProductQuestion[]> = {
+  hausrat: [
+    { key: "wohnform", label: "Wohnform", type: "select", options: ["Mietwohnung", "Eigentumswohnung", "Einfamilienhaus", "Reihenhaus"] },
+    { key: "wohnflaeche", label: "Wohnfläche (m²)", type: "number", placeholder: "z.B. 80" },
+    { key: "versicherungssumme", label: "Gewünschte Versicherungssumme (CHF)", type: "select", options: ["50'000", "75'000", "100'000", "150'000", "200'000+"] },
+    { key: "vorschaeden", label: "Vorschäden in den letzten 5 Jahren?", type: "select", options: ["Nein", "1 Schadenfall", "2+ Schadenfälle"] },
+  ],
+  auto: [
+    { key: "marke", label: "Marke & Modell", type: "text", placeholder: "z.B. VW Golf" },
+    { key: "jahrgang", label: "Jahrgang", type: "number", placeholder: "z.B. 2021" },
+    { key: "km", label: "Jährliche Kilometer", type: "select", options: ["< 10'000 km", "10'000–15'000 km", "15'000–20'000 km", "20'000–30'000 km", "> 30'000 km"] },
+    { key: "fahrausweis_seit", label: "Fahrausweis seit (Jahr)", type: "number", placeholder: "z.B. 2015" },
+    { key: "deckung", label: "Gewünschte Deckung", type: "select", options: ["Haftpflicht", "Haftpflicht + Teilkasko", "Haftpflicht + Vollkasko"] },
+  ],
+  rechtsschutz: [
+    { key: "bereich", label: "Rechtsschutz-Bereich", type: "select", options: ["Privat", "Verkehr", "Beruf", "Privat + Verkehr", "Rundum (alle Bereiche)"] },
+    { key: "haushalt", label: "Haushaltsgrösse", type: "select", options: ["Einzelperson", "Paar (ohne Kinder)", "Familie (mit Kindern)"] },
+    { key: "vorverfahren", label: "Laufende Rechtsstreitigkeiten?", type: "select", options: ["Nein", "Ja"] },
+  ],
+  vorsorge: [
+    { key: "einkommen", label: "Brutto-Jahreseinkommen (CHF)", type: "select", options: ["< 50'000", "50'000–80'000", "80'000–120'000", "120'000–150'000", "> 150'000"] },
+    { key: "bvg", label: "Haben Sie eine Pensionskasse (BVG)?", type: "select", options: ["Ja", "Nein", "Unsicher"] },
+    { key: "anlagestrategie", label: "Bevorzugte Anlagestrategie", type: "select", options: ["Konservativ (Sparkonto)", "Ausgewogen (Fonds)", "Dynamisch (Aktien-orientiert)"] },
+    { key: "einzahlung", label: "Geplante Jahreseinzahlung 3a (CHF)", type: "select", options: ["< 3'000", "3'000–5'000", "5'000–7'056 (Maximum)", "Maximalbetrag"] },
+  ],
+  leben: [
+    { key: "art", label: "Art der Lebensversicherung", type: "select", options: ["Risikolebensversicherung", "Gemischte Lebensversicherung", "Fondsgebundene Lebensversicherung"] },
+    { key: "versicherungssumme", label: "Gewünschte Versicherungssumme (CHF)", type: "select", options: ["100'000", "200'000", "300'000", "500'000", "1'000'000+"] },
+    { key: "laufzeit", label: "Gewünschte Laufzeit", type: "select", options: ["10 Jahre", "15 Jahre", "20 Jahre", "Bis Pensionierung"] },
+    { key: "raucher", label: "Raucher?", type: "select", options: ["Nein", "Ja"] },
+  ],
+  krankenkasse: [
+    { key: "aktuelle_kasse", label: "Aktuelle Krankenkasse", type: "text", placeholder: "z.B. CSS, Helsana, Swica…" },
+    { key: "modell", label: "Gewünschtes Modell", type: "select", options: ["Standard (freie Arztwahl)", "Hausarzt-Modell", "HMO", "Telmed"] },
+    { key: "franchise", label: "Franchise", type: "select", options: ["300 CHF", "500 CHF", "1'000 CHF", "1'500 CHF", "2'000 CHF", "2'500 CHF"] },
+    { key: "zusatz", label: "Zusatzversicherung gewünscht?", type: "select", options: ["Nein", "Spital halbprivat", "Spital privat", "Komplementärmedizin", "Zahnversicherung", "Mehrere"] },
+  ],
+};
+
+/* ─── Coverage packages ─── */
+const coveragePackages: Record<string, { basis: string; komfort: string; premium: string }> = {
+  hausrat: { basis: "ab CHF 8.–/Mt.", komfort: "ab CHF 15.–/Mt.", premium: "ab CHF 25.–/Mt." },
+  auto: { basis: "ab CHF 45.–/Mt.", komfort: "ab CHF 75.–/Mt.", premium: "ab CHF 110.–/Mt." },
+  rechtsschutz: { basis: "ab CHF 12.–/Mt.", komfort: "ab CHF 22.–/Mt.", premium: "ab CHF 35.–/Mt." },
+  vorsorge: { basis: "Sparkonto 3a", komfort: "Fonds-Lösung", premium: "Individuelle Strategie" },
+  leben: { basis: "ab CHF 30.–/Mt.", komfort: "ab CHF 55.–/Mt.", premium: "ab CHF 90.–/Mt." },
+  krankenkasse: { basis: "Grundversicherung", komfort: "Grund + Spital halbprivat", premium: "Grund + Spital privat + Zusatz" },
+};
+
+const packageDetails: Record<string, { title: string; desc: string; color: string; badge?: string }> = {
+  basis: { title: "Basis", desc: "Solider Grundschutz zum besten Preis", color: "border-border" },
+  komfort: { title: "Komfort", desc: "Erweiterter Schutz für mehr Sicherheit", color: "border-primary", badge: "Beliebt" },
+  premium: { title: "Premium", desc: "Maximaler Schutz ohne Kompromisse", color: "border-accent" },
+};
+
+/* ─── Step Indicator ─── */
+const StepIndicator = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
+  const labels = ["Produkt", "Persönlich", "Details", "Deckung", "Zusammenfassung"];
+  return (
+    <div className="flex items-center justify-center gap-1 mb-8">
+      {labels.map((label, i) => (
+        <div key={i} className="flex items-center">
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+            i < currentStep ? "bg-primary/10 text-primary" : i === currentStep ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+          }`}>
+            {i < currentStep ? <CheckCircle2 size={12} /> : <span className="w-4 text-center">{i + 1}</span>}
+            <span className="hidden sm:inline">{label}</span>
+          </div>
+          {i < labels.length - 1 && <ChevronRight size={14} className="text-muted-foreground mx-1" />}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 /* ─── Insurance Wizard Component ─── */
 const InsuranceWizard = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [step, setStep] = useState(0); // 0 = select categories, 1 = form, 2 = done
-  const [formData, setFormData] = useState({
-    firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", notes: "",
+  const [step, setStep] = useState(0);
+  const [personalData, setPersonalData] = useState({
+    firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "",
   });
+  const [productDetails, setProductDetails] = useState<Record<string, Record<string, string>>>({});
+  const [selectedPackages, setSelectedPackages] = useState<Record<string, string>>({});
+  const [agbAccepted, setAgbAccepted] = useState(false);
+  const [referenceNumber, setReferenceNumber] = useState("");
 
   const toggleCategory = (id: string) => {
     setSelectedCategories(prev =>
@@ -267,56 +350,72 @@ const InsuranceWizard = () => {
     );
   };
 
-  const handleSubmit = async () => {
-    if (!formData.firstName || !formData.lastName || !formData.email) return;
+  const updateProductDetail = (productId: string, key: string, value: string) => {
+    setProductDetails(prev => ({
+      ...prev,
+      [productId]: { ...(prev[productId] || {}), [key]: value },
+    }));
+  };
 
-    const message = `Versicherungsanfrage für: ${selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}\n\nGeburtsdatum: ${formData.birthDate || "k.A."}\nPLZ: ${formData.plz || "k.A."}\nNotizen: ${formData.notes || "Keine"}`;
+  const generateRefNumber = () => {
+    const now = new Date();
+    return `SSM-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}-${Math.random().toString(36).slice(2,7).toUpperCase()}`;
+  };
+
+  const handleSubmit = async () => {
+    const ref = generateRefNumber();
+    setReferenceNumber(ref);
+
+    const details = selectedCategories.map(id => {
+      const cat = wizardCategories.find(c => c.id === id)!;
+      const answers = productDetails[id] || {};
+      const pkg = selectedPackages[id] || "nicht gewählt";
+      const qText = Object.entries(answers).map(([k, v]) => `  ${k}: ${v}`).join("\n");
+      return `${cat.label} (Paket: ${pkg}):\n${qText}`;
+    }).join("\n\n");
+
+    const message = `Ref: ${ref}\n\nProdukte: ${selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}\n\nZivilstand: ${personalData.zivilstand || "k.A."}\nGeburtsdatum: ${personalData.birthDate || "k.A."}\nPLZ: ${personalData.plz || "k.A."}\n\n--- Produktdetails ---\n${details}`;
 
     try {
       await supabase.from("inquiries").insert({
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone || null,
-        subject: `Online-Check: ${selectedCategories.join(", ")}`,
+        name: `${personalData.firstName} ${personalData.lastName}`,
+        email: personalData.email,
+        phone: personalData.phone || null,
+        subject: `Online-Check ${ref}: ${selectedCategories.join(", ")}`,
         message,
         source: "onlinecheck",
       });
-      setStep(2);
+      setStep(5);
     } catch {
-      // handle error
+      // handled by UI
     }
   };
 
+  const isPersonalValid = personalData.firstName && personalData.lastName && personalData.email && personalData.birthDate && personalData.plz;
+
+  const inputClass = "w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground";
+  const selectClass = "w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none";
+
   return (
     <div className="space-y-6">
+      {step > 0 && step < 5 && <StepIndicator currentStep={step - 1} totalSteps={5} />}
+
       <AnimatePresence mode="wait">
+        {/* ─── Step 0: Product Selection ─── */}
         {step === 0 && (
-          <motion.div key="select" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+          <motion.div key="s0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="text-center mb-8">
               <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Versicherungs-Check</h2>
-              <p className="text-muted-foreground mt-2">Wählen Sie die gewünschten Versicherungen — wir erstellen Ihr persönliches Angebot innert 24 Stunden.</p>
+              <p className="text-muted-foreground mt-2">Wählen Sie die gewünschten Versicherungen — mehrere gleichzeitig möglich.</p>
             </div>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
-              {wizardCategories.map((cat) => {
+              {wizardCategories.map(cat => {
                 const selected = selectedCategories.includes(cat.id);
                 return (
-                  <motion.button
-                    key={cat.id}
-                    onClick={() => toggleCategory(cat.id)}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`relative p-5 rounded-2xl border-2 text-left transition-all ${
-                      selected
-                        ? "border-primary bg-primary/5 shadow-lg"
-                        : "border-border bg-card hover:border-accent hover:shadow-md"
-                    }`}
+                  <motion.button key={cat.id} onClick={() => toggleCategory(cat.id)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    className={`relative p-5 rounded-2xl border-2 text-left transition-all ${selected ? "border-primary bg-primary/5 shadow-lg" : "border-border bg-card hover:border-accent hover:shadow-md"}`}
                   >
-                    {selected && (
-                      <div className="absolute top-3 right-3">
-                        <CheckCircle2 size={20} className="text-primary" />
-                      </div>
-                    )}
+                    {selected && <div className="absolute top-3 right-3"><CheckCircle2 size={20} className="text-primary" /></div>}
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center mb-3`}>
                       <cat.icon size={22} className="text-white" />
                     </div>
@@ -326,15 +425,10 @@ const InsuranceWizard = () => {
                 );
               })}
             </div>
-
             {selectedCategories.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-8">
-                <button
-                  onClick={() => setStep(1)}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity"
-                >
-                  Weiter
-                  <ArrowRight size={18} />
+                <button onClick={() => setStep(1)} className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity">
+                  Weiter <ArrowRight size={18} />
                 </button>
                 <p className="text-xs text-muted-foreground mt-2">{selectedCategories.length} Versicherung(en) ausgewählt</p>
               </motion.div>
@@ -342,87 +436,242 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
+        {/* ─── Step 1: Personal Info ─── */}
         {step === 1 && (
-          <motion.div key="form" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+          <motion.div key="s1" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="max-w-2xl mx-auto">
-              <button onClick={() => setStep(0)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
-                <ArrowLeft size={14} /> Zurück zur Auswahl
-              </button>
-
+              <button onClick={() => setStep(0)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
               <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
                 <div>
-                  <h3 className="font-heading font-bold text-lg text-foreground">Ihre Angaben</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Für: {selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}</p>
+                  <h3 className="font-heading font-bold text-lg text-foreground">Persönliche Angaben</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Diese Daten benötigen wir für Ihr individuelles Angebot.</p>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">Vorname *</label>
-                    <input value={formData.firstName} onChange={e => setFormData(p => ({ ...p, firstName: e.target.value }))}
-                      className="w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground" />
+                    <input value={personalData.firstName} onChange={e => setPersonalData(p => ({ ...p, firstName: e.target.value }))} className={inputClass} />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">Nachname *</label>
-                    <input value={formData.lastName} onChange={e => setFormData(p => ({ ...p, lastName: e.target.value }))}
-                      className="w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground" />
+                    <input value={personalData.lastName} onChange={e => setPersonalData(p => ({ ...p, lastName: e.target.value }))} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">Geburtsdatum *</label>
+                    <input type="date" value={personalData.birthDate} onChange={e => setPersonalData(p => ({ ...p, birthDate: e.target.value }))} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">Zivilstand</label>
+                    <select value={personalData.zivilstand} onChange={e => setPersonalData(p => ({ ...p, zivilstand: e.target.value }))} className={selectClass}>
+                      <option value="">Bitte wählen</option>
+                      <option>Ledig</option>
+                      <option>Verheiratet</option>
+                      <option>Geschieden</option>
+                      <option>Verwitwet</option>
+                      <option>Eingetragene Partnerschaft</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">PLZ *</label>
+                    <input value={personalData.plz} onChange={e => setPersonalData(p => ({ ...p, plz: e.target.value }))} className={inputClass} placeholder="z.B. 3000" maxLength={4} />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">E-Mail *</label>
-                    <input type="email" value={formData.email} onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-                      className="w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground" />
+                    <input type="email" value={personalData.email} onChange={e => setPersonalData(p => ({ ...p, email: e.target.value }))} className={inputClass} />
                   </div>
-                  <div>
+                  <div className="md:col-span-2">
                     <label className="text-sm font-medium text-foreground mb-1 block">Telefon</label>
-                    <input value={formData.phone} onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
-                      className="w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-1 block">Geburtsdatum</label>
-                    <input type="date" value={formData.birthDate} onChange={e => setFormData(p => ({ ...p, birthDate: e.target.value }))}
-                      className="w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground" />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-1 block">PLZ</label>
-                    <input value={formData.plz} onChange={e => setFormData(p => ({ ...p, plz: e.target.value }))}
-                      className="w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground" placeholder="z.B. 3000" />
+                    <input value={personalData.phone} onChange={e => setPersonalData(p => ({ ...p, phone: e.target.value }))} className={inputClass} placeholder="Optional" />
                   </div>
                 </div>
-
-                <div>
-                  <label className="text-sm font-medium text-foreground mb-1 block">Bemerkungen</label>
-                  <textarea value={formData.notes} onChange={e => setFormData(p => ({ ...p, notes: e.target.value }))} rows={3}
-                    className="w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground resize-none"
-                    placeholder="Besondere Wünsche oder Fragen..." />
-                </div>
-
-                <button
-                  onClick={handleSubmit}
-                  disabled={!formData.firstName || !formData.lastName || !formData.email}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity"
-                >
-                  Angebot anfordern
+                <button onClick={() => setStep(2)} disabled={!isPersonalValid}
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
+                  Weiter zu den Detailfragen <ArrowRight size={18} />
                 </button>
-                <p className="text-[11px] text-muted-foreground text-center">Sie erhalten Ihr persönliches Angebot innert 24 Stunden per E-Mail.</p>
               </div>
             </div>
           </motion.div>
         )}
 
+        {/* ─── Step 2: Product-Specific Questions ─── */}
         {step === 2 && (
-          <motion.div key="done" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
-            <div className="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-6">
-              <CheckCircle2 size={40} className="text-green-600" />
+          <motion.div key="s2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <div className="max-w-3xl mx-auto">
+              <button onClick={() => setStep(1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-foreground">Produktspezifische Angaben</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Bitte füllen Sie die Detailfragen pro Versicherung aus.</p>
+                </div>
+                {selectedCategories.map(catId => {
+                  const cat = wizardCategories.find(c => c.id === catId)!;
+                  const questions = productQuestions[catId] || [];
+                  return (
+                    <div key={catId} className="bg-card rounded-2xl border border-border p-6 space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
+                          <cat.icon size={18} className="text-white" />
+                        </div>
+                        <h4 className="font-heading font-bold text-foreground">{cat.label}</h4>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {questions.map(q => (
+                          <div key={q.key}>
+                            <label className="text-sm font-medium text-foreground mb-1 block">{q.label}</label>
+                            {q.type === "select" ? (
+                              <select value={productDetails[catId]?.[q.key] || ""} onChange={e => updateProductDetail(catId, q.key, e.target.value)} className={selectClass}>
+                                <option value="">Bitte wählen</option>
+                                {q.options?.map(o => <option key={o}>{o}</option>)}
+                              </select>
+                            ) : (
+                              <input type={q.type === "number" ? "number" : "text"} value={productDetails[catId]?.[q.key] || ""} onChange={e => updateProductDetail(catId, q.key, e.target.value)}
+                                className={inputClass} placeholder={q.placeholder} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+                <button onClick={() => setStep(3)}
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
+                  Weiter zur Deckungsauswahl <ArrowRight size={18} />
+                </button>
+              </div>
             </div>
-            <h2 className="text-2xl font-heading font-bold text-foreground">Vielen Dank!</h2>
+          </motion.div>
+        )}
+
+        {/* ─── Step 3: Coverage Package Selection ─── */}
+        {step === 3 && (
+          <motion.div key="s3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <div className="max-w-4xl mx-auto">
+              <button onClick={() => setStep(2)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div className="space-y-8">
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-foreground">Deckungspaket wählen</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Wählen Sie für jede Versicherung Ihr bevorzugtes Paket.</p>
+                </div>
+                {selectedCategories.map(catId => {
+                  const cat = wizardCategories.find(c => c.id === catId)!;
+                  const packages = coveragePackages[catId];
+                  if (!packages) return null;
+                  return (
+                    <div key={catId} className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <cat.icon size={16} className="text-primary" />
+                        <h4 className="font-heading font-bold text-foreground text-sm">{cat.label}</h4>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {(["basis", "komfort", "premium"] as const).map(tier => {
+                          const pkg = packageDetails[tier];
+                          const isSelected = selectedPackages[catId] === tier;
+                          return (
+                            <button key={tier} onClick={() => setSelectedPackages(prev => ({ ...prev, [catId]: tier }))}
+                              className={`relative p-4 rounded-xl border-2 text-left transition-all ${isSelected ? "border-primary bg-primary/5 shadow-md" : `${pkg.color} bg-card hover:shadow-sm`}`}
+                            >
+                              {pkg.badge && (
+                                <span className="absolute -top-2.5 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">{pkg.badge}</span>
+                              )}
+                              <h5 className="font-heading font-bold text-foreground">{pkg.title}</h5>
+                              <p className="text-xs text-muted-foreground mt-0.5">{pkg.desc}</p>
+                              <p className="text-sm font-bold text-primary mt-2">{packages[tier]}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+                <button onClick={() => setStep(4)}
+                  disabled={selectedCategories.some(id => !selectedPackages[id])}
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
+                  Weiter zur Zusammenfassung <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ─── Step 4: Summary + AGB ─── */}
+        {step === 4 && (
+          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <div className="max-w-3xl mx-auto">
+              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Bitte überprüfen Sie Ihre Angaben.</p>
+                </div>
+
+                {/* Personal data summary */}
+                <div className="bg-muted/50 rounded-xl p-4 space-y-1">
+                  <h4 className="text-sm font-bold text-foreground mb-2">Persönliche Daten</h4>
+                  <p className="text-sm text-foreground">{personalData.firstName} {personalData.lastName}</p>
+                  <p className="text-sm text-muted-foreground">{personalData.email} · {personalData.phone || "Kein Telefon"}</p>
+                  <p className="text-sm text-muted-foreground">Geb.: {personalData.birthDate} · PLZ: {personalData.plz} · {personalData.zivilstand || "k.A."}</p>
+                </div>
+
+                {/* Product summaries */}
+                {selectedCategories.map(catId => {
+                  const cat = wizardCategories.find(c => c.id === catId)!;
+                  const details = productDetails[catId] || {};
+                  const pkg = selectedPackages[catId];
+                  return (
+                    <div key={catId} className="bg-muted/50 rounded-xl p-4 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <cat.icon size={16} className="text-primary" />
+                          <h4 className="text-sm font-bold text-foreground">{cat.label}</h4>
+                        </div>
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                        {Object.entries(details).filter(([,v]) => v).map(([k, v]) => (
+                          <p key={k} className="text-xs text-muted-foreground"><span className="font-medium text-foreground">{k}:</span> {v}</p>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* AGB Checkbox */}
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" checked={agbAccepted} onChange={e => setAgbAccepted(e.target.checked)}
+                    className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-ring" />
+                  <span className="text-xs text-muted-foreground leading-relaxed">
+                    Ich habe die <a href="/rechtliches" className="text-primary underline hover:text-accent">Datenschutzerklärung</a> gelesen und bin mit der Verarbeitung meiner Daten zur Angebotserstellung einverstanden. Die SSM Partner AG wird mich innert 24 Stunden kontaktieren.
+                  </span>
+                </label>
+
+                <button onClick={handleSubmit} disabled={!agbAccepted}
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity">
+                  Anfrage einreichen
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ─── Step 5: Confirmation ─── */}
+        {step === 5 && (
+          <motion.div key="s5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
+            <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
+              <CheckCircle2 size={40} className="text-primary" />
+            </div>
+            <h2 className="text-2xl font-heading font-bold text-foreground">Vielen Dank für Ihre Anfrage!</h2>
             <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-              Ihre Anfrage wurde erfolgreich übermittelt. Wir erstellen Ihr persönliches Angebot und melden uns innert 24 Stunden bei Ihnen.
+              Wir erstellen Ihr persönliches Angebot und melden uns innert 24 Stunden bei Ihnen.
             </p>
-            <button
-              onClick={() => { setStep(0); setSelectedCategories([]); setFormData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", notes: "" }); }}
-              className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
-            >
-              Neue Anfrage starten
-            </button>
+            <div className="mt-4 inline-block bg-muted rounded-xl px-6 py-3">
+              <p className="text-xs text-muted-foreground">Ihre Referenznummer</p>
+              <p className="text-lg font-heading font-bold text-foreground tracking-wider">{referenceNumber}</p>
+            </div>
+            <div className="mt-8">
+              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "" }); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors">
+                Neue Anfrage starten
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -430,6 +679,28 @@ const InsuranceWizard = () => {
   );
 };
 
+/* ─── Trust Bar ─── */
+const TrustBar = () => {
+  const items = [
+    { icon: Lock, label: "SSL-verschlüsselt" },
+    { icon: Shield, label: "FINMA-reguliert" },
+    { icon: Clock, label: "Antwort innert 24h" },
+    { icon: Award, label: "Unabhängige Beratung" },
+    { icon: Smartphone, label: "100% Digital" },
+  ];
+  return (
+    <div className="bg-muted/50 border-t border-border py-8 px-4">
+      <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-6 md:gap-10">
+        {items.map(item => (
+          <div key={item.label} className="flex items-center gap-2 text-muted-foreground">
+            <item.icon size={18} className="text-primary" />
+            <span className="text-xs font-medium">{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 /* ─── Main Page ─── */
 const OnlineCheck = () => {
   const { data: hero } = useQuery({
@@ -485,6 +756,9 @@ const OnlineCheck = () => {
           <InsuranceWizard />
         </div>
       </section>
+
+      {/* Trust Bar */}
+      <TrustBar />
     </div>
   );
 };
