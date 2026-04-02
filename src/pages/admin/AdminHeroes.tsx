@@ -23,6 +23,7 @@ const staticPages = [
   { key: "contact", label: "Kontakt" },
   { key: "team", label: "Agenturen" },
   { key: "legal", label: "Impressum / Datenschutz" },
+  { key: "onlinecheck", label: "Online-Beratung" },
   { key: "hq-1", label: "HQ Galerie – Hauptbild" },
   { key: "hq-2", label: "HQ Galerie – Bild 2" },
   { key: "hq-3", label: "HQ Galerie – Bild 3" },
