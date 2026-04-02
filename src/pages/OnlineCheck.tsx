@@ -1168,7 +1168,7 @@ const OnlineCheck = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
 
           {/* Title on hero */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center px-4 pb-24">
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-4 pb-40 lg:pb-48">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1190,17 +1190,20 @@ const OnlineCheck = () => {
             style={{ boxShadow: "0 -10px 30px rgba(0,0,0,0.15)" }}
           />
         </div>
-      </div>
 
-      {/* Chat Overlay — overlaps into wizard container */}
-      <div className="relative z-10 -mt-44 lg:-mt-52 px-4 mb-12 lg:mb-16">
-        <div className="max-w-3xl mx-auto">
-          <ChatOverlay />
+        {/* Chat Overlay — anchored to bottom of hero, independent of wizard */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 translate-y-1/2 px-4">
+          <div className="max-w-3xl mx-auto">
+            <ChatOverlay />
+          </div>
         </div>
       </div>
 
+      {/* Spacer for chat overlap */}
+      <div className="h-16 lg:h-20" />
+
       {/* Wizard Section */}
-      <section className="relative pb-12 md:pb-20 px-4 bg-background">
+      <section className="relative py-12 md:py-20 px-4 bg-background">
         <div className="max-w-5xl mx-auto">
           <InsuranceWizard />
         </div>
