@@ -278,7 +278,7 @@ const ChatOverlay = () => {
       >
         {/* Animated gradient border */}
         <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] animate-[gradient-shift_4s_ease-in-out_infinite] opacity-80" />
-        <div className="relative bg-card rounded-2xl p-4 flex items-end gap-3 shadow-lg border border-border">
+        <div className="relative bg-card/70 backdrop-blur-xl rounded-2xl p-4 flex items-end gap-3 shadow-lg border border-white/20">
           <div className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
               <Sparkles size={16} className="text-primary" />
