@@ -196,12 +196,22 @@ const Index = () => {
             key={i}
             className={`absolute inset-0 transition-opacity duration-1000 ${i === current ? "opacity-100" : "opacity-0"}`}
           >
+            {/* Desktop image */}
             <img
               src={slide.image}
               alt={slide.headline || `Slide ${i + 1}`}
-              className="absolute inset-0 w-full h-full object-cover"
+              className={`absolute inset-0 w-full h-full object-cover ${slide.mobileImage ? "hidden sm:block" : ""}`}
               loading={i === 0 ? "eager" : "lazy"}
             />
+            {/* Mobile image */}
+            {slide.mobileImage && (
+              <img
+                src={slide.mobileImage}
+                alt={slide.headline || `Slide ${i + 1}`}
+                className="absolute inset-0 w-full h-full object-cover sm:hidden"
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+            )}
             <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
             <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.18, mixBlendMode: "overlay" }} />
             {(slide.headline || slide.subline) && (
