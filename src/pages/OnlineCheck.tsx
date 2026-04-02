@@ -1131,7 +1131,7 @@ const TrustBar = () => {
     { icon: Lock, label: "SSL-verschlüsselt" },
     { icon: Shield, label: "FINMA-reguliert" },
     { icon: Clock, label: "Antwort innert 24h" },
-    { icon: Award, label: "Unabhängige Beratung" },
+    
     { icon: Smartphone, label: "100% Digital" },
   ];
   return (
