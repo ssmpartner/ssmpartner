@@ -367,7 +367,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TrendingDown size={16} className="text-primary" />
-          <h5 className="text-sm font-bold text-foreground">BAG Prämienvergleich 2026</h5>
+          <h5 className="text-sm font-bold text-foreground">Visana Prämien 2026 (BAG)</h5>
         </div>
         <button
           onClick={fetchPremiums}
