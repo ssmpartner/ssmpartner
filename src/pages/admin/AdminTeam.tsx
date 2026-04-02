@@ -101,24 +101,31 @@ const AdminTeam = () => {
     },
   });
 
-  const handleImageUpload = async (file: File, memberId?: string) => {
+  const handleFileSelect = (file: File, memberId?: string) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropModal({ src: reader.result as string, memberId });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCroppedUpload = async (blob: Blob, memberId?: string) => {
     setUploading(true);
+    setCropModal(null);
     try {
-      const ext = file.name.split(".").pop();
       const id = memberId || "new-" + Date.now();
-      const path = `team/${id}-${Date.now()}.${ext}`;
+      const path = `team/${id}-${Date.now()}.jpg`;
+      const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
       const { error: uploadError } = await supabase.storage.from("site-images").upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from("site-images").getPublicUrl(path);
 
       if (memberId) {
-        // Existing member — save directly to DB
         const { error } = await supabase.from("team_members").update({ image_url: publicUrl }).eq("id", memberId);
         if (error) throw error;
         queryClient.invalidateQueries({ queryKey: ["admin-team"] });
         toast.success("Foto hochgeladen");
       } else {
-        // New member — just set in form state
         setForm((prev) => ({ ...prev, image_url: publicUrl }));
         toast.success("Foto hochgeladen — bitte speichern");
       }
