@@ -138,6 +138,16 @@ const AdminTeam = () => {
     }
   };
 
+  const handleMediaSelect = (url: string, memberId?: string) => {
+    // Open crop modal with the selected media URL
+    setCropModal({ src: url, memberId });
+    setMediaPickerOpen(null);
+  };
+
+  const handleRecrop = (imageUrl: string, memberId: string) => {
+    setCropModal({ src: imageUrl, memberId });
+  };
+
   const startEdit = (m: any) => {
     setEditingId(m.id);
     setForm({
