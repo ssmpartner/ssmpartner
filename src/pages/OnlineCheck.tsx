@@ -419,11 +419,16 @@ type BagOffer = {
 const BAG_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bag-premiums`;
 
 /* ─── BAG Premium Comparison Component ─── */
-const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: string; birthDate: string; franchise: string; modell: string }) => {
+const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer, onSelectOffer }: {
+  plz: string; birthDate: string; franchise: string; modell: string;
+  selectedOffer: BagOffer | null;
+  onSelectOffer: (offer: BagOffer | null) => void;
+}) => {
   const [offers, setOffers] = useState<BagOffer[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [region, setRegion] = useState("");
+  const lastParamsRef = useRef("");
 
   const calculateAge = (bd: string) => {
     const birth = new Date(bd);
@@ -447,8 +452,11 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
 
   const canSearch = plz.length >= 4 && birthDate && franchise;
 
-  const fetchPremiums = async () => {
+  const fetchPremiums = useCallback(async () => {
     if (!canSearch) return;
+    const paramKey = `${plz}-${birthDate}-${franchise}-${modell}`;
+    if (paramKey === lastParamsRef.current) return;
+    lastParamsRef.current = paramKey;
     setLoading(true);
     setSearched(true);
     try {
@@ -467,31 +475,32 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
       const data = await resp.json();
       setOffers(data.offers || []);
       setRegion(data.region || "");
+      onSelectOffer(null);
     } catch {
       setOffers([]);
     }
     setLoading(false);
-  };
+  }, [plz, birthDate, franchise, modell, canSearch]);
+
+  // Auto-fetch when all params are filled
+  useEffect(() => {
+    if (canSearch) fetchPremiums();
+  }, [canSearch, fetchPremiums]);
+
+  const isSelected = (o: BagOffer) =>
+    selectedOffer?.insurer === o.insurer && selectedOffer?.model === o.model && selectedOffer?.deductible === o.deductible;
 
   return (
     <div className="mt-4 bg-muted/50 rounded-xl p-4 space-y-3 border border-border">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <TrendingDown size={16} className="text-primary" />
-          <h5 className="text-sm font-bold text-foreground">Visana Prämien 2026 (BAG)</h5>
-        </div>
-        <button
-          onClick={fetchPremiums}
-          disabled={!canSearch || loading}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg disabled:opacity-40 hover:opacity-90 transition-opacity"
-        >
-          {loading ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
-          {loading ? "Laden..." : "Prämien laden"}
-        </button>
+      <div className="flex items-center gap-2">
+        <TrendingDown size={16} className="text-primary" />
+        <h5 className="text-sm font-bold text-foreground">Visana Prämien 2026 (BAG)</h5>
+        {loading && <Loader2 size={14} className="animate-spin text-primary" />}
       </div>
-      <p className="text-xs text-muted-foreground">
-        Aktuelle Visana-Prämien basierend auf Ihren Angaben (PLZ, Alter, Franchise).
-      </p>
+
+      {!canSearch && (
+        <p className="text-xs text-muted-foreground">Bitte PLZ, Geburtsdatum und Franchise ausfüllen, um Prämien zu laden.</p>
+      )}
 
       {searched && !loading && offers.length === 0 && (
         <p className="text-xs text-muted-foreground italic">Keine Angebote gefunden. Prüfen Sie die PLZ.</p>
@@ -500,18 +509,34 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
       {offers.length > 0 && (
         <div className="space-y-2">
           {region && <p className="text-[11px] text-muted-foreground">Region: {region}</p>}
+          <p className="text-xs text-muted-foreground">Wählen Sie Ihr bevorzugtes Angebot:</p>
           <div className="grid gap-2">
             {offers.map((o, i) => (
-              <div key={i} className={`flex items-center justify-between p-3 rounded-lg border ${i === 0 ? "border-primary bg-primary/5" : "border-border bg-card"}`}>
-                <div>
-                  <p className="text-sm font-medium text-foreground">{o.insurer}</p>
-                  <p className="text-xs text-muted-foreground">{o.model} · Franchise CHF {o.deductible}</p>
+              <button
+                key={i}
+                onClick={() => onSelectOffer(isSelected(o) ? null : o)}
+                className={`flex items-center justify-between p-3 rounded-lg border text-left transition-all ${
+                  isSelected(o)
+                    ? "border-primary bg-primary/10 ring-2 ring-primary/30"
+                    : i === 0 ? "border-primary/50 bg-primary/5 hover:bg-primary/10" : "border-border bg-card hover:bg-muted/50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {isSelected(o) ? (
+                    <CheckCircle2 size={16} className="text-primary shrink-0" />
+                  ) : (
+                    <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{o.insurer}</p>
+                    <p className="text-xs text-muted-foreground">{o.model} · Franchise CHF {o.deductible}</p>
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-sm font-bold text-primary">CHF {o.price.total.toFixed(2)}</p>
                   <p className="text-[10px] text-muted-foreground">pro Monat</p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
           <p className="text-[10px] text-muted-foreground text-center">Quelle: BAG / priminfo.admin.ch · Visana Prämien 2026</p>
