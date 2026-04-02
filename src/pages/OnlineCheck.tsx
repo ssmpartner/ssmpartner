@@ -555,6 +555,68 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
   );
 };
 
+/* ─── Nearby Agency Card ─── */
+const NearbyAgencyCard = ({ plz }: { plz: string }) => {
+  const navigate = useNavigate();
+  const { data: agencies } = useQuery({
+    queryKey: ["agencies-nearby", plz],
+    queryFn: async () => {
+      const { data } = await supabase.from("agencies").select("*").eq("active", true).order("sort_order");
+      return data || [];
+    },
+  });
+
+  // Simple PLZ-based proximity: match first 2 digits of PLZ for region
+  const nearestAgency = agencies?.find(a => {
+    if (!a.address || !plz) return false;
+    const agencyPlz = a.address.match(/\b(\d{4})\b/)?.[1];
+    if (!agencyPlz) return false;
+    return agencyPlz.slice(0, 2) === plz.slice(0, 2);
+  }) || agencies?.[0];
+
+  if (!nearestAgency) return null;
+
+  return (
+    <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <MapPin size={16} className="text-primary" />
+        <h4 className="text-sm font-bold text-primary">Ihre Agentur in der Nähe</h4>
+      </div>
+      <div className="flex items-start gap-4">
+        {nearestAgency.image_url && (
+          <img src={nearestAgency.image_url} alt={nearestAgency.name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+        )}
+        <div className="flex-1 space-y-1">
+          <p className="text-sm font-bold text-foreground">{nearestAgency.name}</p>
+          {nearestAgency.address && <p className="text-xs text-muted-foreground">{nearestAgency.address}</p>}
+          {nearestAgency.leader_name && (
+            <p className="text-xs text-foreground">
+              <span className="text-muted-foreground">Ihr Finanzcoach:</span> <span className="font-medium">{nearestAgency.leader_name}</span>
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground mt-1">
+            Ein Berater aus unserer Agentur <strong>{nearestAgency.name}</strong> wird sich nach Ihrer Anfrage persönlich bei Ihnen melden.
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => navigate(`/agenturen/${nearestAgency.slug}`)}
+          className="flex-1 text-xs py-2 px-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors text-center font-medium"
+        >
+          Agentur ansehen
+        </button>
+        <a
+          href="/kontakt"
+          className="flex-1 text-xs py-2 px-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity text-center font-medium inline-flex items-center justify-center gap-1"
+        >
+          <Calendar size={12} /> Termin vereinbaren
+        </a>
+      </div>
+    </div>
+  );
+};
+
 /* ─── Coverage packages (fallback, overridden by DB) ─── */
 const coveragePackagesFallback: Record<string, { basis: string; komfort: string; premium: string }> = {
   hausrat: { basis: "ab CHF 8.–/Mt.", komfort: "ab CHF 15.–/Mt.", premium: "ab CHF 25.–/Mt." },
