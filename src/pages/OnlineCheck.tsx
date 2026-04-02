@@ -1199,15 +1199,12 @@ const OnlineCheck = () => {
         </div>
       </div>
 
-      {/* Wizard Section — floating rounded container */}
-      <div className="relative z-0 -mt-12 lg:-mt-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto bg-muted rounded-t-[2rem] lg:rounded-t-[2.5rem] pt-24 lg:pt-28 pb-12 md:pb-20 px-4 sm:px-8 lg:px-12"
-          style={{ boxShadow: "0 -10px 30px rgba(0,0,0,0.10)" }}>
-          <div className="max-w-5xl mx-auto">
-            <InsuranceWizard />
-          </div>
+      {/* Wizard Section */}
+      <section className="relative pb-12 md:pb-20 px-4 bg-muted">
+        <div className="max-w-5xl mx-auto">
+          <InsuranceWizard />
         </div>
-      </div>
+      </section>
 
       {/* Cashback & Weiterempfehlung */}
       <section className="py-16 md:py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-primary/10">
