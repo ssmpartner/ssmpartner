@@ -100,8 +100,8 @@ const ChatOverlay = () => {
   const SCRIBE_TOKEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-scribe-token`;
 
   const scribe = useScribe({
-    modelId: "scribe_v2_realtime",
-    commitStrategy: "vad",
+    modelId: "scribe_v2_realtime" as any,
+    commitStrategy: "vad" as any,
     onCommittedTranscript: (data) => {
       if (data.text?.trim()) {
         setInput(prev => prev ? `${prev} ${data.text.trim()}` : data.text.trim());
