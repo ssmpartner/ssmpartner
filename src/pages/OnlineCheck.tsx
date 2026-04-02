@@ -119,7 +119,14 @@ const ChatOverlay = () => {
   const playTTS = useCallback(async (text: string) => {
     if (!ttsEnabled) return;
     try {
-      const cleanText = text.replace(/\[.*?\]\(.*?\)/g, "").replace(/[*_#`]/g, "").trim();
+      const cleanText = text
+        .replace(/\[.*?\]\(.*?\)/g, "")
+        .replace(/[*_#`|•\-]/g, " ")
+        .replace(/CHF\s*/g, "Franken ")
+        .replace(/\/Mt\./g, " pro Monat")
+        .replace(/\.\.\./g, " ")
+        .replace(/\s{2,}/g, " ")
+        .trim();
       if (!cleanText) return;
       const response = await fetch(TTS_URL, {
         method: "POST",
