@@ -89,9 +89,15 @@ const AdminSlider = () => {
       const { data: { publicUrl } } = supabase.storage.from("site-images").getPublicUrl(path);
 
       if (cropModal?.existingId) {
-        // Update existing slider image
-        const { error } = await supabase.from("slider_images").update({ image_url: publicUrl }).eq("id", cropModal.existingId);
-        if (error) throw error;
+        if (cropModal?.mobile) {
+          // Update mobile image
+          const { error } = await supabase.from("slider_images").update({ mobile_image_url: publicUrl } as any).eq("id", cropModal.existingId);
+          if (error) throw error;
+        } else {
+          // Update existing slider image
+          const { error } = await supabase.from("slider_images").update({ image_url: publicUrl }).eq("id", cropModal.existingId);
+          if (error) throw error;
+        }
       } else {
         // Insert new slider image
         const maxOrder = images?.length ? Math.max(...images.map((i) => i.sort_order)) + 1 : 0;
