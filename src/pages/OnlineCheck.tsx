@@ -865,10 +865,32 @@ const InsuranceWizard = () => {
               <p className="text-xs text-muted-foreground">Ihre Referenznummer</p>
               <p className="text-lg font-heading font-bold text-foreground tracking-wider">{referenceNumber}</p>
             </div>
-            <div className="mt-8">
-              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "" }); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
-                className="inline-flex items-center gap-2 px-6 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors">
-                Neue Anfrage starten
+
+            {/* Post-submit options */}
+            <div className="mt-10 max-w-lg mx-auto">
+              <p className="text-sm font-medium text-foreground mb-4">Wie möchten Sie weiterfahren?</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  onClick={() => { setStep(0); setSelectedCategories([]); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
+                  className="flex items-center justify-center gap-2 p-4 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity"
+                >
+                  <Plus size={18} />
+                  Weitere Versicherung abschliessen
+                </button>
+                <a
+                  href="/kontakt"
+                  className="flex items-center justify-center gap-2 p-4 bg-card border-2 border-primary text-primary rounded-xl font-heading font-bold hover:bg-primary/5 transition-colors"
+                >
+                  <Calendar size={18} />
+                  Termin vereinbaren
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Komplett neu starten
               </button>
             </div>
           </motion.div>
