@@ -29,12 +29,12 @@ const premiumTool = {
 };
 
 // Call BAG API for premiums
-async function fetchVisanaPremiums(args: { plz: string; age: number; deductible?: number; accident?: boolean; model?: string }) {
+async function fetchVisanaPremiums(args: { plz: string; age: string; deductible?: string; accident?: string; model?: string }) {
   const params = new URLSearchParams({
     plz: args.plz,
-    age: String(args.age),
-    deductible: String(args.deductible || 2500),
-    accident: String(args.accident ?? false),
+    age: String(parseInt(args.age) || 30),
+    deductible: String(parseInt(args.deductible || "2500") || 2500),
+    accident: args.accident === "true" ? "true" : "false",
     limit: "200",
   });
   if (args.model) params.set("model", args.model);
