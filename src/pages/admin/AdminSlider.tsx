@@ -11,7 +11,7 @@ const AdminSlider = () => {
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ headline: "", subline: "", alt_text: "" });
-  const [cropModal, setCropModal] = useState<{ src: string; existingId?: string } | null>(null);
+  const [cropModal, setCropModal] = useState<{ src: string; existingId?: string; mobile?: boolean } | null>(null);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const { data: images, isLoading } = useQuery({
