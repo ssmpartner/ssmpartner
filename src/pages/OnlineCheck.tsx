@@ -736,7 +736,7 @@ const InsuranceWizard = () => {
         message,
         source: "onlinecheck",
       });
-      setStep(6);
+      setStep(4);
     } catch {
       // handled by UI
     }
