@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Save, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
+import ImageCropModal from "@/components/ImageCropModal";
 
 const categories = [
   { value: "", label: "Alle" },
@@ -30,6 +31,7 @@ const AdminTeam = () => {
   const [form, setForm] = useState(emptyForm);
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState("");
+  const [cropModal, setCropModal] = useState<{ src: string; memberId?: string } | null>(null);
 
   const { data: agencies } = useQuery({
     queryKey: ["admin-agencies-list"],
@@ -99,24 +101,31 @@ const AdminTeam = () => {
     },
   });
 
-  const handleImageUpload = async (file: File, memberId?: string) => {
+  const handleFileSelect = (file: File, memberId?: string) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropModal({ src: reader.result as string, memberId });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCroppedUpload = async (blob: Blob, memberId?: string) => {
     setUploading(true);
+    setCropModal(null);
     try {
-      const ext = file.name.split(".").pop();
       const id = memberId || "new-" + Date.now();
-      const path = `team/${id}-${Date.now()}.${ext}`;
+      const path = `team/${id}-${Date.now()}.jpg`;
+      const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
       const { error: uploadError } = await supabase.storage.from("site-images").upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
       const { data: { publicUrl } } = supabase.storage.from("site-images").getPublicUrl(path);
 
       if (memberId) {
-        // Existing member — save directly to DB
         const { error } = await supabase.from("team_members").update({ image_url: publicUrl }).eq("id", memberId);
         if (error) throw error;
         queryClient.invalidateQueries({ queryKey: ["admin-team"] });
         toast.success("Foto hochgeladen");
       } else {
-        // New member — just set in form state
         setForm((prev) => ({ ...prev, image_url: publicUrl }));
         toast.success("Foto hochgeladen — bitte speichern");
       }
@@ -226,7 +235,7 @@ const AdminTeam = () => {
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleImageUpload(file, editingId === "new" ? undefined : editingId);
+                      if (file) handleFileSelect(file, editingId === "new" ? undefined : editingId);
                       e.target.value = "";
                     }}
                   />
@@ -320,7 +329,7 @@ const AdminTeam = () => {
                     accept="image/*"
                     className="hidden"
                     onChange={(e) => {
-                      if (e.target.files?.[0]) handleImageUpload(e.target.files[0], m.id);
+                      if (e.target.files?.[0]) handleFileSelect(e.target.files[0], m.id);
                       e.target.value = "";
                     }}
                   />
@@ -381,6 +390,14 @@ const AdminTeam = () => {
           ))}
         </div>
       )}
+
+      <ImageCropModal
+        open={!!cropModal}
+        imageSrc={cropModal?.src || ""}
+        aspect={3 / 4}
+        onClose={() => setCropModal(null)}
+        onCropDone={(blob) => handleCroppedUpload(blob, cropModal?.memberId)}
+      />
     </div>
   );
 };
