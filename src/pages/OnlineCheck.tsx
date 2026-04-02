@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft, Lock, Award, Clock, Globe, Smartphone, Briefcase, Search, Loader2, TrendingDown, MapPin, Calendar, Plus } from "lucide-react";
+import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft, Lock, Award, Clock, Globe, Smartphone, Briefcase, Search, Loader2, TrendingDown, MapPin, Calendar, Plus, Mic, MicOff } from "lucide-react";
+import { useScribe } from "@elevenlabs/react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
