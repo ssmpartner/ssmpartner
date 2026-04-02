@@ -220,7 +220,7 @@ const AdminSlider = () => {
       <ImageCropModal
         open={!!cropModal}
         imageSrc={cropModal?.src || ""}
-        aspect={16 / 9}
+        aspect={cropModal?.mobile ? 9 / 16 : 16 / 9}
         onClose={() => setCropModal(null)}
         onCropDone={handleCroppedUpload}
       />
