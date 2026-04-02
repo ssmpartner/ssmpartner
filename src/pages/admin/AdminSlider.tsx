@@ -66,7 +66,7 @@ const AdminSlider = () => {
   };
 
 
-    const file = e.target.files?.[0];
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => setCropModal({ src: reader.result as string });
