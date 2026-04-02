@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Save, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import ImageCropModal from "@/components/ImageCropModal";
-import { toast } from "sonner";
 
 const categories = [
   { value: "", label: "Alle" },
