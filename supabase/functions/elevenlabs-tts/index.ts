@@ -19,7 +19,7 @@ serve(async (req) => {
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
     if (!ELEVENLABS_API_KEY) throw new Error("ELEVENLABS_API_KEY is not configured");
 
-    const voice = voiceId || "pFQyF2hbBHFKK23TkieM"; // Antonia Konstanz - German Native voice
+    const voice = voiceId || "pFZP5JQG7iQjIQuC4Bku"; // Lily - multilingual, good German pronunciation
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_44100_128`,
