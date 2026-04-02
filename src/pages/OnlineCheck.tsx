@@ -403,7 +403,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground text-center">Quelle: BAG / priminfo.admin.ch · Prämien 2026 · Top {offers.length} Angebote</p>
+          <p className="text-[10px] text-muted-foreground text-center">Quelle: BAG / priminfo.admin.ch · Visana Prämien 2026</p>
         </div>
       )}
     </div>
