@@ -333,7 +333,7 @@ const ChatOverlay = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Fragen Sie unseren KI-Berater..."
+            placeholder={isRecording ? "Sprechen Sie jetzt..." : "Fragen Sie unseren KI-Berater..."}
             rows={2}
             className="flex-1 resize-none text-base bg-transparent outline-none text-foreground placeholder:text-muted-foreground py-2 max-h-32"
             disabled={isLoading}
