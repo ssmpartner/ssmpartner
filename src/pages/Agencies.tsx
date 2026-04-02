@@ -36,7 +36,7 @@ const Agencies = () => {
 
   return (
     <main>
-      <PageHero pageKey="team" fallbackImage="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" />
+      <PageHero pageKey="team" />
 
       {/* Intro Section */}
       <section className="py-20 lg:py-28 relative overflow-hidden">

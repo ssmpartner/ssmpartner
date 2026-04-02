@@ -84,7 +84,7 @@ const Legal = () => {
 
   return (
     <main>
-      <PageHero pageKey="legal" fallbackImage="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1600" />
+      <PageHero pageKey="legal" />
 
       <AnimatedSection>
         <section className="max-w-7xl mx-auto px-6 py-16 lg:py-24">
