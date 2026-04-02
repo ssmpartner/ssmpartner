@@ -296,6 +296,119 @@ const productQuestions: Record<string, ProductQuestion[]> = {
   ],
 };
 
+/* ─── BAG Premium API Types ─── */
+type BagOffer = {
+  insurer: string;
+  model: string;
+  deductible: number;
+  accident: boolean;
+  price: { base: number; accident: number; total: number; currency: string };
+};
+
+const BAG_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bag-premiums`;
+
+/* ─── BAG Premium Comparison Component ─── */
+const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: string; birthDate: string; franchise: string; modell: string }) => {
+  const [offers, setOffers] = useState<BagOffer[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
+  const [region, setRegion] = useState("");
+
+  const calculateAge = (bd: string) => {
+    const birth = new Date(bd);
+    const now = new Date();
+    let age = now.getFullYear() - birth.getFullYear();
+    if (now.getMonth() < birth.getMonth() || (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())) age--;
+    return age;
+  };
+
+  const modelMap: Record<string, string> = {
+    "Standard (freie Arztwahl)": "standard",
+    "Hausarzt-Modell": "hausarzt",
+    "HMO": "hmo",
+    "Telmed": "telmed",
+  };
+
+  const deductibleMap: Record<string, number> = {
+    "300 CHF": 300, "500 CHF": 500, "1'000 CHF": 1000,
+    "1'500 CHF": 1500, "2'000 CHF": 2000, "2'500 CHF": 2500,
+  };
+
+  const canSearch = plz.length >= 4 && birthDate && franchise;
+
+  const fetchPremiums = async () => {
+    if (!canSearch) return;
+    setLoading(true);
+    setSearched(true);
+    try {
+      const age = calculateAge(birthDate);
+      const deductible = deductibleMap[franchise] || 2500;
+      const model = modelMap[modell] || undefined;
+
+      const resp = await fetch(BAG_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ plz, age, deductible, accident: false, model, limit: 10 }),
+      });
+      const data = await resp.json();
+      setOffers(data.offers || []);
+      setRegion(data.region || "");
+    } catch {
+      setOffers([]);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="mt-4 bg-muted/50 rounded-xl p-4 space-y-3 border border-border">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <TrendingDown size={16} className="text-primary" />
+          <h5 className="text-sm font-bold text-foreground">BAG Prämienvergleich 2026</h5>
+        </div>
+        <button
+          onClick={fetchPremiums}
+          disabled={!canSearch || loading}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg disabled:opacity-40 hover:opacity-90 transition-opacity"
+        >
+          {loading ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
+          {loading ? "Laden..." : "Prämien laden"}
+        </button>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Vergleichen Sie aktuelle Krankenkassenprämien basierend auf Ihren Angaben (PLZ, Alter, Franchise).
+      </p>
+
+      {searched && !loading && offers.length === 0 && (
+        <p className="text-xs text-muted-foreground italic">Keine Angebote gefunden. Prüfen Sie die PLZ.</p>
+      )}
+
+      {offers.length > 0 && (
+        <div className="space-y-2">
+          {region && <p className="text-[11px] text-muted-foreground">Region: {region}</p>}
+          <div className="grid gap-2">
+            {offers.map((o, i) => (
+              <div key={i} className={`flex items-center justify-between p-3 rounded-lg border ${i === 0 ? "border-primary bg-primary/5" : "border-border bg-card"}`}>
+                <div>
+                  <p className="text-sm font-medium text-foreground">{o.insurer}</p>
+                  <p className="text-xs text-muted-foreground">{o.model} · Franchise CHF {o.deductible}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-primary">CHF {o.price.total.toFixed(2)}</p>
+                  <p className="text-[10px] text-muted-foreground">pro Monat</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground text-center">Quelle: BAG / priminfo.admin.ch · Prämien 2026 · Top {offers.length} Angebote</p>
+        </div>
+      )}
+    </div>
+  );
+
 /* ─── Coverage packages ─── */
 const coveragePackages: Record<string, { basis: string; komfort: string; premium: string }> = {
   hausrat: { basis: "ab CHF 8.–/Mt.", komfort: "ab CHF 15.–/Mt.", premium: "ab CHF 25.–/Mt." },
