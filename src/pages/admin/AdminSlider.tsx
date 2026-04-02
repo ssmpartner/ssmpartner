@@ -203,6 +203,12 @@ const AdminSlider = () => {
         onClose={() => setCropModal(null)}
         onCropDone={handleCroppedUpload}
       />
+
+      <MediaPickerModal
+        open={mediaPickerOpen}
+        onClose={() => setMediaPickerOpen(false)}
+        onSelect={handleMediaSelect}
+      />
     </div>
   );
 };
