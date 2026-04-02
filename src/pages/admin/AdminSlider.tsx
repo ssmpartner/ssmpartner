@@ -63,6 +63,11 @@ const AdminSlider = () => {
     e.target.value = "";
   };
 
+  const handleMediaSelect = (url: string) => {
+    setMediaPickerOpen(false);
+    setCropModal({ src: url });
+  };
+
   const handleCroppedUpload = async (blob: Blob) => {
     setUploading(true);
     try {
