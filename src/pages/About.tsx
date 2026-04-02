@@ -92,6 +92,11 @@ const About = () => {
           </div>
           <h3 className={`font-heading font-semibold text-foreground ${isSmall ? "text-sm mt-3" : "text-base mt-4"}`}>{member.name}</h3>
           <p className={`font-body text-muted-foreground ${isSmall ? "text-xs mt-0.5" : "text-sm mt-1"}`}>{getRole(member)}</p>
+          {member.badge && (
+            <span className="inline-block mt-1.5 font-body text-[10px] font-medium px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: "#6A9387" }}>
+              {({ verkaufsleiter: "Verkaufsleiter", teamleiter: "Teamleiter", finanzexperte: "Finanzexperte", finanzcoach: "Finanzcoach", finanzcoach_vbv: "Finanzcoach VBV", trainee: "Trainee" } as Record<string, string>)[member.badge] || member.badge}
+            </span>
+          )}
         </div>
       </AnimatedSection>
     );
