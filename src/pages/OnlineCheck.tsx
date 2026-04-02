@@ -573,7 +573,7 @@ const packageDetails: Record<string, { title: string; desc: string; color: strin
 
 /* ─── Step Indicator ─── */
 const StepIndicator = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
-  const labels = ["Produkt", "Persönlich", "Details", "Deckung", "Zusammenfassung"];
+  const labels = ["Produkt", "Persönlich", "Details", "Zusammenfassung", "Offertenanfrage"];
   return (
     <div className="flex items-center justify-center gap-1 mb-8">
       {labels.map((label, i) => (
