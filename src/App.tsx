@@ -31,6 +31,7 @@ import AdminCareerVideos from "./pages/admin/AdminCareerVideos";
 import AdminCareerFaqs from "./pages/admin/AdminCareerFaqs";
 import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
 import AdminChatKnowledge from "./pages/admin/AdminChatKnowledge";
+import AdminChatLogs from "./pages/admin/AdminChatLogs";
 import AdminVag45 from "./pages/admin/AdminVag45";
 import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import ChatWidget from "@/components/ChatWidget";
@@ -97,6 +98,7 @@ const App = () => (
                 <Route path="/admin/api-docs" element={<AdminApiDocs />} />
                 <Route path="/admin/docs" element={<AdminDocs />} />
                 <Route path="/admin/chat-knowledge" element={<AdminChatKnowledge />} />
+                <Route path="/admin/chat-logs" element={<AdminChatLogs />} />
                 <Route path="/admin/vag45" element={<AdminVag45 />} />
                 <Route path="/admin/onlinecheck" element={<AdminOnlineCheck />} />
               </Route>
