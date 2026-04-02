@@ -1193,7 +1193,7 @@ const OnlineCheck = () => {
       </div>
 
       {/* Chat Overlay — overlaps into wizard container */}
-      <div className="relative z-10 -mt-32 lg:-mt-40 px-4 mb-12 lg:mb-16">
+      <div className="relative z-10 -mt-44 lg:-mt-52 px-4 mb-12 lg:mb-16">
         <div className="max-w-3xl mx-auto">
           <ChatOverlay />
         </div>
