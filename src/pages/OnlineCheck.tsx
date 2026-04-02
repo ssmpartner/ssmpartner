@@ -518,8 +518,8 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
   );
 };
 
-/* ─── Coverage packages ─── */
-const coveragePackages: Record<string, { basis: string; komfort: string; premium: string }> = {
+/* ─── Coverage packages (fallback, overridden by DB) ─── */
+const coveragePackagesFallback: Record<string, { basis: string; komfort: string; premium: string }> = {
   hausrat: { basis: "ab CHF 8.–/Mt.", komfort: "ab CHF 15.–/Mt.", premium: "ab CHF 25.–/Mt." },
   auto: { basis: "ab CHF 45.–/Mt.", komfort: "ab CHF 75.–/Mt.", premium: "ab CHF 110.–/Mt." },
   rechtsschutz: { basis: "ab CHF 12.–/Mt.", komfort: "ab CHF 22.–/Mt.", premium: "ab CHF 35.–/Mt." },
