@@ -1200,7 +1200,7 @@ const OnlineCheck = () => {
       </div>
 
       {/* Wizard Section — negative margin so chat overlaps into it */}
-      <section className="relative -mt-12 lg:-mt-16 pt-20 lg:pt-24 pb-12 md:pb-20 px-4 bg-muted/50">
+      <section className="relative -mt-12 lg:-mt-16 pt-20 lg:pt-24 pb-12 md:pb-20 px-4 bg-muted">
         <div className="max-w-5xl mx-auto">
           <InsuranceWizard />
         </div>
