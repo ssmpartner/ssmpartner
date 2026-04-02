@@ -959,7 +959,7 @@ const InsuranceWizard = () => {
             </div>
 
             <div className="mt-6">
-              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
+              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", address: "", plz: "", ort: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Komplett neu starten
               </button>
