@@ -145,7 +145,7 @@ const AdminSlider = () => {
         <p className="font-body text-sm text-muted-foreground">Noch keine Slider-Bilder vorhanden.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {images.map((img) => (
+          {images.map((img, idx) => (
             <div key={img.id} className="bg-card border rounded-xl overflow-hidden">
               <div className="relative aspect-video">
                 <img src={img.image_url} alt={img.alt_text || ""} className="w-full h-full object-cover" />
