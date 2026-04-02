@@ -20,9 +20,20 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
     },
   });
 
-  const imageUrl = hero?.image_url;
+  const imageUrl = hero?.image_url || fallbackImage;
 
-  if (isLoading || !imageUrl) return (
+  if (isLoading) return (
+    <div className="w-full relative">
+      <div className="w-full h-[35vh] lg:h-[42vh] bg-muted relative">
+        <div
+          className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
+          style={{ boxShadow: "0 -10px 30px rgba(0,0,0,0.15)" }}
+        />
+      </div>
+    </div>
+  );
+
+  if (!imageUrl) return (
     <div className="w-full relative">
       <div className="w-full h-[35vh] lg:h-[42vh] bg-muted relative">
         <div
