@@ -10,7 +10,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { messages } = await req.json();
+    const { messages, session_id, source, page_url } = await req.json();
     if (!messages || !Array.isArray(messages)) {
       return new Response(JSON.stringify({ error: "messages array required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -23,6 +23,29 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const sb = createClient(supabaseUrl, supabaseKey);
+
+    // Create or reuse chat session
+    let currentSessionId = session_id;
+    if (!currentSessionId) {
+      const { data: sessionData, error: sessionError } = await sb
+        .from("chat_sessions")
+        .insert({ source: source || "website", page_url: page_url || null })
+        .select("id")
+        .single();
+      if (!sessionError && sessionData) {
+        currentSessionId = sessionData.id;
+      }
+    }
+
+    // Save user message (last message in array)
+    const lastMsg = messages[messages.length - 1];
+    if (currentSessionId && lastMsg?.role === "user" && lastMsg?.content) {
+      await sb.from("chat_messages").insert({
+        session_id: currentSessionId,
+        role: "user",
+        content: lastMsg.content,
+      });
+    }
 
     // Fetch knowledge base
     const { data: knowledge } = await sb
@@ -130,8 +153,49 @@ KONTAKTKARTEN-FUNKTION:
       });
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+    // We need to intercept the stream to save the assistant response
+    const reader = response.body!.getReader();
+    let assistantContent = "";
+
+    const stream = new ReadableStream({
+      async pull(controller) {
+        const { done, value } = await reader.read();
+        if (done) {
+          // Save assistant response when stream ends
+          if (currentSessionId && assistantContent.trim()) {
+            sb.from("chat_messages").insert({
+              session_id: currentSessionId,
+              role: "assistant",
+              content: assistantContent,
+            }).then(() => {});
+          }
+          controller.close();
+          return;
+        }
+
+        // Parse SSE to capture assistant content
+        const text = new TextDecoder().decode(value);
+        const lines = text.split("\n");
+        for (const line of lines) {
+          if (line.startsWith("data: ") && line.trim() !== "data: [DONE]") {
+            try {
+              const parsed = JSON.parse(line.slice(6));
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) assistantContent += delta;
+            } catch { /* partial JSON, ignore */ }
+          }
+        }
+
+        controller.enqueue(value);
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "text/event-stream",
+        "X-Session-Id": currentSessionId || "",
+      },
     });
   } catch (e) {
     console.error("chat error:", e);
