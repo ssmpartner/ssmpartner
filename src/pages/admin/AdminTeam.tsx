@@ -352,20 +352,36 @@ const AdminTeam = () => {
                     {m.name.charAt(0)}
                   </div>
                 )}
-                <label className="absolute inset-0 flex items-center justify-center bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                  <span className="font-body text-xs text-primary-foreground bg-foreground/80 px-2 py-1 rounded">
-                    {uploading ? "..." : "Foto"}
-                  </span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      if (e.target.files?.[0]) handleFileSelect(e.target.files[0], m.id);
-                      e.target.value = "";
-                    }}
-                  />
-                </label>
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <label className="cursor-pointer">
+                    <span className="font-body text-[10px] text-primary-foreground bg-foreground/80 px-2 py-1 rounded inline-flex items-center gap-1">
+                      <Upload size={10} />{uploading ? "..." : "Upload"}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) handleFileSelect(e.target.files[0], m.id);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                  <button
+                    onClick={() => setMediaPickerOpen({ memberId: m.id })}
+                    className="font-body text-[10px] text-primary-foreground bg-foreground/80 px-2 py-1 rounded inline-flex items-center gap-1"
+                  >
+                    <FolderOpen size={10} />Mediathek
+                  </button>
+                  {m.image_url && (
+                    <button
+                      onClick={() => handleRecrop(m.image_url!, m.id)}
+                      className="font-body text-[10px] text-primary-foreground bg-foreground/80 px-2 py-1 rounded inline-flex items-center gap-1"
+                    >
+                      <Crop size={10} />Zuschnitt
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="p-2.5 flex items-center justify-between gap-1">
                 <div onClick={() => startEdit(m)} role="button" className="cursor-pointer min-w-0 flex-1">
