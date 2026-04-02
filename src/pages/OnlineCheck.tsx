@@ -1032,11 +1032,11 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
-        {/* ─── Step 4: Offertenanfrage ─── */}
-        {step === 4 && (
-          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+        {/* ─── Step 5: Offertenanfrage ─── */}
+        {step === 5 && (
+          <motion.div key="s5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="max-w-3xl mx-auto">
-              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <button onClick={() => setStep(4)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
               <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
                 <div>
                   <h3 className="font-heading font-bold text-lg text-foreground">Offertenanfrage</h3>
