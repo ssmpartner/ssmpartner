@@ -220,6 +220,33 @@ const ChatOverlay = () => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(input); }
   };
 
+  const toggleRecording = useCallback(async () => {
+    if (isRecording) {
+      scribe.disconnect();
+      setIsRecording(false);
+      return;
+    }
+    try {
+      const resp = await fetch(SCRIBE_TOKEN_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+      });
+      const data = await resp.json();
+      if (!data?.token) throw new Error("No token received");
+
+      await scribe.connect({
+        token: data.token,
+        microphone: { echoCancellation: true, noiseSuppression: true },
+      });
+      setIsRecording(true);
+    } catch (e) {
+      console.error("Scribe error:", e);
+    }
+  }, [isRecording, scribe]);
+
   return (
     <div className="relative">
       {/* Chat messages area - expands when conversation starts */}
