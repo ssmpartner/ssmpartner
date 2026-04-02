@@ -329,7 +329,7 @@ const AdminTeam = () => {
                     accept="image/*"
                     className="hidden"
                     onChange={(e) => {
-                      if (e.target.files?.[0]) handleImageUpload(e.target.files[0], m.id);
+                      if (e.target.files?.[0]) handleFileSelect(e.target.files[0], m.id);
                       e.target.value = "";
                     }}
                   />
