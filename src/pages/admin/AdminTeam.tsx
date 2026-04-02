@@ -446,6 +446,14 @@ const AdminTeam = () => {
         onClose={() => setCropModal(null)}
         onCropDone={(blob) => handleCroppedUpload(blob, cropModal?.memberId)}
       />
+
+      <MediaPickerModal
+        open={!!mediaPickerOpen}
+        onClose={() => setMediaPickerOpen(null)}
+        onSelect={(url) => handleMediaSelect(url, mediaPickerOpen?.memberId)}
+        accept="image"
+        title="Teamfoto aus Mediathek wählen"
+      />
     </div>
   );
 };
