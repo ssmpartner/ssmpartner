@@ -1,15 +1,17 @@
-import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot } from "lucide-react";
+import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift } from "lucide-react";
+
+const CMS_VERSION = "2.4.0";
 
 const sections = [
   {
     icon: Layers,
     title: "Slider-Bilder",
-    content: "Auf der Startseite befindet sich ein automatischer Bild-Slider. Unter «Slider-Bilder» können Sie Bilder hinzufügen, löschen und die Reihenfolge ändern. Jedes Slide kann eine Headline und Subline enthalten. Empfohlenes Format: 1920 × 800 px (21:9), JPG oder WebP, max. 500 KB.",
+    content: "Auf der Startseite befindet sich ein automatischer Bild-Slider. Unter «Slider-Bilder» können Sie Bilder hinzufügen, löschen und die Reihenfolge ändern. Jedes Slide kann eine Headline und Subline enthalten. Beim Hochladen oder nachträglich kann der Zuschnitt (16:9) angepasst werden. Empfohlenes Format: 1920 × 800 px, JPG oder WebP, max. 500 KB.",
   },
   {
     icon: Image,
     title: "Hero-Bilder",
-    content: "Jede Unterseite und jede Agentur kann ein eigenes Hero-Bild erhalten. Unter «Hero-Bilder» wählen Sie die Seite aus und laden das gewünschte Bild hoch. Auch die Karriere-Hintergrundbilder (career_bg_1, career_bg_2) werden hier verwaltet. Empfohlenes Format: 1920 × 800 px.",
+    content: "Jede Unterseite und jede Agentur kann ein eigenes Hero-Bild erhalten. Unter «Hero-Bilder» wählen Sie die Seite aus und laden das gewünschte Bild hoch oder wählen es aus der Mediathek. Der Zuschnitt (21:9) kann jederzeit angepasst werden. Auch die Karriere-Hintergrundbilder (career_bg_1, career_bg_2) werden hier verwaltet.",
   },
   {
     icon: FileText,
@@ -19,12 +21,12 @@ const sections = [
   {
     icon: Users,
     title: "Team-Verwaltung",
-    content: "Unter «Team» fügen Sie Mitglieder hinzu und weisen sie einer Kategorie zu: Geschäftsleitung, Fachführung, Erweitertes Team oder einer Agentur. Pro Agentur kann ein Mitglied als Agenturleiter/in markiert werden (★). Badges wie Verkaufsleiter, Teamleiter oder Finanzexperte können individuell vergeben werden und erscheinen auf dem Profilbild.",
+    content: "Unter «Team» fügen Sie Mitglieder hinzu und weisen sie einer Kategorie zu: Geschäftsleitung, Fachführung, Erweitertes Team oder einer Agentur. Pro Agentur kann ein Mitglied als Agenturleiter/in markiert werden (★). Badges wie Verkaufsleiter, Teamleiter, Finanzexperte, Finanzcoach, Finanzcoach VBV oder Trainee können individuell vergeben werden und erscheinen auf dem Profilbild. Beim Hochladen von Teamfotos kann der Zuschnitt (3:4) angepasst werden — auch nachträglich über die Mediathek oder den «Zuschnitt»-Button.",
   },
   {
     icon: Building2,
     title: "Agenturen",
-    content: "Unter «Agenturen» verwalten Sie alle Standorte. Jede Agentur hat eine eigene Detailseite mit Beschreibung, Team, Mapbox-Karte, Bewertungen, Galerie und Kontaktformular. Felder wie Adresse, Telefon, E-Mail, Öffnungszeiten und Koordinaten (Lat/Lng) können gepflegt werden. Auf der Agenturen-Übersicht gibt es zudem einen HQ-Bereich mit Bildergalerie.",
+    content: "Unter «Agenturen» verwalten Sie alle Standorte. Jede Agentur hat eine eigene Detailseite mit Beschreibung, Team, Mapbox-Karte, Bewertungen, Galerie und Kontaktformular. Felder wie Adresse, Telefon, E-Mail, Öffnungszeiten und Koordinaten (Lat/Lng) können gepflegt werden. Hero-Bilder der Agenturen werden automatisch als Fallback verwendet, falls kein separates Hero-Bild gepflegt ist.",
   },
   {
     icon: Star,
@@ -47,9 +49,19 @@ const sections = [
     content: "Unter «Karriere-FAQs» verwalten Sie häufig gestellte Fragen rund um Bewerbung und Karriere. Diese werden als Akkordeon am Ende der Karriereseite dargestellt.",
   },
   {
+    icon: CreditCard,
+    title: "Prämien & Angebotsanfrage (Wizard)",
+    content: "Unter «Online-Check» verwalten Sie den 5-stufigen Wizard: Schritt 1 Produkt, Schritt 2 Persönliche Informationen, Schritt 3 Deckung mit Vorschlägen (günstigstes Angebot wird mit Badge markiert), Schritt 4 Zusammenfassung mit Richtpreisen (als PDF herunterladbar), Schritt 5 Offertenanfrage mit Agentur-Vorschlag und Terminbuchung. Die Preisstufen (Basis, Standard, Premium) werden über die Tabelle «wizard_pricing» verwaltet.",
+  },
+  {
+    icon: Gift,
+    title: "Cashback & Weiterempfehlung",
+    content: "Unterhalb des Wizards wird ein Cashback-Bereich angezeigt: Bei Online-Abschluss erhalten Kunden CHF 150.– Cashback. Zudem können sie Familie oder Freunde weiterempfehlen und zusätzlich CHF 50.– pro Empfehlung erhalten.",
+  },
+  {
     icon: Inbox,
     title: "Anfragen",
-    content: "Alle Kontaktanfragen — ob von der Kontaktseite, einer Agentur-Schnellanfrage oder dem Chatbot — landen zentral unter «Anfragen». Status: Neu → In Bearbeitung → Erledigt → Archiviert. Sie können Notizen hinzufügen und den Verlauf verfolgen.",
+    content: "Alle Kontaktanfragen — ob von der Kontaktseite, einer Agentur-Schnellanfrage, dem Chatbot oder dem Wizard — landen zentral unter «Anfragen». Status: Neu → In Bearbeitung → Erledigt → Archiviert. Sie können Notizen hinzufügen und den Verlauf verfolgen.",
   },
   {
     icon: Bot,
@@ -60,6 +72,11 @@ const sections = [
     icon: Globe,
     title: "Navigation",
     content: "Unter «Menüpunkte» verwalten Sie die Hauptnavigation. Sie können Einträge aktivieren/deaktivieren, umbenennen und die Reihenfolge anpassen. Mehrsprachige Labels (DE, FR, IT, EN) werden unterstützt.",
+  },
+  {
+    icon: Scissors,
+    title: "Bildzuschnitt",
+    content: "Beim Hochladen von Bildern (Team, Hero, Slider) steht ein Zuschnitt-Tool zur Verfügung. Die Seitenverhältnisse sind fix vorgegeben: Team 3:4, Hero 21:9, Slider 16:9. Bestehende Bilder können jederzeit nachträglich zugeschnitten werden. Bilder können hochgeladen oder aus der Mediathek ausgewählt werden.",
   },
   {
     icon: Image,
@@ -76,7 +93,10 @@ const sections = [
 const AdminDocs = () => {
   return (
     <div className="max-w-3xl">
-      <h1 className="font-heading text-2xl font-bold text-foreground mb-1">Dokumentation</h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="font-heading text-2xl font-bold text-foreground">Dokumentation</h1>
+        <span className="text-xs font-mono bg-muted text-muted-foreground px-2 py-1 rounded-md">v{CMS_VERSION}</span>
+      </div>
       <p className="font-body text-sm text-muted-foreground mb-8">
         Übersicht aller Funktionen des Content-Management-Systems.
       </p>
@@ -96,6 +116,10 @@ const AdminDocs = () => {
           </div>
         ))}
       </div>
+
+      <p className="text-xs text-muted-foreground text-center mt-8">
+        CMS Version {CMS_VERSION} · Letzte Aktualisierung: April 2026
+      </p>
     </div>
   );
 };
