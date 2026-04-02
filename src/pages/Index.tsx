@@ -306,7 +306,7 @@ const Index = () => {
         </div>
 
         {/* Mobile: stacked cards below dots */}
-        <div className="absolute bottom-20 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
+        <div className="absolute bottom-36 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
           <Link
             to="/karriere"
             className="flex items-center gap-3 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-xl p-3 pr-4"
