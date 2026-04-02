@@ -624,7 +624,7 @@ const InsuranceWizard = () => {
       return `${cat.label} (Paket: ${pkg}):\n${qText}`;
     }).join("\n\n");
 
-    const message = `Ref: ${ref}\n\nProdukte: ${selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}\n\nZivilstand: ${personalData.zivilstand || "k.A."}\nGeburtsdatum: ${personalData.birthDate || "k.A."}\nPLZ: ${personalData.plz || "k.A."}\n\n--- Produktdetails ---\n${details}`;
+    const message = `Ref: ${ref}\n\nProdukte: ${selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}\n\nAdresse: ${personalData.address}, ${personalData.plz} ${personalData.ort}\nZivilstand: ${personalData.zivilstand || "k.A."}\nGeburtsdatum: ${personalData.birthDate || "k.A."}\n\n--- Produktdetails ---\n${details}`;
 
     try {
       await supabase.from("inquiries").insert({
