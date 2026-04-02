@@ -592,6 +592,84 @@ export type Database = {
           },
         ]
       }
+      vag45_downloads: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string
+          id: string
+          lang: string
+          sort_order: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          id?: string
+          lang: string
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          id?: string
+          lang?: string
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      vag45_partners: {
+        Row: {
+          active: boolean
+          address: string
+          branch: string
+          category: string
+          company: string
+          contact_email: string
+          created_at: string
+          id: string
+          privacy_url: string
+          section: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          address?: string
+          branch?: string
+          category?: string
+          company?: string
+          contact_email?: string
+          created_at?: string
+          id?: string
+          privacy_url?: string
+          section?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          address?: string
+          branch?: string
+          category?: string
+          company?: string
+          contact_email?: string
+          created_at?: string
+          id?: string
+          privacy_url?: string
+          section?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
