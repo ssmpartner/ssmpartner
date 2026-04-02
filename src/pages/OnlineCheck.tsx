@@ -816,8 +816,7 @@ const InsuranceWizard = () => {
                 </div>
                 {selectedCategories.map(catId => {
                   const cat = wizardCategories.find(c => c.id === catId)!;
-                  const packages = coveragePackages[catId];
-                  if (!packages) return null;
+                  const packages = getCoveragePackages(catId);
                   return (
                     <div key={catId} className="space-y-3">
                       <div className="flex items-center gap-2">
@@ -836,8 +835,8 @@ const InsuranceWizard = () => {
                                 <span className="absolute -top-2.5 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">{pkg.badge}</span>
                               )}
                               <h5 className="font-heading font-bold text-foreground">{pkg.title}</h5>
-                              <p className="text-xs text-muted-foreground mt-0.5">{pkg.desc}</p>
-                              <p className="text-sm font-bold text-primary mt-2">{packages[tier]}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">{getPricingDescription(catId, tier)}</p>
+                              <p className="text-sm font-bold text-primary mt-2">{packages[tier] || "—"}</p>
                             </button>
                           );
                         })}
