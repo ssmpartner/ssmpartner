@@ -253,7 +253,27 @@ const AdminTeam = () => {
                   />
                 </label>
               </div>
-              <p className="font-body text-[10px] text-muted-foreground mt-1 text-center">
+              <div className="flex gap-1 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setMediaPickerOpen({ memberId: editingId === "new" ? undefined : editingId })}
+                  className="font-body text-[10px] text-primary hover:underline"
+                  title="Aus Mediathek wählen"
+                >
+                  <FolderOpen size={12} className="inline mr-0.5" />Mediathek
+                </button>
+                {form.image_url && (
+                  <button
+                    type="button"
+                    onClick={() => handleRecrop(form.image_url, editingId === "new" ? "new" : editingId!)}
+                    className="font-body text-[10px] text-primary hover:underline"
+                    title="Zuschnitt ändern"
+                  >
+                    <Crop size={12} className="inline mr-0.5" />Zuschnitt
+                  </button>
+                )}
+              </div>
+              <p className="font-body text-[10px] text-muted-foreground mt-0.5 text-center">
                 {uploading ? "Hochladen..." : "Foto"}
               </p>
             </div>
