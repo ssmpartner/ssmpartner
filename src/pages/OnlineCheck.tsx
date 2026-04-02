@@ -965,11 +965,11 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
-        {/* ─── Step 3: Coverage / Zusammenfassung ─── */}
-        {step === 3 && (
-          <motion.div key="s3cov" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+        {/* ─── Step 4: Zusammenfassung ─── */}
+        {step === 4 && (
+          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="max-w-4xl mx-auto">
-              <button onClick={() => setStep(2)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
               <div className="space-y-8">
                 <div>
                   <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
