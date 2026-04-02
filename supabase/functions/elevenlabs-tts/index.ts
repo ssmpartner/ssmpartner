@@ -19,7 +19,7 @@ serve(async (req) => {
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
     if (!ELEVENLABS_API_KEY) throw new Error("ELEVENLABS_API_KEY is not configured");
 
-    const voice = voiceId || "EXAVITQu4vr4xnSDxMaL"; // Sarah - default voice
+    const voice = voiceId || "FGY2WhTYpPnrIDTdsKH5"; // Laura - German-speaking voice
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${voice}?output_format=mp3_44100_128`,
@@ -33,9 +33,9 @@ serve(async (req) => {
           text,
           model_id: "eleven_multilingual_v2",
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
-            style: 0.3,
+            stability: 0.65,
+            similarity_boost: 0.8,
+            style: 0.2,
             use_speaker_boost: true,
           },
         }),
