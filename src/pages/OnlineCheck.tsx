@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft, Lock, Award, Clock, Globe, Smartphone, Briefcase, Search, Loader2, TrendingDown, MapPin, Calendar, Plus } from "lucide-react";
+import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft, Lock, Award, Clock, Globe, Smartphone, Briefcase, Search, Loader2, TrendingDown, MapPin, Calendar, Plus, Mic, MicOff } from "lucide-react";
+import { useScribe } from "@elevenlabs/react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -89,11 +90,27 @@ const ChatOverlay = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
   const [chatOpen, setChatOpen] = useState(false);
+
+  const SCRIBE_TOKEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-scribe-token`;
+
+  const scribe = useScribe({
+    modelId: "scribe_v2_realtime" as any,
+    commitStrategy: "vad" as any,
+    onCommittedTranscript: (data) => {
+      if (data.text?.trim()) {
+        setInput(prev => prev ? `${prev} ${data.text.trim()}` : data.text.trim());
+      }
+    },
+    onPartialTranscript: (data) => {
+      // Visual feedback handled by isRecording state
+    },
+  });
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -203,6 +220,33 @@ const ChatOverlay = () => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(input); }
   };
 
+  const toggleRecording = useCallback(async () => {
+    if (isRecording) {
+      scribe.disconnect();
+      setIsRecording(false);
+      return;
+    }
+    try {
+      const resp = await fetch(SCRIBE_TOKEN_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+      });
+      const data = await resp.json();
+      if (!data?.token) throw new Error("No token received");
+
+      await scribe.connect({
+        token: data.token,
+        microphone: { echoCancellation: true, noiseSuppression: true },
+      });
+      setIsRecording(true);
+    } catch (e) {
+      console.error("Scribe error:", e);
+    }
+  }, [isRecording, scribe]);
+
   return (
     <div className="relative">
       {/* Chat messages area - expands when conversation starts */}
@@ -289,12 +333,19 @@ const ChatOverlay = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Fragen Sie unseren KI-Berater..."
+            placeholder={isRecording ? "Sprechen Sie jetzt..." : "Fragen Sie unseren KI-Berater..."}
             rows={2}
             className="flex-1 resize-none text-base bg-transparent outline-none text-foreground placeholder:text-muted-foreground py-2 max-h-32"
             disabled={isLoading}
           />
           <div className="flex items-center gap-1 shrink-0">
+            <button
+              onClick={toggleRecording}
+              className={`p-2 rounded-lg transition-colors ${isRecording ? "bg-red-500/20 text-red-500 animate-pulse" : "text-muted-foreground hover:text-foreground"}`}
+              title={isRecording ? "Aufnahme stoppen" : "Spracheingabe"}
+            >
+              {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
+            </button>
             <button
               onClick={() => setTtsEnabled(!ttsEnabled)}
               className={`p-2 rounded-lg transition-colors ${ttsEnabled ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-foreground"}`}
