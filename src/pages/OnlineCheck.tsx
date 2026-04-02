@@ -943,6 +943,7 @@ const InsuranceWizard = () => {
                           </div>
                         </div>
                       )}
+                    </div>
                   );
                 })}
 
