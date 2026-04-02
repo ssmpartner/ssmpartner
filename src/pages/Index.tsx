@@ -38,7 +38,7 @@ const Index = () => {
   const [current, setCurrent] = useState(0);
 
   // Slider images
-  const { data: dbSlides } = useQuery({
+  const { data: dbSlides, isLoading: slidesLoading } = useQuery({
     queryKey: ["slider-images"],
     queryFn: async () => {
       const { data, error } = await supabase
