@@ -511,7 +511,11 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
           {region && <p className="text-[11px] text-muted-foreground">Region: {region}</p>}
           <p className="text-xs text-muted-foreground">Wählen Sie Ihr bevorzugtes Angebot:</p>
           <div className="grid gap-2">
-            {offers.map((o, i) => (
+            {(() => {
+              const minPrice = Math.min(...offers.map(o => o.price.total));
+              return offers.map((o, i) => {
+                const isCheapest = o.price.total === minPrice;
+                return (
               <button
                 key={i}
                 onClick={() => onSelectOffer(isSelected(o) ? null : o)}
