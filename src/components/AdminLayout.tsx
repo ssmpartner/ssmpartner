@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { LayoutDashboard, Image, Users, Briefcase, FileText, LogOut, Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2, Book, Video, FolderOpen, HelpCircle, Bot } from "lucide-react";
+import { LayoutDashboard, Image, Users, Briefcase, FileText, LogOut, Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2, Book, Video, FolderOpen, HelpCircle, Bot, MessageSquare } from "lucide-react";
 
 const adminLinks = [
   { to: "/admin", label: "Übersicht", icon: LayoutDashboard, end: true },
@@ -15,6 +15,7 @@ const adminLinks = [
   { to: "/admin/career-faqs", label: "Karriere-FAQ", icon: HelpCircle },
   { to: "/admin/media", label: "Mediathek", icon: FolderOpen },
   { to: "/admin/chat-knowledge", label: "KI-Chat Wissen", icon: Bot },
+  { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },

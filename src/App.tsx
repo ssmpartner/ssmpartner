@@ -32,9 +32,11 @@ import AdminCareerFaqs from "./pages/admin/AdminCareerFaqs";
 import AdminMediaLibrary from "./pages/admin/AdminMediaLibrary";
 import AdminChatKnowledge from "./pages/admin/AdminChatKnowledge";
 import AdminVag45 from "./pages/admin/AdminVag45";
+import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import ChatWidget from "@/components/ChatWidget";
 import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
+import OnlineCheck from "./pages/OnlineCheck";
 import NotFound from "./pages/NotFound";
 
 const ScrollToTop = () => {
@@ -71,6 +73,7 @@ const App = () => (
             <Route path="/kontakt" element={<PublicLayout><Contact /></PublicLayout>} />
             <Route path="/rechtliches" element={<PublicLayout><Legal /></PublicLayout>} />
             <Route path="/vag45" element={<PublicLayout><Vag45 /></PublicLayout>} />
+            <Route path="/onlinecheck" element={<PublicLayout><OnlineCheck /></PublicLayout>} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />
@@ -95,6 +98,7 @@ const App = () => (
                 <Route path="/admin/docs" element={<AdminDocs />} />
                 <Route path="/admin/chat-knowledge" element={<AdminChatKnowledge />} />
                 <Route path="/admin/vag45" element={<AdminVag45 />} />
+                <Route path="/admin/onlinecheck" element={<AdminOnlineCheck />} />
               </Route>
             </Route>
 
