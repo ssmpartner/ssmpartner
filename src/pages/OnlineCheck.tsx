@@ -1064,9 +1064,9 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
-        {/* ─── Step 5: Confirmation ─── */}
-        {step === 5 && (
-          <motion.div key="s5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
+        {/* ─── Step 6: Confirmation ─── */}
+        {step === 6 && (
+          <motion.div key="s6" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
             <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
               <CheckCircle2 size={40} className="text-primary" />
             </div>
