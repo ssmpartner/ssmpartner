@@ -38,7 +38,7 @@ const Index = () => {
   const [current, setCurrent] = useState(0);
 
   // Slider images
-  const { data: dbSlides } = useQuery({
+  const { data: dbSlides, isLoading: slidesLoading } = useQuery({
     queryKey: ["slider-images"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -121,9 +121,11 @@ const Index = () => {
     return found?.image_url || "";
   }, [cmsHeroes]);
 
-  const slides = dbSlides && dbSlides.length > 0
-    ? dbSlides.map((s) => ({ image: s.image_url, headline: s.headline || "", subline: s.subline || "" }))
-    : fallbackSlides;
+  const slides = slidesLoading
+    ? [{ image: "", headline: "", subline: "" }]
+    : dbSlides && dbSlides.length > 0
+      ? dbSlides.map((s) => ({ image: s.image_url, headline: s.headline || "", subline: s.subline || "" }))
+      : fallbackSlides;
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
