@@ -24,6 +24,7 @@ const ChatWidget = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [vcardMember, setVcardMember] = useState<TeamMember | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
