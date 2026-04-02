@@ -756,7 +756,7 @@ const InsuranceWizard = () => {
         {step === 0 && (
           <motion.div key="s0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Versicherungs-Check</h2>
+              <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Prämien & Angebotsanfrage</h2>
               <p className="text-muted-foreground mt-2">Wählen Sie die gewünschten Versicherungen — mehrere gleichzeitig möglich.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
