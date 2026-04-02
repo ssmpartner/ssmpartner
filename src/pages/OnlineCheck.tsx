@@ -120,7 +120,7 @@ const ChatOverlay = () => {
     if (!ttsEnabled) return;
     try {
       const cleanText = text
-        .replace(/\[.*?\]\(.*?\)/g, "")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
         .replace(/[*_#`|•\-]/g, " ")
         .replace(/CHF\s*/g, "Franken ")
         .replace(/\/Mt\./g, " pro Monat")
