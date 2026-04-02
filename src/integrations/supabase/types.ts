@@ -670,6 +670,51 @@ export type Database = {
         }
         Relationships: []
       }
+      wizard_pricing: {
+        Row: {
+          active: boolean
+          api_source: string | null
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          label: string
+          price_text: string
+          price_value: number | null
+          sort_order: number
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          api_source?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          label?: string
+          price_text?: string
+          price_value?: number | null
+          sort_order?: number
+          tier?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          api_source?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          label?: string
+          price_text?: string
+          price_value?: number | null
+          sort_order?: number
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
