@@ -1191,8 +1191,8 @@ const OnlineCheck = () => {
           />
         </div>
 
-        {/* Chat Overlay — centered on hero/content boundary */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 translate-y-1/2 px-4">
+        {/* Chat Overlay — 50/50 overlapping hero and content */}
+        <div className="absolute left-0 right-0 z-10 px-4" style={{ bottom: "-2rem" }}>
           <div className="max-w-4xl mx-auto">
             <ChatOverlay />
           </div>
