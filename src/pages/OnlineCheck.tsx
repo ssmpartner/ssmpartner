@@ -290,8 +290,8 @@ const ChatOverlay = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Fragen Sie unseren KI-Berater..."
-            rows={1}
-            className="flex-1 resize-none text-sm bg-transparent outline-none text-foreground placeholder:text-muted-foreground py-2 max-h-24"
+            rows={2}
+            className="flex-1 resize-none text-base bg-transparent outline-none text-foreground placeholder:text-muted-foreground py-2 max-h-32"
             disabled={isLoading}
           />
           <div className="flex items-center gap-1 shrink-0">
