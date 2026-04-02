@@ -351,7 +351,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ plz, age, deductible, accident: false, model, limit: 10 }),
+        body: JSON.stringify({ plz, age, deductible, accident: false, model, limit: 100, insurer: "Visana" }),
       });
       const data = await resp.json();
       setOffers(data.offers || []);
