@@ -1023,7 +1023,7 @@ const InsuranceWizard = () => {
                   );
                 })}
 
-                <button onClick={() => setStep(4)}
+                <button onClick={() => setStep(5)}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
                   Weiter zur Offertenanfrage <ArrowRight size={18} />
                 </button>
