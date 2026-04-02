@@ -896,7 +896,7 @@ const InsuranceWizard = () => {
                 <button onClick={() => setStep(4)}
                   disabled={selectedCategories.some(id => !selectedPackages[id])}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
-                  Weiter zur Zusammenfassung <ArrowRight size={18} />
+                  Weiter zur Offertenanfrage <ArrowRight size={18} />
                 </button>
               </div>
             </div>
