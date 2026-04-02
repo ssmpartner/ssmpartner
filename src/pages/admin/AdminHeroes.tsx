@@ -25,6 +25,7 @@ const staticPages = [
   { key: "team", label: "Agenturen" },
   { key: "legal", label: "Impressum / Datenschutz" },
   { key: "onlinecheck", label: "Online-Beratung" },
+  { key: "vag45", label: "VAG 45" },
   { key: "hq-1", label: "HQ Galerie – Hauptbild" },
   { key: "hq-2", label: "HQ Galerie – Bild 2" },
   { key: "hq-3", label: "HQ Galerie – Bild 3" },
