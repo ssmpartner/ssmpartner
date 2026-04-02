@@ -635,7 +635,7 @@ const packageDetails: Record<string, { title: string; desc: string; color: strin
 
 /* ─── Step Indicator ─── */
 const StepIndicator = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
-  const labels = ["Produkt", "Persönlich", "Details", "Deckung", "Zusammenfassung", "Offertenanfrage"];
+  const labels = ["Produkt", "Persönlich", "Deckung", "Zusammenfassung", "Offertenanfrage"];
   return (
     <div className="flex items-center justify-center gap-1 mb-8">
       {labels.map((label, i) => (
@@ -736,7 +736,7 @@ const InsuranceWizard = () => {
         message,
         source: "onlinecheck",
       });
-      setStep(6);
+      setStep(4);
     } catch {
       // handled by UI
     }
@@ -749,7 +749,7 @@ const InsuranceWizard = () => {
 
   return (
     <div className="space-y-6">
-      {step > 0 && step < 6 && <StepIndicator currentStep={step - 1} totalSteps={6} />}
+      {step > 0 && step < 4 && <StepIndicator currentStep={step - 1} totalSteps={5} />}
 
       <AnimatePresence mode="wait">
         {/* ─── Step 0: Product Selection ─── */}
@@ -848,50 +848,56 @@ const InsuranceWizard = () => {
                 </div>
                 <button onClick={() => setStep(2)} disabled={!isPersonalValid}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
-                  Weiter zu den Detailfragen <ArrowRight size={18} />
+                  Weiter zur Deckung <ArrowRight size={18} />
                 </button>
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* ─── Step 2: Product-Specific Questions ─── */}
+        {/* ─── Step 2: Deckung (Product Questions + Coverage Packages) ─── */}
         {step === 2 && (
           <motion.div key="s2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="max-w-3xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               <button onClick={() => setStep(1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <h3 className="font-heading font-bold text-lg text-foreground">Produktspezifische Angaben</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Bitte füllen Sie die Detailfragen pro Versicherung aus.</p>
+                  <h3 className="font-heading font-bold text-lg text-foreground">Deckung & Details</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Füllen Sie die Angaben pro Versicherung aus und wählen Sie Ihr Deckungspaket.</p>
                 </div>
                 {selectedCategories.map(catId => {
                   const cat = wizardCategories.find(c => c.id === catId)!;
                   const questions = productQuestions[catId] || [];
+                  const packages = getCoveragePackages(catId);
                   return (
-                    <div key={catId} className="bg-card rounded-2xl border border-border p-6 space-y-4">
+                    <div key={catId} className="bg-card rounded-2xl border border-border p-6 space-y-6">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
                           <cat.icon size={18} className="text-white" />
                         </div>
                         <h4 className="font-heading font-bold text-foreground">{cat.label}</h4>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {questions.map(q => (
-                          <div key={q.key}>
-                            <label className="text-sm font-medium text-foreground mb-1 block">{q.label}</label>
-                            {q.type === "select" ? (
-                              <select value={productDetails[catId]?.[q.key] || ""} onChange={e => updateProductDetail(catId, q.key, e.target.value)} className={selectClass}>
-                                <option value="">Bitte wählen</option>
-                                {q.options?.map(o => <option key={o}>{o}</option>)}
-                              </select>
-                            ) : (
-                              <input type={q.type === "number" ? "number" : "text"} value={productDetails[catId]?.[q.key] || ""} onChange={e => updateProductDetail(catId, q.key, e.target.value)}
-                                className={inputClass} placeholder={q.placeholder} />
-                            )}
-                          </div>
-                        ))}
-                      </div>
+
+                      {/* Product-specific questions */}
+                      {questions.length > 0 && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {questions.map(q => (
+                            <div key={q.key}>
+                              <label className="text-sm font-medium text-foreground mb-1 block">{q.label}</label>
+                              {q.type === "select" ? (
+                                <select value={productDetails[catId]?.[q.key] || ""} onChange={e => updateProductDetail(catId, q.key, e.target.value)} className={selectClass}>
+                                  <option value="">Bitte wählen</option>
+                                  {q.options?.map(o => <option key={o}>{o}</option>)}
+                                </select>
+                              ) : (
+                                <input type={q.type === "number" ? "number" : "text"} value={productDetails[catId]?.[q.key] || ""} onChange={e => updateProductDetail(catId, q.key, e.target.value)}
+                                  className={inputClass} placeholder={q.placeholder} />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
                       {catId !== "krankenkasse" && <Vag45PartnerBadge catId={catId} />}
                       {catId === "krankenkasse" && (
                         <BagPremiumComparison
@@ -903,59 +909,33 @@ const InsuranceWizard = () => {
                           onSelectOffer={setSelectedBagOffer}
                         />
                       )}
+
+                      {/* Coverage package selection */}
+                      <div className="space-y-3 pt-2 border-t border-border">
+                        <h5 className="text-sm font-bold text-foreground">Deckungspaket wählen</h5>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          {(["basis", "komfort", "premium"] as const).map(tier => {
+                            const pkg = packageDetails[tier];
+                            const isSelected = selectedPackages[catId] === tier;
+                            return (
+                              <button key={tier} onClick={() => setSelectedPackages(prev => ({ ...prev, [catId]: tier }))}
+                                className={`relative p-4 rounded-xl border-2 text-left transition-all ${isSelected ? "border-primary bg-primary/5 shadow-md" : `${pkg.color} bg-card hover:shadow-sm`}`}
+                              >
+                                {pkg.badge && (
+                                  <span className="absolute -top-2.5 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">{pkg.badge}</span>
+                                )}
+                                <h5 className="font-heading font-bold text-foreground">{pkg.title}</h5>
+                                <p className="text-xs text-muted-foreground mt-0.5">{getPricingDescription(catId, tier)}</p>
+                                <p className="text-sm font-bold text-primary mt-2">{packages[tier] || "—"}</p>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
                 <button onClick={() => setStep(3)}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
-                  Weiter zur Deckungsauswahl <ArrowRight size={18} />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ─── Step 3: Coverage Package Selection ─── */}
-        {step === 3 && (
-          <motion.div key="s3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="max-w-4xl mx-auto">
-              <button onClick={() => setStep(2)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
-              <div className="space-y-8">
-                <div>
-                  <h3 className="font-heading font-bold text-lg text-foreground">Deckungspaket wählen</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Wählen Sie für jede Versicherung Ihr bevorzugtes Paket.</p>
-                </div>
-                {selectedCategories.map(catId => {
-                  const cat = wizardCategories.find(c => c.id === catId)!;
-                  const packages = getCoveragePackages(catId);
-                  return (
-                    <div key={catId} className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <cat.icon size={16} className="text-primary" />
-                        <h4 className="font-heading font-bold text-foreground text-sm">{cat.label}</h4>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        {(["basis", "komfort", "premium"] as const).map(tier => {
-                          const pkg = packageDetails[tier];
-                          const isSelected = selectedPackages[catId] === tier;
-                          return (
-                            <button key={tier} onClick={() => setSelectedPackages(prev => ({ ...prev, [catId]: tier }))}
-                              className={`relative p-4 rounded-xl border-2 text-left transition-all ${isSelected ? "border-primary bg-primary/5 shadow-md" : `${pkg.color} bg-card hover:shadow-sm`}`}
-                            >
-                              {pkg.badge && (
-                                <span className="absolute -top-2.5 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">{pkg.badge}</span>
-                              )}
-                              <h5 className="font-heading font-bold text-foreground">{pkg.title}</h5>
-                              <p className="text-xs text-muted-foreground mt-0.5">{getPricingDescription(catId, tier)}</p>
-                              <p className="text-sm font-bold text-primary mt-2">{packages[tier] || "—"}</p>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-                <button onClick={() => setStep(4)}
                   disabled={selectedCategories.some(id => !selectedPackages[id])}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
                   Weiter zur Zusammenfassung <ArrowRight size={18} />
@@ -965,86 +945,98 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
-        {/* ─── Step 4: Zusammenfassung ─── */}
-        {step === 4 && (
-          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+        {/* ─── Step 3: Zusammenfassung (Quote-like overview) ─── */}
+        {step === 3 && (
+          <motion.div key="s3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="max-w-4xl mx-auto">
-              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
-              <div className="space-y-8">
-                <div>
-                  <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Übersicht Ihrer Angaben und gewählten Pakete.</p>
+              <button onClick={() => setStep(2)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div id="wizard-summary" className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
+                    <p className="text-sm text-muted-foreground mt-1">Übersicht Ihrer Angaben und ca. Richtpreise — keine definitiven Preise.</p>
+                  </div>
+                  <button
+                    onClick={() => window.print()}
+                    className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors"
+                  >
+                    📄 Herunterladen / Drucken
+                  </button>
                 </div>
 
-                {/* Personal data summary */}
-                <div className="bg-muted/50 rounded-xl p-4 space-y-1">
-                  <h4 className="text-sm font-bold text-foreground mb-2">Persönliche Daten</h4>
-                  <p className="text-sm text-foreground">{personalData.firstName} {personalData.lastName}</p>
-                  <p className="text-sm text-muted-foreground">{personalData.address && `${personalData.address}, `}{personalData.plz} {personalData.ort}</p>
-                  <p className="text-sm text-muted-foreground">{personalData.email} · {personalData.phone || "Kein Telefon"}</p>
-                  <p className="text-sm text-muted-foreground">Geb.: {personalData.birthDate} · {personalData.zivilstand || "k.A."}</p>
-                </div>
-
-                {/* Product summaries */}
-                {selectedCategories.map(catId => {
-                  const cat = wizardCategories.find(c => c.id === catId)!;
-                  const details = productDetails[catId] || {};
-                  const pkg = selectedPackages[catId];
-                  return (
-                    <div key={catId} className="bg-muted/50 rounded-xl p-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <cat.icon size={16} className="text-primary" />
-                          <h4 className="text-sm font-bold text-foreground">{cat.label}</h4>
-                        </div>
-                        {pkg && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>}
-                      </div>
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-                        {Object.entries(details).filter(([,v]) => v).map(([k, v]) => (
-                          <p key={k} className="text-xs text-muted-foreground"><span className="font-medium text-foreground">{k}:</span> {v}</p>
-                        ))}
-                      </div>
-                      {catId === "krankenkasse" && selectedBagOffer && (
-                        <div className="mt-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                          <div className="flex items-center gap-1.5 mb-1">
-                            <CheckCircle2 size={14} className="text-primary" />
-                            <span className="text-xs font-bold text-primary">Gewähltes Visana-Angebot</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-foreground">{selectedBagOffer.insurer}</p>
-                              <p className="text-xs text-muted-foreground">{selectedBagOffer.model} · Franchise CHF {selectedBagOffer.deductible}</p>
-                            </div>
-                            <p className="text-sm font-bold text-primary">CHF {selectedBagOffer.price.total.toFixed(2)}/Mt.</p>
-                          </div>
-                        </div>
-                      )}
+                {/* Offerte Header */}
+                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Richtofferte für</p>
+                      <p className="text-base font-bold text-foreground">{personalData.firstName} {personalData.lastName}</p>
+                      <p className="text-xs text-muted-foreground">{personalData.address && `${personalData.address}, `}{personalData.plz} {personalData.ort}</p>
                     </div>
-                  );
-                })}
-
-                <button onClick={() => setStep(5)}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
-                  Weiter zur Offertenanfrage <ArrowRight size={18} />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ─── Step 5: Offertenanfrage ─── */}
-        {step === 5 && (
-          <motion.div key="s5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="max-w-3xl mx-auto">
-              <button onClick={() => setStep(4)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
-              <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
-                <div>
-                  <h3 className="font-heading font-bold text-lg text-foreground">Offertenanfrage</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Senden Sie Ihre Anfrage ab — wir melden uns innert 24h.</p>
+                    <div className="text-right">
+                      <p className="text-xs text-muted-foreground">Datum</p>
+                      <p className="text-sm font-medium text-foreground">{new Date().toLocaleDateString("de-CH")}</p>
+                    </div>
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-primary/10 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-muted-foreground">
+                    <span>📧 {personalData.email}</span>
+                    {personalData.phone && <span>📞 {personalData.phone}</span>}
+                    <span>🎂 {personalData.birthDate}</span>
+                    {personalData.zivilstand && <span>💍 {personalData.zivilstand}</span>}
+                  </div>
                 </div>
 
-                {/* Nearby Agency */}
-                <NearbyAgencyCard plz={personalData.plz} />
+                {/* Product summaries with prices */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-bold text-foreground border-b border-border pb-2">Gewählte Versicherungen & Richtpreise</h4>
+                  {selectedCategories.map(catId => {
+                    const cat = wizardCategories.find(c => c.id === catId)!;
+                    const details = productDetails[catId] || {};
+                    const pkg = selectedPackages[catId];
+                    const packages = getCoveragePackages(catId);
+                    const priceText = pkg ? (packages[pkg] || "—") : "—";
+                    return (
+                      <div key={catId} className="bg-muted/50 rounded-xl p-4 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <cat.icon size={16} className="text-primary" />
+                            <h4 className="text-sm font-bold text-foreground">{cat.label}</h4>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {pkg && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>}
+                            <span className="text-sm font-bold text-primary">{priceText}</span>
+                          </div>
+                        </div>
+                        {Object.entries(details).filter(([,v]) => v).length > 0 && (
+                          <div className="grid grid-cols-2 gap-x-4 gap-y-1 pt-1">
+                            {Object.entries(details).filter(([,v]) => v).map(([k, v]) => (
+                              <p key={k} className="text-xs text-muted-foreground"><span className="font-medium text-foreground">{k}:</span> {v}</p>
+                            ))}
+                          </div>
+                        )}
+                        {catId === "krankenkasse" && selectedBagOffer && (
+                          <div className="mt-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <CheckCircle2 size={14} className="text-primary" />
+                              <span className="text-xs font-bold text-primary">Gewähltes Visana-Angebot</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-foreground">{selectedBagOffer.insurer}</p>
+                                <p className="text-xs text-muted-foreground">{selectedBagOffer.model} · Franchise CHF {selectedBagOffer.deductible}</p>
+                              </div>
+                              <p className="text-sm font-bold text-primary">CHF {selectedBagOffer.price.total.toFixed(2)}/Mt.</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Disclaimer */}
+                <p className="text-[11px] text-muted-foreground text-center italic">
+                  * Die angezeigten Preise sind unverbindliche Richtpreise. Ihr definitives Angebot erhalten Sie nach Prüfung durch unsere Berater.
+                </p>
 
                 {/* AGB Checkbox */}
                 <label className="flex items-start gap-3 cursor-pointer">
@@ -1057,54 +1049,74 @@ const InsuranceWizard = () => {
 
                 <button onClick={handleSubmit} disabled={!agbAccepted}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity">
-                  Anfrage einreichen
+                  Offertenanfrage einreichen
+                </button>
+
+                {/* Mobile download button */}
+                <button
+                  onClick={() => window.print()}
+                  className="sm:hidden w-full py-2 text-xs font-medium bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors"
+                >
+                  📄 Zusammenfassung herunterladen / drucken
                 </button>
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* ─── Step 6: Confirmation ─── */}
-        {step === 6 && (
-          <motion.div key="s6" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
-            <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
-              <CheckCircle2 size={40} className="text-primary" />
-            </div>
-            <h2 className="text-2xl font-heading font-bold text-foreground">Vielen Dank für Ihre Anfrage!</h2>
-            <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-              Wir erstellen Ihr persönliches Angebot und melden uns innert 24 Stunden bei Ihnen.
-            </p>
-            <div className="mt-4 inline-block bg-muted rounded-xl px-6 py-3">
-              <p className="text-xs text-muted-foreground">Ihre Referenznummer</p>
-              <p className="text-lg font-heading font-bold text-foreground tracking-wider">{referenceNumber}</p>
-            </div>
-
-            {/* Post-submit options */}
-            <div className="mt-10 max-w-lg mx-auto">
-              <p className="text-sm font-medium text-foreground mb-4">Wie möchten Sie weiterfahren?</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button
-                  onClick={() => { setStep(0); setSelectedCategories([]); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
-                  className="flex items-center justify-center gap-2 p-4 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity"
-                >
-                  <Plus size={18} />
-                  Weitere Versicherung abschliessen
-                </button>
-                <a
-                  href="/kontakt"
-                  className="flex items-center justify-center gap-2 p-4 bg-card border-2 border-primary text-primary rounded-xl font-heading font-bold hover:bg-primary/5 transition-colors"
-                >
-                  <Calendar size={18} />
-                  Termin vereinbaren
-                </a>
+        {/* ─── Step 4: Offertenanfrage (Confirmation) ─── */}
+        {step === 4 && (
+          <motion.div key="s4" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="py-8">
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                  <CheckCircle2 size={40} className="text-primary" />
+                </div>
+                <h2 className="text-2xl font-heading font-bold text-foreground">Vielen Dank für Ihre Anfrage!</h2>
+                <p className="text-muted-foreground mt-2 max-w-md mx-auto">
+                  Wir stellen Ihr persönliches Angebot zusammen und jemand aus einer unserer Agenturen in Ihrer Nähe wird sich bei Ihnen melden.
+                </p>
               </div>
-            </div>
 
-            <div className="mt-6">
-              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", address: "", plz: "", ort: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
-                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                Komplett neu starten
-              </button>
+              {/* Reference Number */}
+              <div className="text-center mb-8">
+                <div className="inline-block bg-muted rounded-xl px-6 py-3">
+                  <p className="text-xs text-muted-foreground">Ihre Referenznummer</p>
+                  <p className="text-lg font-heading font-bold text-foreground tracking-wider">{referenceNumber}</p>
+                </div>
+              </div>
+
+              {/* Nearby Agency */}
+              <div className="mb-8">
+                <NearbyAgencyCard plz={personalData.plz} />
+              </div>
+
+              {/* Next actions */}
+              <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
+                <h4 className="text-sm font-bold text-foreground text-center">Wie möchten Sie weiterfahren?</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <a
+                    href="/kontakt"
+                    className="flex items-center justify-center gap-2 p-4 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity"
+                  >
+                    <Calendar size={18} />
+                    Sofort Online-Termin vereinbaren
+                  </a>
+                  <button
+                    onClick={() => { setStep(0); setSelectedCategories([]); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); setSelectedBagOffer(null); }}
+                    className="flex items-center justify-center gap-2 p-4 bg-card border-2 border-primary text-primary rounded-xl font-heading font-bold hover:bg-primary/5 transition-colors"
+                  >
+                    <Plus size={18} />
+                    Weitere Anfrage senden
+                  </button>
+                </div>
+                <div className="text-center pt-2">
+                  <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", address: "", plz: "", ort: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); setSelectedBagOffer(null); }}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    Komplett neu starten
+                  </button>
+                </div>
+              </div>
             </div>
           </motion.div>
         )}
