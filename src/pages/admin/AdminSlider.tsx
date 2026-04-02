@@ -196,7 +196,10 @@ const AdminSlider = () => {
                       <span className="font-body text-xs text-muted-foreground">#{idx + 1}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Zuschnitt anpassen"><Crop size={14} /></button>
+                      <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Desktop-Zuschnitt (16:9)"><Crop size={14} /></button>
+                      <button onClick={() => setCropModal({ src: (img as any).mobile_image_url || img.image_url, existingId: img.id, mobile: true })} className="text-muted-foreground hover:text-foreground" title="Mobile-Zuschnitt (9:16)">
+                        <Smartphone size={14} />
+                      </button>
                       <button onClick={() => startEdit(img)} className="text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
                       <button
                         onClick={() => toggleMutation.mutate({ id: img.id, active: !img.active })}
