@@ -759,6 +759,7 @@ const InsuranceWizard = () => {
                           </div>
                         ))}
                       </div>
+                      {catId !== "krankenkasse" && <Vag45PartnerBadge catId={catId} />}
                       {catId === "krankenkasse" && (
                         <BagPremiumComparison
                           plz={personalData.plz}
