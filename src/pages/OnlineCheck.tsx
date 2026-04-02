@@ -647,7 +647,11 @@ const InsuranceWizard = () => {
       const answers = productDetails[id] || {};
       const pkg = selectedPackages[id] || "nicht gewählt";
       const qText = Object.entries(answers).map(([k, v]) => `  ${k}: ${v}`).join("\n");
-      return `${cat.label} (Paket: ${pkg}):\n${qText}`;
+      let result = `${cat.label} (Paket: ${pkg}):\n${qText}`;
+      if (id === "krankenkasse" && selectedBagOffer) {
+        result += `\n  Gewähltes Visana-Angebot: ${selectedBagOffer.insurer} – ${selectedBagOffer.model} – CHF ${selectedBagOffer.price.total.toFixed(2)}/Mt. (Franchise ${selectedBagOffer.deductible})`;
+      }
+      return result;
     }).join("\n\n");
 
     const message = `Ref: ${ref}\n\nProdukte: ${selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}\n\nAdresse: ${personalData.address}, ${personalData.plz} ${personalData.ort}\nZivilstand: ${personalData.zivilstand || "k.A."}\nGeburtsdatum: ${personalData.birthDate || "k.A."}\n\n--- Produktdetails ---\n${details}`;
