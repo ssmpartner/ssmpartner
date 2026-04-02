@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon } from "lucide-react";
+import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import ImageCropModal from "@/components/ImageCropModal";
 import MediaPickerModal from "@/components/MediaPickerModal";
@@ -53,6 +53,17 @@ const AdminSlider = () => {
       toast.success("Gespeichert");
     },
   });
+
+  const handleMove = async (index: number, direction: "up" | "down") => {
+    if (!images) return;
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= images.length) return;
+    const a = images[index];
+    const b = images[swapIndex];
+    await supabase.from("slider_images").update({ sort_order: b.sort_order }).eq("id", a.id);
+    await supabase.from("slider_images").update({ sort_order: a.sort_order }).eq("id", b.id);
+    queryClient.invalidateQueries({ queryKey: ["admin-slider"] });
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -134,7 +145,7 @@ const AdminSlider = () => {
         <p className="font-body text-sm text-muted-foreground">Noch keine Slider-Bilder vorhanden.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {images.map((img) => (
+          {images.map((img, idx) => (
             <div key={img.id} className="bg-card border rounded-xl overflow-hidden">
               <div className="relative aspect-video">
                 <img src={img.image_url} alt={img.alt_text || ""} className="w-full h-full object-cover" />
@@ -174,8 +185,9 @@ const AdminSlider = () => {
                   )}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <GripVertical size={16} className="text-muted-foreground" />
-                      <span className="font-body text-xs text-muted-foreground">#{img.sort_order + 1}</span>
+                      <button onClick={() => handleMove(idx, "up")} disabled={idx === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Nach oben"><ArrowUp size={14} /></button>
+                      <button onClick={() => handleMove(idx, "down")} disabled={idx === images.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Nach unten"><ArrowDown size={14} /></button>
+                      <span className="font-body text-xs text-muted-foreground">#{idx + 1}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Zuschnitt anpassen"><Crop size={14} /></button>
