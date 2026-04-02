@@ -96,8 +96,19 @@ const ChatWidget = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({
+          messages: allMessages,
+          session_id: sessionId,
+          source: "website",
+          page_url: window.location.pathname,
+        }),
       });
+
+      // Capture session ID from response header
+      const respSessionId = resp.headers.get("X-Session-Id");
+      if (respSessionId && !sessionId) {
+        setSessionId(respSessionId);
+      }
 
       if (!resp.ok || !resp.body) {
         const err = await resp.json().catch(() => ({ error: "Fehler" }));
