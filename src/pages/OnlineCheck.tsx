@@ -848,7 +848,7 @@ const InsuranceWizard = () => {
                 </div>
                 <button onClick={() => setStep(2)} disabled={!isPersonalValid}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
-                  Weiter zu den Detailfragen <ArrowRight size={18} />
+                  Weiter zur Deckung <ArrowRight size={18} />
                 </button>
               </div>
             </div>
