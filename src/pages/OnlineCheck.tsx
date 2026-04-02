@@ -217,7 +217,7 @@ const ChatOverlay = () => {
           >
             <div
               ref={scrollRef}
-              className="max-h-[400px] overflow-y-auto space-y-4 p-4 bg-card/80 backdrop-blur-md rounded-2xl border border-border/50"
+              className="max-h-[500px] overflow-y-auto space-y-4 p-5 bg-card/90 backdrop-blur-md rounded-2xl border border-border/50 shadow-lg"
             >
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
