@@ -1192,20 +1192,17 @@ const OnlineCheck = () => {
         </div>
       </div>
 
-      {/* Chat + Wizard combined section with shared background */}
-      <section className="relative bg-muted/30 pt-0 pb-12 md:pb-20">
-        {/* Chat Overlay — bridges hero into this section */}
-        <div className="relative z-10 -mt-32 lg:-mt-40 px-4 pb-10">
-          <div className="max-w-3xl mx-auto">
-            <ChatOverlay />
-          </div>
+      {/* Chat Overlay — overlaps into wizard section */}
+      <div className="relative z-10 -mt-32 lg:-mt-40 px-4 mb-0">
+        <div className="max-w-3xl mx-auto">
+          <ChatOverlay />
         </div>
+      </div>
 
-        {/* Wizard */}
-        <div className="px-4">
-          <div className="max-w-5xl mx-auto">
-            <InsuranceWizard />
-          </div>
+      {/* Wizard Section — negative margin so chat overlaps into it */}
+      <section className="relative -mt-12 lg:-mt-16 pt-20 lg:pt-24 pb-12 md:pb-20 px-4 bg-muted/50">
+        <div className="max-w-5xl mx-auto">
+          <InsuranceWizard />
         </div>
       </section>
 
