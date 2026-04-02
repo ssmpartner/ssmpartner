@@ -1003,7 +1003,7 @@ const OnlineCheck = () => {
     },
   });
 
-  const heroImg = hero?.image_url || "/placeholder.svg";
+  const heroImg = hero?.image_url || "";
 
   return (
     <div className="min-h-screen bg-background">
