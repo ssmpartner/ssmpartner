@@ -365,6 +365,45 @@ const productQuestions: Record<string, ProductQuestion[]> = {
   ],
 };
 
+/* ─── VAG45 Partner Mapping ─── */
+const categoryToBranches: Record<string, string[]> = {
+  hausrat: ["Hausrat- und Gebäudeversicherung", "Haftpflichtversicherung (Privatkunden)"],
+  auto: ["Motorfahrzeugversicherung"],
+  rechtsschutz: ["Rechtsschutzversicherung"],
+  vorsorge: ["Kollektivlebensversicherung", "Anteilsgebundene Lebensversicherung", "Sonstige Lebensversicherung"],
+  leben: ["Kollektivlebensversicherung", "Anteilsgebundene Lebensversicherung", "Sonstige Lebensversicherung"],
+};
+
+const Vag45PartnerBadge = ({ catId }: { catId: string }) => {
+  const branchKeywords = categoryToBranches[catId];
+  const { data: partners } = useQuery({
+    queryKey: ["vag45-partners-wizard", catId],
+    queryFn: async () => {
+      const { data } = await supabase.from("vag45_partners").select("*").eq("active", true).order("sort_order");
+      if (!data || !branchKeywords) return [];
+      return data.filter(p => branchKeywords.some(kw => p.branch.toLowerCase().includes(kw.toLowerCase())));
+    },
+    enabled: !!branchKeywords,
+  });
+
+  if (!partners || partners.length === 0) return null;
+
+  return (
+    <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 space-y-1.5">
+      <div className="flex items-center gap-1.5">
+        <Shield size={14} className="text-primary" />
+        <span className="text-xs font-bold text-primary">Unsere Versicherungspartner (VAG 45)</span>
+      </div>
+      {partners.map(p => (
+        <div key={p.id} className="flex items-center justify-between text-xs">
+          <span className="font-medium text-foreground">{p.company}</span>
+          <span className="text-muted-foreground">{p.branch}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 /* ─── BAG Premium API Types ─── */
 type BagOffer = {
   insurer: string;
