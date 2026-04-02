@@ -635,7 +635,7 @@ const packageDetails: Record<string, { title: string; desc: string; color: strin
 
 /* ─── Step Indicator ─── */
 const StepIndicator = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
-  const labels = ["Produkt", "Persönlich", "Details", "Zusammenfassung", "Offertenanfrage"];
+  const labels = ["Produkt", "Persönlich", "Details", "Deckung", "Zusammenfassung", "Offertenanfrage"];
   return (
     <div className="flex items-center justify-center gap-1 mb-8">
       {labels.map((label, i) => (
@@ -736,7 +736,7 @@ const InsuranceWizard = () => {
         message,
         source: "onlinecheck",
       });
-      setStep(5);
+      setStep(6);
     } catch {
       // handled by UI
     }
@@ -749,7 +749,7 @@ const InsuranceWizard = () => {
 
   return (
     <div className="space-y-6">
-      {step > 0 && step < 5 && <StepIndicator currentStep={step - 1} totalSteps={5} />}
+      {step > 0 && step < 6 && <StepIndicator currentStep={step - 1} totalSteps={6} />}
 
       <AnimatePresence mode="wait">
         {/* ─── Step 0: Product Selection ─── */}
@@ -958,18 +958,18 @@ const InsuranceWizard = () => {
                 <button onClick={() => setStep(4)}
                   disabled={selectedCategories.some(id => !selectedPackages[id])}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
-                  Weiter zur Offertenanfrage <ArrowRight size={18} />
+                  Weiter zur Zusammenfassung <ArrowRight size={18} />
                 </button>
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* ─── Step 3: Coverage / Zusammenfassung ─── */}
-        {step === 3 && (
-          <motion.div key="s3cov" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+        {/* ─── Step 4: Zusammenfassung ─── */}
+        {step === 4 && (
+          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="max-w-4xl mx-auto">
-              <button onClick={() => setStep(2)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
               <div className="space-y-8">
                 <div>
                   <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
@@ -1023,7 +1023,7 @@ const InsuranceWizard = () => {
                   );
                 })}
 
-                <button onClick={() => setStep(4)}
+                <button onClick={() => setStep(5)}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
                   Weiter zur Offertenanfrage <ArrowRight size={18} />
                 </button>
@@ -1032,11 +1032,11 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
-        {/* ─── Step 4: Offertenanfrage ─── */}
-        {step === 4 && (
-          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+        {/* ─── Step 5: Offertenanfrage ─── */}
+        {step === 5 && (
+          <motion.div key="s5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="max-w-3xl mx-auto">
-              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <button onClick={() => setStep(4)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
               <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
                 <div>
                   <h3 className="font-heading font-bold text-lg text-foreground">Offertenanfrage</h3>
@@ -1064,9 +1064,9 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
-        {/* ─── Step 5: Confirmation ─── */}
-        {step === 5 && (
-          <motion.div key="s5" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
+        {/* ─── Step 6: Confirmation ─── */}
+        {step === 6 && (
+          <motion.div key="s6" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-16">
             <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
               <CheckCircle2 size={40} className="text-primary" />
             </div>
