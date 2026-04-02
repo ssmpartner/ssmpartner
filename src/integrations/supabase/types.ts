@@ -549,6 +549,7 @@ export type Database = {
           headline: string | null
           id: string
           image_url: string
+          mobile_image_url: string | null
           sort_order: number
           subline: string | null
           updated_at: string
@@ -560,6 +561,7 @@ export type Database = {
           headline?: string | null
           id?: string
           image_url: string
+          mobile_image_url?: string | null
           sort_order?: number
           subline?: string | null
           updated_at?: string
@@ -571,6 +573,7 @@ export type Database = {
           headline?: string | null
           id?: string
           image_url?: string
+          mobile_image_url?: string | null
           sort_order?: number
           subline?: string | null
           updated_at?: string

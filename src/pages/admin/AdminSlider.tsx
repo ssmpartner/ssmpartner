@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon, ArrowUp, ArrowDown } from "lucide-react";
+import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon, ArrowUp, ArrowDown, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import ImageCropModal from "@/components/ImageCropModal";
 import MediaPickerModal from "@/components/MediaPickerModal";
@@ -11,7 +11,7 @@ const AdminSlider = () => {
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ headline: "", subline: "", alt_text: "" });
-  const [cropModal, setCropModal] = useState<{ src: string; existingId?: string } | null>(null);
+  const [cropModal, setCropModal] = useState<{ src: string; existingId?: string; mobile?: boolean } | null>(null);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const { data: images, isLoading } = useQuery({
@@ -89,9 +89,15 @@ const AdminSlider = () => {
       const { data: { publicUrl } } = supabase.storage.from("site-images").getPublicUrl(path);
 
       if (cropModal?.existingId) {
-        // Update existing slider image
-        const { error } = await supabase.from("slider_images").update({ image_url: publicUrl }).eq("id", cropModal.existingId);
-        if (error) throw error;
+        if (cropModal?.mobile) {
+          // Update mobile image
+          const { error } = await supabase.from("slider_images").update({ mobile_image_url: publicUrl } as any).eq("id", cropModal.existingId);
+          if (error) throw error;
+        } else {
+          // Update existing slider image
+          const { error } = await supabase.from("slider_images").update({ image_url: publicUrl }).eq("id", cropModal.existingId);
+          if (error) throw error;
+        }
       } else {
         // Insert new slider image
         const maxOrder = images?.length ? Math.max(...images.map((i) => i.sort_order)) + 1 : 0;
@@ -104,7 +110,7 @@ const AdminSlider = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ["admin-slider"] });
-      toast.success(cropModal?.existingId ? "Zuschnitt aktualisiert" : "Bild hochgeladen");
+      toast.success(cropModal?.mobile ? "Mobile-Zuschnitt gespeichert" : cropModal?.existingId ? "Zuschnitt aktualisiert" : "Bild hochgeladen");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -190,7 +196,10 @@ const AdminSlider = () => {
                       <span className="font-body text-xs text-muted-foreground">#{idx + 1}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Zuschnitt anpassen"><Crop size={14} /></button>
+                      <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Desktop-Zuschnitt (16:9)"><Crop size={14} /></button>
+                      <button onClick={() => setCropModal({ src: (img as any).mobile_image_url || img.image_url, existingId: img.id, mobile: true })} className="text-muted-foreground hover:text-foreground" title="Mobile-Zuschnitt (9:16)">
+                        <Smartphone size={14} />
+                      </button>
                       <button onClick={() => startEdit(img)} className="text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
                       <button
                         onClick={() => toggleMutation.mutate({ id: img.id, active: !img.active })}
@@ -211,7 +220,7 @@ const AdminSlider = () => {
       <ImageCropModal
         open={!!cropModal}
         imageSrc={cropModal?.src || ""}
-        aspect={16 / 9}
+        aspect={cropModal?.mobile ? 9 / 16 : 16 / 9}
         onClose={() => setCropModal(null)}
         onCropDone={handleCroppedUpload}
       />

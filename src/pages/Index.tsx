@@ -122,10 +122,10 @@ const Index = () => {
   }, [cmsHeroes]);
 
   const slides = slidesLoading
-    ? [{ image: "", headline: "", subline: "" }]
+    ? [{ image: "", mobileImage: "", headline: "", subline: "" }]
     : dbSlides && dbSlides.length > 0
-      ? dbSlides.map((s) => ({ image: s.image_url, headline: s.headline || "", subline: s.subline || "" }))
-      : fallbackSlides;
+      ? dbSlides.map((s: any) => ({ image: s.image_url, mobileImage: s.mobile_image_url || "", headline: s.headline || "", subline: s.subline || "" }))
+      : fallbackSlides.map(s => ({ ...s, mobileImage: "" }));
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
@@ -196,12 +196,22 @@ const Index = () => {
             key={i}
             className={`absolute inset-0 transition-opacity duration-1000 ${i === current ? "opacity-100" : "opacity-0"}`}
           >
+            {/* Desktop image */}
             <img
               src={slide.image}
               alt={slide.headline || `Slide ${i + 1}`}
-              className="absolute inset-0 w-full h-full object-cover"
+              className={`absolute inset-0 w-full h-full object-cover ${slide.mobileImage ? "hidden sm:block" : ""}`}
               loading={i === 0 ? "eager" : "lazy"}
             />
+            {/* Mobile image */}
+            {slide.mobileImage && (
+              <img
+                src={slide.mobileImage}
+                alt={slide.headline || `Slide ${i + 1}`}
+                className="absolute inset-0 w-full h-full object-cover sm:hidden"
+                loading={i === 0 ? "eager" : "lazy"}
+              />
+            )}
             <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.35)" }} />
             <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.18, mixBlendMode: "overlay" }} />
             {(slide.headline || slide.subline) && (
@@ -306,7 +316,7 @@ const Index = () => {
         </div>
 
         {/* Mobile: stacked cards below dots */}
-        <div className="absolute bottom-20 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
+        <div className="absolute bottom-36 left-0 right-0 z-20 px-4 sm:hidden flex flex-col gap-3">
           <Link
             to="/karriere"
             className="flex items-center gap-3 bg-transparent backdrop-blur-sm border-2 border-white/80 rounded-xl p-3 pr-4"
