@@ -903,23 +903,24 @@ const InsuranceWizard = () => {
           </motion.div>
         )}
 
-        {/* ─── Step 4: Summary + AGB ─── */}
-        {step === 4 && (
-          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="max-w-3xl mx-auto">
-              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
-              <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
+        {/* ─── Step 3: Coverage / Zusammenfassung ─── */}
+        {step === 3 && (
+          <motion.div key="s3cov" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <div className="max-w-4xl mx-auto">
+              <button onClick={() => setStep(2)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div className="space-y-8">
                 <div>
                   <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Bitte überprüfen Sie Ihre Angaben.</p>
+                  <p className="text-sm text-muted-foreground mt-1">Übersicht Ihrer Angaben und gewählten Pakete.</p>
                 </div>
 
                 {/* Personal data summary */}
                 <div className="bg-muted/50 rounded-xl p-4 space-y-1">
                   <h4 className="text-sm font-bold text-foreground mb-2">Persönliche Daten</h4>
                   <p className="text-sm text-foreground">{personalData.firstName} {personalData.lastName}</p>
+                  <p className="text-sm text-muted-foreground">{personalData.address && `${personalData.address}, `}{personalData.plz} {personalData.ort}</p>
                   <p className="text-sm text-muted-foreground">{personalData.email} · {personalData.phone || "Kein Telefon"}</p>
-                  <p className="text-sm text-muted-foreground">Geb.: {personalData.birthDate} · PLZ: {personalData.plz} · {personalData.zivilstand || "k.A."}</p>
+                  <p className="text-sm text-muted-foreground">Geb.: {personalData.birthDate} · {personalData.zivilstand || "k.A."}</p>
                 </div>
 
                 {/* Product summaries */}
@@ -934,7 +935,7 @@ const InsuranceWizard = () => {
                           <cat.icon size={16} className="text-primary" />
                           <h4 className="text-sm font-bold text-foreground">{cat.label}</h4>
                         </div>
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>
+                        {pkg && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>}
                       </div>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                         {Object.entries(details).filter(([,v]) => v).map(([k, v]) => (
@@ -959,6 +960,29 @@ const InsuranceWizard = () => {
                     </div>
                   );
                 })}
+
+                <button onClick={() => setStep(4)}
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
+                  Weiter zur Offertenanfrage <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ─── Step 4: Offertenanfrage ─── */}
+        {step === 4 && (
+          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <div className="max-w-3xl mx-auto">
+              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-foreground">Offertenanfrage</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Senden Sie Ihre Anfrage ab — wir melden uns innert 24h.</p>
+                </div>
+
+                {/* Nearby Agency */}
+                <NearbyAgencyCard plz={personalData.plz} />
 
                 {/* AGB Checkbox */}
                 <label className="flex items-start gap-3 cursor-pointer">
