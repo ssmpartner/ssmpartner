@@ -390,6 +390,14 @@ const AdminTeam = () => {
           ))}
         </div>
       )}
+
+      <ImageCropModal
+        open={!!cropModal}
+        imageSrc={cropModal?.src || ""}
+        aspect={3 / 4}
+        onClose={() => setCropModal(null)}
+        onCropDone={(blob) => handleCroppedUpload(blob, cropModal?.memberId)}
+      />
     </div>
   );
 };
