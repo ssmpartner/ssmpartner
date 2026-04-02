@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop } from "lucide-react";
+import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import ImageCropModal from "@/components/ImageCropModal";
+import MediaPickerModal from "@/components/MediaPickerModal";
 
 const AdminSlider = () => {
   const queryClient = useQueryClient();
@@ -11,6 +12,7 @@ const AdminSlider = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ headline: "", subline: "", alt_text: "" });
   const [cropModal, setCropModal] = useState<{ src: string; existingId?: string } | null>(null);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
 
   const { data: images, isLoading } = useQuery({
     queryKey: ["admin-slider"],
@@ -61,6 +63,11 @@ const AdminSlider = () => {
     e.target.value = "";
   };
 
+  const handleMediaSelect = (url: string) => {
+    setMediaPickerOpen(false);
+    setCropModal({ src: url });
+  };
+
   const handleCroppedUpload = async (blob: Blob) => {
     setUploading(true);
     try {
@@ -108,11 +115,17 @@ const AdminSlider = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-heading text-2xl font-bold text-foreground">Slider-Bilder</h1>
-        <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
-          <Plus size={18} />
-          {uploading ? "Hochladen..." : "Bild hinzufügen"}
-          <input type="file" accept="image/*" onChange={handleFileSelect} className="hidden" disabled={uploading} />
-        </label>
+        <div className="flex items-center gap-2">
+          <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
+            <Plus size={18} />
+            {uploading ? "Hochladen..." : "Hochladen"}
+            <input type="file" accept="image/*" onChange={handleFileSelect} className="hidden" disabled={uploading} />
+          </label>
+          <button onClick={() => setMediaPickerOpen(true)} className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity">
+            <ImageIcon size={18} />
+            Mediathek
+          </button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -189,6 +202,12 @@ const AdminSlider = () => {
         aspect={16 / 9}
         onClose={() => setCropModal(null)}
         onCropDone={handleCroppedUpload}
+      />
+
+      <MediaPickerModal
+        open={mediaPickerOpen}
+        onClose={() => setMediaPickerOpen(false)}
+        onSelect={handleMediaSelect}
       />
     </div>
   );
