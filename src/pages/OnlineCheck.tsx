@@ -488,7 +488,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
   }, [canSearch, fetchPremiums]);
 
   const isSelected = (o: BagOffer) =>
-    selectedOffer?.insurer === o.insurer && selectedOffer?.model === o.model && selectedOffer?.deductible === o.deductible;
+    selectedOffer?.insurer === o.insurer && selectedOffer?.model === o.model && selectedOffer?.deductible === o.deductible && selectedOffer?.price.total === o.price.total;
 
   return (
     <div className="mt-4 bg-muted/50 rounded-xl p-4 space-y-3 border border-border">
