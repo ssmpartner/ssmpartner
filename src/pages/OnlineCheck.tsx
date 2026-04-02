@@ -594,6 +594,7 @@ const InsuranceWizard = () => {
   const [selectedPackages, setSelectedPackages] = useState<Record<string, string>>({});
   const [agbAccepted, setAgbAccepted] = useState(false);
   const [referenceNumber, setReferenceNumber] = useState("");
+  const [selectedBagOffer, setSelectedBagOffer] = useState<BagOffer | null>(null);
 
   const { data: dbPricing = [] } = useQuery({
     queryKey: ["wizard-pricing-public"],
