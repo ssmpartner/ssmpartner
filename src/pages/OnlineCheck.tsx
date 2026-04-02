@@ -555,6 +555,68 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
   );
 };
 
+/* ─── Nearby Agency Card ─── */
+const NearbyAgencyCard = ({ plz }: { plz: string }) => {
+  const navigate = useNavigate();
+  const { data: agencies } = useQuery({
+    queryKey: ["agencies-nearby", plz],
+    queryFn: async () => {
+      const { data } = await supabase.from("agencies").select("*").eq("active", true).order("sort_order");
+      return data || [];
+    },
+  });
+
+  // Simple PLZ-based proximity: match first 2 digits of PLZ for region
+  const nearestAgency = agencies?.find(a => {
+    if (!a.address || !plz) return false;
+    const agencyPlz = a.address.match(/\b(\d{4})\b/)?.[1];
+    if (!agencyPlz) return false;
+    return agencyPlz.slice(0, 2) === plz.slice(0, 2);
+  }) || agencies?.[0];
+
+  if (!nearestAgency) return null;
+
+  return (
+    <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <MapPin size={16} className="text-primary" />
+        <h4 className="text-sm font-bold text-primary">Ihre Agentur in der Nähe</h4>
+      </div>
+      <div className="flex items-start gap-4">
+        {nearestAgency.image_url && (
+          <img src={nearestAgency.image_url} alt={nearestAgency.name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+        )}
+        <div className="flex-1 space-y-1">
+          <p className="text-sm font-bold text-foreground">{nearestAgency.name}</p>
+          {nearestAgency.address && <p className="text-xs text-muted-foreground">{nearestAgency.address}</p>}
+          {nearestAgency.leader_name && (
+            <p className="text-xs text-foreground">
+              <span className="text-muted-foreground">Ihr Finanzcoach:</span> <span className="font-medium">{nearestAgency.leader_name}</span>
+            </p>
+          )}
+          <p className="text-xs text-muted-foreground mt-1">
+            Ein Berater aus unserer Agentur <strong>{nearestAgency.name}</strong> wird sich nach Ihrer Anfrage persönlich bei Ihnen melden.
+          </p>
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => navigate(`/agenturen/${nearestAgency.slug}`)}
+          className="flex-1 text-xs py-2 px-3 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors text-center font-medium"
+        >
+          Agentur ansehen
+        </button>
+        <a
+          href="/kontakt"
+          className="flex-1 text-xs py-2 px-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity text-center font-medium inline-flex items-center justify-center gap-1"
+        >
+          <Calendar size={12} /> Termin vereinbaren
+        </a>
+      </div>
+    </div>
+  );
+};
+
 /* ─── Coverage packages (fallback, overridden by DB) ─── */
 const coveragePackagesFallback: Record<string, { basis: string; komfort: string; premium: string }> = {
   hausrat: { basis: "ab CHF 8.–/Mt.", komfort: "ab CHF 15.–/Mt.", premium: "ab CHF 25.–/Mt." },
@@ -573,7 +635,7 @@ const packageDetails: Record<string, { title: string; desc: string; color: strin
 
 /* ─── Step Indicator ─── */
 const StepIndicator = ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => {
-  const labels = ["Produkt", "Persönlich", "Details", "Deckung", "Zusammenfassung"];
+  const labels = ["Produkt", "Persönlich", "Details", "Zusammenfassung", "Offertenanfrage"];
   return (
     <div className="flex items-center justify-center gap-1 mb-8">
       {labels.map((label, i) => (
@@ -896,30 +958,31 @@ const InsuranceWizard = () => {
                 <button onClick={() => setStep(4)}
                   disabled={selectedCategories.some(id => !selectedPackages[id])}
                   className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
-                  Weiter zur Zusammenfassung <ArrowRight size={18} />
+                  Weiter zur Offertenanfrage <ArrowRight size={18} />
                 </button>
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* ─── Step 4: Summary + AGB ─── */}
-        {step === 4 && (
-          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
-            <div className="max-w-3xl mx-auto">
-              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
-              <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
+        {/* ─── Step 3: Coverage / Zusammenfassung ─── */}
+        {step === 3 && (
+          <motion.div key="s3cov" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <div className="max-w-4xl mx-auto">
+              <button onClick={() => setStep(2)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div className="space-y-8">
                 <div>
                   <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
-                  <p className="text-sm text-muted-foreground mt-1">Bitte überprüfen Sie Ihre Angaben.</p>
+                  <p className="text-sm text-muted-foreground mt-1">Übersicht Ihrer Angaben und gewählten Pakete.</p>
                 </div>
 
                 {/* Personal data summary */}
                 <div className="bg-muted/50 rounded-xl p-4 space-y-1">
                   <h4 className="text-sm font-bold text-foreground mb-2">Persönliche Daten</h4>
                   <p className="text-sm text-foreground">{personalData.firstName} {personalData.lastName}</p>
+                  <p className="text-sm text-muted-foreground">{personalData.address && `${personalData.address}, `}{personalData.plz} {personalData.ort}</p>
                   <p className="text-sm text-muted-foreground">{personalData.email} · {personalData.phone || "Kein Telefon"}</p>
-                  <p className="text-sm text-muted-foreground">Geb.: {personalData.birthDate} · PLZ: {personalData.plz} · {personalData.zivilstand || "k.A."}</p>
+                  <p className="text-sm text-muted-foreground">Geb.: {personalData.birthDate} · {personalData.zivilstand || "k.A."}</p>
                 </div>
 
                 {/* Product summaries */}
@@ -934,7 +997,7 @@ const InsuranceWizard = () => {
                           <cat.icon size={16} className="text-primary" />
                           <h4 className="text-sm font-bold text-foreground">{cat.label}</h4>
                         </div>
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>
+                        {pkg && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>}
                       </div>
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                         {Object.entries(details).filter(([,v]) => v).map(([k, v]) => (
@@ -959,6 +1022,29 @@ const InsuranceWizard = () => {
                     </div>
                   );
                 })}
+
+                <button onClick={() => setStep(4)}
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
+                  Weiter zur Offertenanfrage <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ─── Step 4: Offertenanfrage ─── */}
+        {step === 4 && (
+          <motion.div key="s4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <div className="max-w-3xl mx-auto">
+              <button onClick={() => setStep(3)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
+              <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
+                <div>
+                  <h3 className="font-heading font-bold text-lg text-foreground">Offertenanfrage</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Senden Sie Ihre Anfrage ab — wir melden uns innert 24h.</p>
+                </div>
+
+                {/* Nearby Agency */}
+                <NearbyAgencyCard plz={personalData.plz} />
 
                 {/* AGB Checkbox */}
                 <label className="flex items-start gap-3 cursor-pointer">
