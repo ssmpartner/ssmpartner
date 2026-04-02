@@ -408,6 +408,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
       )}
     </div>
   );
+};
 
 /* ─── Coverage packages ─── */
 const coveragePackages: Record<string, { basis: string; komfort: string; premium: string }> = {
