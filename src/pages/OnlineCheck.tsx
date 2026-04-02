@@ -6,6 +6,75 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+const MAPBOX_TOKEN = "pk.eyJ1Ijoic3NtcGFydG5lciIsImEiOiJjbW40bDI4engwMWg3MnFzbnp4emJua2hhIn0.5u0JuVsRDe6DSNBOEpSh1A";
+
+/* ─── Mapbox Address Autocomplete ─── */
+const AddressAutocomplete = ({ value, onChange, onPlzSelect }: {
+  value: string;
+  onChange: (val: string) => void;
+  onPlzSelect: (plz: string) => void;
+}) => {
+  const [suggestions, setSuggestions] = useState<Array<{ place_name: string; postcode: string }>>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const searchAddress = (query: string) => {
+    onChange(query);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (query.length < 2) { setSuggestions([]); return; }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const resp = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?country=ch&types=place,postcode,address&language=de&limit=5&access_token=${MAPBOX_TOKEN}`
+        );
+        const data = await resp.json();
+        const results = (data.features || []).map((f: any) => {
+          const postcode = f.context?.find((c: any) => c.id?.startsWith("postcode"))?.text
+            || (f.place_type?.includes("postcode") ? f.text : "");
+          return { place_name: f.place_name, postcode };
+        }).filter((r: any) => r.postcode);
+        setSuggestions(results);
+        setShowSuggestions(results.length > 0);
+      } catch { setSuggestions([]); }
+    }, 300);
+  };
+
+  const selectSuggestion = (s: { place_name: string; postcode: string }) => {
+    onChange(s.place_name);
+    onPlzSelect(s.postcode);
+    setShowSuggestions(false);
+  };
+
+  return (
+    <div className="relative">
+      <div className="relative">
+        <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input
+          value={value}
+          onChange={e => searchAddress(e.target.value)}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+          className="w-full text-sm bg-muted rounded-xl pl-9 pr-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground"
+          placeholder="Ort oder PLZ eingeben…"
+        />
+      </div>
+      {showSuggestions && (
+        <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+          {suggestions.map((s, i) => (
+            <button key={i} onMouseDown={() => selectSuggestion(s)}
+              className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center gap-2">
+              <MapPin size={12} className="text-muted-foreground shrink-0" />
+              <span className="text-foreground truncate">{s.place_name}</span>
+              <span className="text-xs text-primary font-medium ml-auto shrink-0">{s.postcode}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 type Msg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
