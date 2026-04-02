@@ -1226,7 +1226,7 @@ const OnlineCheck = () => {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Schliessen Sie Ihre Versicherung direkt über unseren Online-Wizard ab und erhalten Sie einen Cashback im Wert von <span className="font-semibold text-primary">CHF 150.–</span> als Dankeschön.
+                Schliessen Sie Ihren Vertrag direkt über uns online ab und erhalten Sie einen Cashback im Wert von <span className="font-semibold text-primary">CHF 150.–</span> als Dankeschön.
               </p>
               <div className="mt-6 flex items-center gap-2 text-xs text-primary font-medium">
                 <CheckCircle2 size={14} />
