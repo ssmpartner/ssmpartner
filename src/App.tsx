@@ -35,6 +35,7 @@ import AdminVag45 from "./pages/admin/AdminVag45";
 import ChatWidget from "@/components/ChatWidget";
 import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
+import OnlineCheck from "./pages/OnlineCheck";
 import NotFound from "./pages/NotFound";
 
 const ScrollToTop = () => {
