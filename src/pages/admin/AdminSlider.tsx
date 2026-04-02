@@ -65,8 +65,8 @@ const AdminSlider = () => {
     queryClient.invalidateQueries({ queryKey: ["admin-slider"] });
   };
 
-
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => setCropModal({ src: reader.result as string });
