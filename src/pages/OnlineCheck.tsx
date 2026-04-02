@@ -824,6 +824,8 @@ const InsuranceWizard = () => {
                           birthDate={personalData.birthDate}
                           franchise={productDetails.krankenkasse?.franchise || ""}
                           modell={productDetails.krankenkasse?.modell || ""}
+                          selectedOffer={selectedBagOffer}
+                          onSelectOffer={setSelectedBagOffer}
                         />
                       )}
                     </div>
