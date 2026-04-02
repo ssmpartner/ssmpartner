@@ -1007,31 +1007,27 @@ const OnlineCheck = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero with Chat Overlay */}
+      {/* Hero Section */}
       <div className="relative w-full">
         <div className="w-full h-[50vh] lg:h-[55vh] overflow-hidden relative">
           <img src={heroImg} alt={hero?.alt_text || "Online-Beratung"} className="w-full h-full object-cover" />
-          {/* Dark overlay for readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
 
-          {/* Chat overlay on hero */}
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 px-4">
+          {/* Title on hero */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-4 pb-24">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-center mb-6"
+              className="text-center"
             >
-              <h1 className="text-3xl md:text-4xl font-heading font-bold text-white drop-shadow-lg">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white drop-shadow-lg">
                 Online-Beratung
               </h1>
               <p className="text-white/80 mt-2 text-sm md:text-base max-w-lg mx-auto">
                 Stellen Sie Ihre Fragen direkt an unseren KI-Berater
               </p>
             </motion.div>
-            <div className="w-full max-w-2xl">
-              <ChatOverlay />
-            </div>
           </div>
 
           {/* Rounded overlap */}
@@ -1039,6 +1035,13 @@ const OnlineCheck = () => {
             className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
             style={{ boxShadow: "0 -10px 30px rgba(0,0,0,0.15)" }}
           />
+        </div>
+      </div>
+
+      {/* Chat Overlay — positioned to bridge hero and wizard */}
+      <div className="relative z-10 -mt-32 lg:-mt-40 px-4 mb-8">
+        <div className="max-w-3xl mx-auto">
+          <ChatOverlay />
         </div>
       </div>
 
