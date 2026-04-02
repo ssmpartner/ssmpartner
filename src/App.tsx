@@ -94,6 +94,7 @@ const App = () => (
                 <Route path="/admin/api-docs" element={<AdminApiDocs />} />
                 <Route path="/admin/docs" element={<AdminDocs />} />
                 <Route path="/admin/chat-knowledge" element={<AdminChatKnowledge />} />
+                <Route path="/admin/vag45" element={<AdminVag45 />} />
               </Route>
             </Route>
 
