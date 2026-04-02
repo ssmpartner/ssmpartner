@@ -522,6 +522,7 @@ const InsuranceWizard = () => {
   const [personalData, setPersonalData] = useState({
     firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "",
   });
+  const [addressInput, setAddressInput] = useState("");
   const [productDetails, setProductDetails] = useState<Record<string, Record<string, string>>>({});
   const [selectedPackages, setSelectedPackages] = useState<Record<string, string>>({});
   const [agbAccepted, setAgbAccepted] = useState(false);
