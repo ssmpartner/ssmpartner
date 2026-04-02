@@ -235,7 +235,7 @@ const AdminTeam = () => {
                     className="hidden"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (file) handleImageUpload(file, editingId === "new" ? undefined : editingId);
+                      if (file) handleFileSelect(file, editingId === "new" ? undefined : editingId);
                       e.target.value = "";
                     }}
                   />
