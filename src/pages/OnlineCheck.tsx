@@ -90,11 +90,27 @@ const ChatOverlay = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
   const [chatOpen, setChatOpen] = useState(false);
+
+  const SCRIBE_TOKEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-scribe-token`;
+
+  const scribe = useScribe({
+    modelId: "scribe_v2_realtime",
+    commitStrategy: "vad",
+    onCommittedTranscript: (data) => {
+      if (data.text?.trim()) {
+        setInput(prev => prev ? `${prev} ${data.text.trim()}` : data.text.trim());
+      }
+    },
+    onPartialTranscript: (data) => {
+      // Visual feedback handled by isRecording state
+    },
+  });
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
