@@ -749,7 +749,7 @@ const InsuranceWizard = () => {
 
   return (
     <div className="space-y-6">
-      {step > 0 && step < 4 && <StepIndicator currentStep={step - 1} totalSteps={5} />}
+      {step >= 0 && step < 5 && <StepIndicator currentStep={step} totalSteps={5} />}
 
       <AnimatePresence mode="wait">
         {/* ─── Step 0: Product Selection ─── */}
