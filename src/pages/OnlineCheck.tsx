@@ -567,6 +567,30 @@ const InsuranceWizard = () => {
   const [agbAccepted, setAgbAccepted] = useState(false);
   const [referenceNumber, setReferenceNumber] = useState("");
 
+  const { data: dbPricing = [] } = useQuery({
+    queryKey: ["wizard-pricing-public"],
+    queryFn: async () => {
+      const { data } = await supabase.from("wizard_pricing").select("*").eq("active", true).order("sort_order");
+      return data || [];
+    },
+  });
+
+  const getCoveragePackages = (catId: string) => {
+    const rows = dbPricing.filter((p: any) => p.category === catId);
+    if (rows.length > 0) {
+      const result: Record<string, string> = {};
+      rows.forEach((r: any) => { result[r.tier] = r.price_text; });
+      return result;
+    }
+    const fb = coveragePackagesFallback[catId];
+    return fb || { basis: "—", komfort: "—", premium: "—" };
+  };
+
+  const getPricingDescription = (catId: string, tier: string) => {
+    const row = dbPricing.find((p: any) => p.category === catId && p.tier === tier);
+    return row?.description || packageDetails[tier]?.desc || "";
+  };
+
   const toggleCategory = (id: string) => {
     setSelectedCategories(prev =>
       prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
