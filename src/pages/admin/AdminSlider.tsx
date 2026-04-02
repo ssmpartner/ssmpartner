@@ -110,7 +110,7 @@ const AdminSlider = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: ["admin-slider"] });
-      toast.success(cropModal?.existingId ? "Zuschnitt aktualisiert" : "Bild hochgeladen");
+      toast.success(cropModal?.mobile ? "Mobile-Zuschnitt gespeichert" : cropModal?.existingId ? "Zuschnitt aktualisiert" : "Bild hochgeladen");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
