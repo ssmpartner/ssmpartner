@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, GripVertical, Pencil, X, Check } from "lucide-react";
+import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop } from "lucide-react";
 import { toast } from "sonner";
+import ImageCropModal from "@/components/ImageCropModal";
 
 const AdminSlider = () => {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ headline: "", subline: "", alt_text: "" });
+  const [cropModal, setCropModal] = useState<{ src: string; existingId?: string } | null>(null);
 
   const { data: images, isLoading } = useQuery({
     queryKey: ["admin-slider"],
@@ -50,35 +52,51 @@ const AdminSlider = () => {
     },
   });
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setCropModal({ src: reader.result as string });
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
 
+  const handleCroppedUpload = async (blob: Blob) => {
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `slider/${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("site-images").upload(path, file);
+      const path = `slider/${Date.now()}.jpg`;
+      const { error: uploadError } = await supabase.storage.from("site-images").upload(path, blob, { contentType: "image/jpeg" });
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage.from("site-images").getPublicUrl(path);
 
-      const maxOrder = images?.length ? Math.max(...images.map((i) => i.sort_order)) + 1 : 0;
-      const { error } = await supabase.from("slider_images").insert({
-        image_url: publicUrl,
-        alt_text: file.name,
-        sort_order: maxOrder,
-      });
-      if (error) throw error;
+      if (cropModal?.existingId) {
+        // Update existing slider image
+        const { error } = await supabase.from("slider_images").update({ image_url: publicUrl }).eq("id", cropModal.existingId);
+        if (error) throw error;
+      } else {
+        // Insert new slider image
+        const maxOrder = images?.length ? Math.max(...images.map((i) => i.sort_order)) + 1 : 0;
+        const { error } = await supabase.from("slider_images").insert({
+          image_url: publicUrl,
+          alt_text: "Slider-Bild",
+          sort_order: maxOrder,
+        });
+        if (error) throw error;
+      }
 
       queryClient.invalidateQueries({ queryKey: ["admin-slider"] });
-      toast.success("Bild hochgeladen");
+      toast.success(cropModal?.existingId ? "Zuschnitt aktualisiert" : "Bild hochgeladen");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
       setUploading(false);
-      e.target.value = "";
+      setCropModal(null);
     }
+  };
+
+  const handleRecrop = (imageUrl: string, id: string) => {
+    setCropModal({ src: imageUrl, existingId: id });
   };
 
   const startEdit = (img: any) => {
@@ -93,7 +111,7 @@ const AdminSlider = () => {
         <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
           <Plus size={18} />
           {uploading ? "Hochladen..." : "Bild hinzufügen"}
-          <input type="file" accept="image/*" onChange={handleUpload} className="hidden" disabled={uploading} />
+          <input type="file" accept="image/*" onChange={handleFileSelect} className="hidden" disabled={uploading} />
         </label>
       </div>
 
@@ -147,6 +165,7 @@ const AdminSlider = () => {
                       <span className="font-body text-xs text-muted-foreground">#{img.sort_order + 1}</span>
                     </div>
                     <div className="flex items-center gap-2">
+                      <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Zuschnitt anpassen"><Crop size={14} /></button>
                       <button onClick={() => startEdit(img)} className="text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
                       <button
                         onClick={() => toggleMutation.mutate({ id: img.id, active: !img.active })}
@@ -163,6 +182,14 @@ const AdminSlider = () => {
           ))}
         </div>
       )}
+
+      <ImageCropModal
+        open={!!cropModal}
+        imageSrc={cropModal?.src || ""}
+        aspect={16 / 9}
+        onClose={() => setCropModal(null)}
+        onCropDone={handleCroppedUpload}
+      />
     </div>
   );
 };

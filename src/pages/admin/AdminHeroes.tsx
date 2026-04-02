@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Image as ImageIcon, FolderOpen } from "lucide-react";
+import { Upload, Image as ImageIcon, FolderOpen, Crop } from "lucide-react";
 import { toast } from "sonner";
 import MediaPickerModal from "@/components/MediaPickerModal";
+import ImageCropModal from "@/components/ImageCropModal";
 
 const staticPages = [
   // Home
@@ -35,6 +36,7 @@ const AdminHeroes = () => {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState<string | null>(null);
   const [mediaPickerKey, setMediaPickerKey] = useState<string | null>(null);
+  const [cropModal, setCropModal] = useState<{ src: string; pageKey: string } | null>(null);
 
   const { data: heroes, isLoading } = useQuery({
     queryKey: ["admin-heroes"],
@@ -77,25 +79,41 @@ const AdminHeroes = () => {
     onError: (err: any) => toast.error(err.message),
   });
 
-  const handleUpload = async (pageKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (pageKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setCropModal({ src: reader.result as string, pageKey });
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
 
+  const handleCroppedUpload = async (blob: Blob, pageKey?: string) => {
+    if (!pageKey) return;
     setUploading(pageKey);
     try {
-      const ext = file.name.split(".").pop();
-      const path = `heroes/${pageKey}-${Date.now()}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("site-images").upload(path, file);
+      const path = `heroes/${pageKey}-${Date.now()}.jpg`;
+      const { error: uploadError } = await supabase.storage.from("site-images").upload(path, blob, { contentType: "image/jpeg" });
       if (uploadError) throw uploadError;
-
       const { data: { publicUrl } } = supabase.storage.from("site-images").getPublicUrl(path);
       await updateMutation.mutateAsync({ pageKey, image_url: publicUrl });
     } catch (err: any) {
       toast.error(err.message);
     } finally {
       setUploading(null);
-      e.target.value = "";
+      setCropModal(null);
     }
+  };
+
+  const handleMediaSelect = (url: string) => {
+    if (mediaPickerKey) {
+      setCropModal({ src: url, pageKey: mediaPickerKey });
+    }
+    setMediaPickerKey(null);
+  };
+
+  const handleRecrop = (imageUrl: string, pageKey: string) => {
+    setCropModal({ src: imageUrl, pageKey });
   };
 
   const getHero = (pageKey: string) => heroes?.find((h) => h.page_key === pageKey);
@@ -130,7 +148,6 @@ const AdminHeroes = () => {
                       <span className="font-body text-xs mt-2">Kein Bild</span>
                     </div>
                   )}
-                  {/* Green line preview */}
                   <div className="absolute bottom-0 left-0 right-0 h-1" style={{ backgroundColor: "#243e3a" }} />
                 </div>
                 <div className="p-4 flex items-center justify-between">
@@ -139,6 +156,15 @@ const AdminHeroes = () => {
                     <p className="font-body text-xs text-muted-foreground">Seite: /{page.key}</p>
                   </div>
                   <div className="flex gap-2">
+                    {hero?.image_url && (
+                      <button
+                        onClick={() => handleRecrop(hero.image_url!, page.key)}
+                        className="inline-flex items-center gap-2 bg-muted text-foreground font-body text-xs font-medium px-3 py-2 rounded-lg hover:bg-muted/80 transition-colors"
+                      >
+                        <Crop size={14} />
+                        Zuschnitt
+                      </button>
+                    )}
                     <button
                       onClick={() => setMediaPickerKey(page.key)}
                       className="inline-flex items-center gap-2 bg-muted text-foreground font-body text-xs font-medium px-3 py-2 rounded-lg hover:bg-muted/80 transition-colors"
@@ -152,7 +178,7 @@ const AdminHeroes = () => {
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleUpload(page.key, e)}
+                        onChange={(e) => handleFileSelect(page.key, e)}
                         className="hidden"
                         disabled={uploading === page.key}
                       />
@@ -168,14 +194,17 @@ const AdminHeroes = () => {
       <MediaPickerModal
         open={!!mediaPickerKey}
         onClose={() => setMediaPickerKey(null)}
-        onSelect={(url) => {
-          if (mediaPickerKey) {
-            updateMutation.mutate({ pageKey: mediaPickerKey, image_url: url });
-          }
-          setMediaPickerKey(null);
-        }}
+        onSelect={handleMediaSelect}
         accept="image"
         title="Bild aus Mediathek wählen"
+      />
+
+      <ImageCropModal
+        open={!!cropModal}
+        imageSrc={cropModal?.src || ""}
+        aspect={21 / 9}
+        onClose={() => setCropModal(null)}
+        onCropDone={(blob) => handleCroppedUpload(blob, cropModal?.pageKey)}
       />
     </div>
   );
