@@ -641,7 +641,7 @@ const InsuranceWizard = () => {
     }
   };
 
-  const isPersonalValid = personalData.firstName && personalData.lastName && personalData.email && personalData.birthDate && personalData.plz;
+  const isPersonalValid = personalData.firstName && personalData.lastName && personalData.email && personalData.birthDate && personalData.plz && personalData.ort;
 
   const inputClass = "w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground";
   const selectClass = "w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none";
