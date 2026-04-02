@@ -1184,11 +1184,6 @@ const OnlineCheck = () => {
             </motion.div>
           </div>
 
-          {/* Rounded overlap */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-10 lg:h-14 rounded-t-[2rem] lg:rounded-t-[2.5rem] bg-background"
-            style={{ boxShadow: "0 -10px 30px rgba(0,0,0,0.15)" }}
-          />
         </div>
       </div>
 
