@@ -928,7 +928,21 @@ const InsuranceWizard = () => {
                           <p key={k} className="text-xs text-muted-foreground"><span className="font-medium text-foreground">{k}:</span> {v}</p>
                         ))}
                       </div>
-                    </div>
+                      {catId === "krankenkasse" && selectedBagOffer && (
+                        <div className="mt-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                          <div className="flex items-center gap-1.5 mb-1">
+                            <CheckCircle2 size={14} className="text-primary" />
+                            <span className="text-xs font-bold text-primary">Gewähltes Visana-Angebot</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-foreground">{selectedBagOffer.insurer}</p>
+                              <p className="text-xs text-muted-foreground">{selectedBagOffer.model} · Franchise CHF {selectedBagOffer.deductible}</p>
+                            </div>
+                            <p className="text-sm font-bold text-primary">CHF {selectedBagOffer.price.total.toFixed(2)}/Mt.</p>
+                          </div>
+                        </div>
+                      )}
                   );
                 })}
 
