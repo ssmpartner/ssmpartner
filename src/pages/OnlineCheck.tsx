@@ -511,33 +511,42 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
           {region && <p className="text-[11px] text-muted-foreground">Region: {region}</p>}
           <p className="text-xs text-muted-foreground">Wählen Sie Ihr bevorzugtes Angebot:</p>
           <div className="grid gap-2">
-            {offers.map((o, i) => (
-              <button
-                key={i}
-                onClick={() => onSelectOffer(isSelected(o) ? null : o)}
-                className={`flex items-center justify-between p-3 rounded-lg border text-left transition-all ${
-                  isSelected(o)
-                    ? "border-primary bg-primary/10 ring-2 ring-primary/30"
-                    : i === 0 ? "border-primary/50 bg-primary/5 hover:bg-primary/10" : "border-border bg-card hover:bg-muted/50"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {isSelected(o) ? (
-                    <CheckCircle2 size={16} className="text-primary shrink-0" />
-                  ) : (
-                    <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
-                  )}
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{o.insurer}</p>
-                    <p className="text-xs text-muted-foreground">{o.model} · Franchise CHF {o.deductible}</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-primary">CHF {o.price.total.toFixed(2)}</p>
-                  <p className="text-[10px] text-muted-foreground">pro Monat</p>
-                </div>
-              </button>
-            ))}
+            {(() => {
+              const minPrice = Math.min(...offers.map(o => o.price.total));
+              return offers.map((o, i) => {
+                const isCheapest = o.price.total === minPrice;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => onSelectOffer(isSelected(o) ? null : o)}
+                    className={`relative flex items-center justify-between p-3 rounded-lg border text-left transition-all ${
+                      isSelected(o)
+                        ? "border-primary bg-primary/10 ring-2 ring-primary/30"
+                        : isCheapest ? "border-primary/50 bg-primary/5 hover:bg-primary/10" : "border-border bg-card hover:bg-muted/50"
+                    }`}
+                  >
+                    {isCheapest && (
+                      <span className="absolute -top-2 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">Günstigste</span>
+                    )}
+                    <div className="flex items-center gap-2">
+                      {isSelected(o) ? (
+                        <CheckCircle2 size={16} className="text-primary shrink-0" />
+                      ) : (
+                        <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/30 shrink-0" />
+                      )}
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{o.insurer}</p>
+                        <p className="text-xs text-muted-foreground">{o.model} · Franchise CHF {o.deductible}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-primary">CHF {o.price.total.toFixed(2)}</p>
+                      <p className="text-[10px] text-muted-foreground">pro Monat</p>
+                    </div>
+                  </button>
+                );
+              });
+            })()}
           </div>
           <p className="text-[10px] text-muted-foreground text-center">Quelle: BAG / priminfo.admin.ch · Visana Prämien 2026</p>
         </div>
