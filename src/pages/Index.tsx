@@ -122,10 +122,10 @@ const Index = () => {
   }, [cmsHeroes]);
 
   const slides = slidesLoading
-    ? [{ image: "", headline: "", subline: "" }]
+    ? [{ image: "", mobileImage: "", headline: "", subline: "" }]
     : dbSlides && dbSlides.length > 0
-      ? dbSlides.map((s) => ({ image: s.image_url, headline: s.headline || "", subline: s.subline || "" }))
-      : fallbackSlides;
+      ? dbSlides.map((s: any) => ({ image: s.image_url, mobileImage: s.mobile_image_url || "", headline: s.headline || "", subline: s.subline || "" }))
+      : fallbackSlides.map(s => ({ ...s, mobileImage: "" }));
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
