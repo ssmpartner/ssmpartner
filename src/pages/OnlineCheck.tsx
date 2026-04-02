@@ -9,12 +9,12 @@ import { supabase } from "@/integrations/supabase/client";
 const MAPBOX_TOKEN = "pk.eyJ1Ijoic3NtcGFydG5lciIsImEiOiJjbW40bDI4engwMWg3MnFzbnp4emJua2hhIn0.5u0JuVsRDe6DSNBOEpSh1A";
 
 /* ─── Mapbox Address Autocomplete ─── */
-const AddressAutocomplete = ({ value, onChange, onPlzSelect }: {
+const AddressAutocomplete = ({ value, onChange, onSelect }: {
   value: string;
   onChange: (val: string) => void;
-  onPlzSelect: (plz: string) => void;
+  onSelect: (data: { address: string; plz: string; ort: string }) => void;
 }) => {
-  const [suggestions, setSuggestions] = useState<Array<{ place_name: string; postcode: string }>>([]);
+  const [suggestions, setSuggestions] = useState<Array<{ place_name: string; postcode: string; place: string; street: string }>>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -32,17 +32,20 @@ const AddressAutocomplete = ({ value, onChange, onPlzSelect }: {
         const results = (data.features || []).map((f: any) => {
           const postcode = f.context?.find((c: any) => c.id?.startsWith("postcode"))?.text
             || (f.place_type?.includes("postcode") ? f.text : "");
-          return { place_name: f.place_name, postcode };
-        }).filter((r: any) => r.postcode);
+          const place = f.context?.find((c: any) => c.id?.startsWith("place"))?.text
+            || (f.place_type?.includes("place") ? f.text : "");
+          const street = f.place_type?.includes("address") ? (f.text + (f.address ? ` ${f.address}` : "")) : "";
+          return { place_name: f.place_name, postcode, place, street };
+        }).filter((r: any) => r.postcode || r.place);
         setSuggestions(results);
         setShowSuggestions(results.length > 0);
       } catch { setSuggestions([]); }
     }, 300);
   };
 
-  const selectSuggestion = (s: { place_name: string; postcode: string }) => {
-    onChange(s.place_name);
-    onPlzSelect(s.postcode);
+  const selectSuggestion = (s: { place_name: string; postcode: string; place: string; street: string }) => {
+    onChange(s.street || s.place_name.split(",")[0] || "");
+    onSelect({ address: s.street || "", plz: s.postcode, ort: s.place });
     setShowSuggestions(false);
   };
 
@@ -56,7 +59,7 @@ const AddressAutocomplete = ({ value, onChange, onPlzSelect }: {
           onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           className="w-full text-sm bg-muted rounded-xl pl-9 pr-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground"
-          placeholder="Ort oder PLZ eingeben…"
+          placeholder="Strasse und Hausnummer eingeben…"
         />
       </div>
       {showSuggestions && (
@@ -66,7 +69,7 @@ const AddressAutocomplete = ({ value, onChange, onPlzSelect }: {
               className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center gap-2">
               <MapPin size={12} className="text-muted-foreground shrink-0" />
               <span className="text-foreground truncate">{s.place_name}</span>
-              <span className="text-xs text-primary font-medium ml-auto shrink-0">{s.postcode}</span>
+              {s.postcode && <span className="text-xs text-primary font-medium ml-auto shrink-0">{s.postcode}</span>}
             </button>
           ))}
         </div>
@@ -559,7 +562,7 @@ const InsuranceWizard = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [step, setStep] = useState(0);
   const [personalData, setPersonalData] = useState({
-    firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "",
+    firstName: "", lastName: "", email: "", phone: "", birthDate: "", address: "", plz: "", ort: "", zivilstand: "",
   });
   const [addressInput, setAddressInput] = useState("");
   const [productDetails, setProductDetails] = useState<Record<string, Record<string, string>>>({});
@@ -621,7 +624,7 @@ const InsuranceWizard = () => {
       return `${cat.label} (Paket: ${pkg}):\n${qText}`;
     }).join("\n\n");
 
-    const message = `Ref: ${ref}\n\nProdukte: ${selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}\n\nZivilstand: ${personalData.zivilstand || "k.A."}\nGeburtsdatum: ${personalData.birthDate || "k.A."}\nPLZ: ${personalData.plz || "k.A."}\n\n--- Produktdetails ---\n${details}`;
+    const message = `Ref: ${ref}\n\nProdukte: ${selectedCategories.map(id => wizardCategories.find(c => c.id === id)?.label).join(", ")}\n\nAdresse: ${personalData.address}, ${personalData.plz} ${personalData.ort}\nZivilstand: ${personalData.zivilstand || "k.A."}\nGeburtsdatum: ${personalData.birthDate || "k.A."}\n\n--- Produktdetails ---\n${details}`;
 
     try {
       await supabase.from("inquiries").insert({
@@ -638,7 +641,7 @@ const InsuranceWizard = () => {
     }
   };
 
-  const isPersonalValid = personalData.firstName && personalData.lastName && personalData.email && personalData.birthDate && personalData.plz;
+  const isPersonalValid = personalData.firstName && personalData.lastName && personalData.email && personalData.birthDate && personalData.plz && personalData.ort;
 
   const inputClass = "w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground";
   const selectClass = "w-full text-sm bg-muted rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground appearance-none";
@@ -717,16 +720,21 @@ const InsuranceWizard = () => {
                       <option>Eingetragene Partnerschaft</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-1 block">Wohnort / PLZ *</label>
+                  <div className="md:col-span-2">
+                    <label className="text-sm font-medium text-foreground mb-1 block">Strasse & Nr. *</label>
                     <AddressAutocomplete
                       value={addressInput}
                       onChange={setAddressInput}
-                      onPlzSelect={(plz) => setPersonalData(p => ({ ...p, plz }))}
+                      onSelect={({ address, plz, ort }) => setPersonalData(p => ({ ...p, address: address || addressInput, plz, ort }))}
                     />
-                    {personalData.plz && (
-                      <p className="text-xs text-primary mt-1">PLZ: {personalData.plz}</p>
-                    )}
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">PLZ *</label>
+                    <input value={personalData.plz} onChange={e => setPersonalData(p => ({ ...p, plz: e.target.value }))} className={inputClass} placeholder="z.B. 3000" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">Ort *</label>
+                    <input value={personalData.ort} onChange={e => setPersonalData(p => ({ ...p, ort: e.target.value }))} className={inputClass} placeholder="z.B. Bern" />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">E-Mail *</label>
@@ -951,7 +959,7 @@ const InsuranceWizard = () => {
             </div>
 
             <div className="mt-6">
-              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
+              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", address: "", plz: "", ort: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
                 className="inline-flex items-center gap-2 px-6 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 Komplett neu starten
               </button>
