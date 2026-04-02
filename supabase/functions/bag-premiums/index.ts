@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { plz, age, deductible, accident, model, limit } = await req.json();
+    const { plz, age, deductible, accident, model, limit, insurer } = await req.json();
 
     if (!plz || !age) {
       return new Response(
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
       age: String(age),
       deductible: String(deductible || 2500),
       accident: String(accident ?? false),
-      limit: String(limit || "all"),
+      limit: String(limit || 100),
     });
     if (model) params.set("model", model);
 
@@ -35,6 +35,14 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
+
+    // Filter by insurer if specified (e.g. "Visana")
+    if (insurer && data.offers) {
+      const filterLower = insurer.toLowerCase();
+      data.offers = data.offers.filter((o: { insurer: string }) =>
+        o.insurer.toLowerCase().includes(filterLower)
+      );
+    }
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

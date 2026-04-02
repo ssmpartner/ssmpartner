@@ -1,10 +1,79 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft, Lock, Award, Clock, Globe, Smartphone, Briefcase, Search, Loader2, TrendingDown } from "lucide-react";
+import { Send, Volume2, VolumeX, Sparkles, Shield, Car, Home, Scale, Heart, PiggyBank, ChevronRight, CheckCircle2, ArrowRight, ArrowLeft, Lock, Award, Clock, Globe, Smartphone, Briefcase, Search, Loader2, TrendingDown, MapPin, Calendar, Plus } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+
+const MAPBOX_TOKEN = "pk.eyJ1Ijoic3NtcGFydG5lciIsImEiOiJjbW40bDI4engwMWg3MnFzbnp4emJua2hhIn0.5u0JuVsRDe6DSNBOEpSh1A";
+
+/* ─── Mapbox Address Autocomplete ─── */
+const AddressAutocomplete = ({ value, onChange, onPlzSelect }: {
+  value: string;
+  onChange: (val: string) => void;
+  onPlzSelect: (plz: string) => void;
+}) => {
+  const [suggestions, setSuggestions] = useState<Array<{ place_name: string; postcode: string }>>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const searchAddress = (query: string) => {
+    onChange(query);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (query.length < 2) { setSuggestions([]); return; }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const resp = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?country=ch&types=place,postcode,address&language=de&limit=5&access_token=${MAPBOX_TOKEN}`
+        );
+        const data = await resp.json();
+        const results = (data.features || []).map((f: any) => {
+          const postcode = f.context?.find((c: any) => c.id?.startsWith("postcode"))?.text
+            || (f.place_type?.includes("postcode") ? f.text : "");
+          return { place_name: f.place_name, postcode };
+        }).filter((r: any) => r.postcode);
+        setSuggestions(results);
+        setShowSuggestions(results.length > 0);
+      } catch { setSuggestions([]); }
+    }, 300);
+  };
+
+  const selectSuggestion = (s: { place_name: string; postcode: string }) => {
+    onChange(s.place_name);
+    onPlzSelect(s.postcode);
+    setShowSuggestions(false);
+  };
+
+  return (
+    <div className="relative">
+      <div className="relative">
+        <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input
+          value={value}
+          onChange={e => searchAddress(e.target.value)}
+          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+          className="w-full text-sm bg-muted rounded-xl pl-9 pr-4 py-3 outline-none focus:ring-2 focus:ring-ring text-foreground"
+          placeholder="Ort oder PLZ eingeben…"
+        />
+      </div>
+      {showSuggestions && (
+        <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-xl shadow-lg overflow-hidden">
+          {suggestions.map((s, i) => (
+            <button key={i} onMouseDown={() => selectSuggestion(s)}
+              className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center gap-2">
+              <MapPin size={12} className="text-muted-foreground shrink-0" />
+              <span className="text-foreground truncate">{s.place_name}</span>
+              <span className="text-xs text-primary font-medium ml-auto shrink-0">{s.postcode}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -351,7 +420,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ plz, age, deductible, accident: false, model, limit: 10 }),
+        body: JSON.stringify({ plz, age, deductible, accident: false, model, limit: 100, insurer: "Visana" }),
       });
       const data = await resp.json();
       setOffers(data.offers || []);
@@ -367,7 +436,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TrendingDown size={16} className="text-primary" />
-          <h5 className="text-sm font-bold text-foreground">BAG Prämienvergleich 2026</h5>
+          <h5 className="text-sm font-bold text-foreground">Visana Prämien 2026 (BAG)</h5>
         </div>
         <button
           onClick={fetchPremiums}
@@ -379,7 +448,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
         </button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Vergleichen Sie aktuelle Krankenkassenprämien basierend auf Ihren Angaben (PLZ, Alter, Franchise).
+        Aktuelle Visana-Prämien basierend auf Ihren Angaben (PLZ, Alter, Franchise).
       </p>
 
       {searched && !loading && offers.length === 0 && (
@@ -403,7 +472,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-muted-foreground text-center">Quelle: BAG / priminfo.admin.ch · Prämien 2026 · Top {offers.length} Angebote</p>
+          <p className="text-[10px] text-muted-foreground text-center">Quelle: BAG / priminfo.admin.ch · Visana Prämien 2026</p>
         </div>
       )}
     </div>
@@ -453,6 +522,7 @@ const InsuranceWizard = () => {
   const [personalData, setPersonalData] = useState({
     firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "",
   });
+  const [addressInput, setAddressInput] = useState("");
   const [productDetails, setProductDetails] = useState<Record<string, Record<string, string>>>({});
   const [selectedPackages, setSelectedPackages] = useState<Record<string, string>>({});
   const [agbAccepted, setAgbAccepted] = useState(false);
@@ -585,8 +655,15 @@ const InsuranceWizard = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-1 block">PLZ *</label>
-                    <input value={personalData.plz} onChange={e => setPersonalData(p => ({ ...p, plz: e.target.value }))} className={inputClass} placeholder="z.B. 3000" maxLength={4} />
+                    <label className="text-sm font-medium text-foreground mb-1 block">Wohnort / PLZ *</label>
+                    <AddressAutocomplete
+                      value={addressInput}
+                      onChange={setAddressInput}
+                      onPlzSelect={(plz) => setPersonalData(p => ({ ...p, plz }))}
+                    />
+                    {personalData.plz && (
+                      <p className="text-xs text-primary mt-1">PLZ: {personalData.plz}</p>
+                    )}
                   </div>
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">E-Mail *</label>
@@ -788,10 +865,32 @@ const InsuranceWizard = () => {
               <p className="text-xs text-muted-foreground">Ihre Referenznummer</p>
               <p className="text-lg font-heading font-bold text-foreground tracking-wider">{referenceNumber}</p>
             </div>
-            <div className="mt-8">
-              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "" }); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
-                className="inline-flex items-center gap-2 px-6 py-2.5 border border-border rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors">
-                Neue Anfrage starten
+
+            {/* Post-submit options */}
+            <div className="mt-10 max-w-lg mx-auto">
+              <p className="text-sm font-medium text-foreground mb-4">Wie möchten Sie weiterfahren?</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  onClick={() => { setStep(0); setSelectedCategories([]); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
+                  className="flex items-center justify-center gap-2 p-4 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity"
+                >
+                  <Plus size={18} />
+                  Weitere Versicherung abschliessen
+                </button>
+                <a
+                  href="/kontakt"
+                  className="flex items-center justify-center gap-2 p-4 bg-card border-2 border-primary text-primary rounded-xl font-heading font-bold hover:bg-primary/5 transition-colors"
+                >
+                  <Calendar size={18} />
+                  Termin vereinbaren
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <button onClick={() => { setStep(0); setSelectedCategories([]); setPersonalData({ firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "" }); setAddressInput(""); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Komplett neu starten
               </button>
             </div>
           </motion.div>
