@@ -562,7 +562,7 @@ const InsuranceWizard = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [step, setStep] = useState(0);
   const [personalData, setPersonalData] = useState({
-    firstName: "", lastName: "", email: "", phone: "", birthDate: "", plz: "", zivilstand: "",
+    firstName: "", lastName: "", email: "", phone: "", birthDate: "", address: "", plz: "", ort: "", zivilstand: "",
   });
   const [addressInput, setAddressInput] = useState("");
   const [productDetails, setProductDetails] = useState<Record<string, Record<string, string>>>({});
