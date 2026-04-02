@@ -18,10 +18,10 @@ const premiumTool = {
       type: "object",
       properties: {
         plz: { type: "string", description: "Schweizer Postleitzahl (z.B. '6003' für Luzern)" },
-        age: { type: "number", description: "Alter der versicherten Person" },
-        deductible: { type: "number", description: "Franchise in CHF (300, 500, 1000, 1500, 2000 oder 2500). Standard: 2500", enum: [300, 500, 1000, 1500, 2000, 2500] },
-        accident: { type: "boolean", description: "Mit Unfalldeckung? Standard: false" },
-        model: { type: "string", description: "Versicherungsmodell. Standard: alle Modelle", enum: ["standard", "hmo", "hausarzt", "telmed"] },
+        age: { type: "string", description: "Alter der versicherten Person als Zahl (z.B. '30')" },
+        deductible: { type: "string", description: "Franchise in CHF: 300, 500, 1000, 1500, 2000 oder 2500. Standard: 2500" },
+        accident: { type: "string", description: "Mit Unfalldeckung? 'true' oder 'false'. Standard: 'false'" },
+        model: { type: "string", description: "Versicherungsmodell: standard, hmo, hausarzt oder telmed. Standard: alle Modelle" },
       },
       required: ["plz", "age"],
     },
@@ -29,12 +29,12 @@ const premiumTool = {
 };
 
 // Call BAG API for premiums
-async function fetchVisanaPremiums(args: { plz: string; age: number; deductible?: number; accident?: boolean; model?: string }) {
+async function fetchVisanaPremiums(args: { plz: string; age: string; deductible?: string; accident?: string; model?: string }) {
   const params = new URLSearchParams({
     plz: args.plz,
-    age: String(args.age),
-    deductible: String(args.deductible || 2500),
-    accident: String(args.accident ?? false),
+    age: String(parseInt(args.age) || 30),
+    deductible: String(parseInt(args.deductible || "2500") || 2500),
+    accident: args.accident === "true" ? "true" : "false",
     limit: "200",
   });
   if (args.model) params.set("model", args.model);
