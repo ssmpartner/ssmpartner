@@ -6,6 +6,53 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const BAG_API = "https://primai-okp-api.fly.dev/v1/compare";
+
+// Tool definition for premium lookup
+const premiumTool = {
+  type: "function",
+  function: {
+    name: "lookup_visana_premiums",
+    description: "Sucht Visana Krankenkassen-Prämien basierend auf PLZ, Alter und weiteren Parametern. Verwende dieses Tool wenn der User nach Prämien, Kosten oder Preisen für Krankenkassen/Grundversicherung fragt.",
+    parameters: {
+      type: "object",
+      properties: {
+        plz: { type: "string", description: "Schweizer Postleitzahl (z.B. '6003' für Luzern)" },
+        age: { type: "number", description: "Alter der versicherten Person" },
+        deductible: { type: "number", description: "Franchise in CHF (300, 500, 1000, 1500, 2000 oder 2500). Standard: 2500", enum: [300, 500, 1000, 1500, 2000, 2500] },
+        accident: { type: "boolean", description: "Mit Unfalldeckung? Standard: false" },
+        model: { type: "string", description: "Versicherungsmodell. Standard: alle Modelle", enum: ["standard", "hmo", "hausarzt", "telmed"] },
+      },
+      required: ["plz", "age"],
+    },
+  },
+};
+
+// Call BAG API for premiums
+async function fetchVisanaPremiums(args: { plz: string; age: number; deductible?: number; accident?: boolean; model?: string }) {
+  const params = new URLSearchParams({
+    plz: args.plz,
+    age: String(args.age),
+    deductible: String(args.deductible || 2500),
+    accident: String(args.accident ?? false),
+    limit: "200",
+  });
+  if (args.model) params.set("model", args.model);
+
+  const response = await fetch(`${BAG_API}?${params}`);
+  if (!response.ok) throw new Error(`BAG API error: ${response.status}`);
+  const data = await response.json();
+
+  // Filter to Visana only
+  if (data.offers) {
+    data.offers = data.offers.filter((o: { insurer: string }) =>
+      o.insurer.toLowerCase().includes("visana")
+    );
+  }
+
+  return data;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -101,12 +148,19 @@ ${agencyList || "Keine Agenturen verfügbar."}
 UNSERE TEAM-MITGLIEDER:
 ${teamList || "Keine Team-Mitglieder verfügbar."}
 
+PRÄMIEN-ABFRAGE:
+- Du hast Zugriff auf ein Tool "lookup_visana_premiums" um Visana Krankenkassen-Prämien (Grundversicherung OKP) nachzuschlagen.
+- Wenn ein User nach Prämien fragt, nutze das Tool. Frage nach PLZ und Alter falls nicht angegeben.
+- Für Kantone nutze eine typische PLZ: Luzern=6003, Bern=3001, Zürich=8001, Basel=4001, St.Gallen=9000, Aarau=5000, Solothurn=4500, Thun=3600, Winterthur=8400, Zug=6300.
+- Präsentiere die Ergebnisse übersichtlich mit Modell, Prämie pro Monat in CHF.
+- Erwähne dass es sich um offizielle BAG-Daten für 2026 handelt und weise auf die Online-Beratung (/onlinecheck) hin.
+
 VERHALTEN:
 - Antworte immer freundlich, professionell und auf Deutsch (oder in der Sprache des Users).
 - Nutze die Wissensbasis, um Fragen zu beantworten.
 - Wenn eine Agentur relevant ist, empfehle sie mit Link.
 - Wenn du die Antwort nicht weisst, leite den User zum Kontaktformular weiter: "Sie können uns gerne über unser [Kontaktformular](/kontakt) erreichen."
-- Halte Antworten kurz und hilfreich (max 3-4 Sätze).
+- Halte Antworten kurz und hilfreich (max 3-4 Sätze, ausser bei Prämien-Tabellen).
 - Wir sind KEIN Temporärbüro und KEIN Personaldienstleister. Wir sind ein Vertriebsunternehmen für Finanz- und Versicherungsprodukte.
 - Wenn jemand eine Karriere bei uns sucht, verweise auf die Karriereseite (/karriere) – wir suchen Finanzcoaches und Führungskräfte.
 - Formatiere Links als Markdown: [Linktext](url)
@@ -119,7 +173,8 @@ KONTAKTKARTEN-FUNKTION:
 - Nutze NUR IDs die in der Team-Liste existieren. Erfinde keine IDs.
 - Der Marker wird im Frontend automatisch als interaktive Kontaktkarte mit QR-Code angezeigt.`;
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    // First call with tools enabled (non-streaming to handle tool calls)
+    const firstResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -131,71 +186,137 @@ KONTAKTKARTEN-FUNKTION:
           { role: "system", content: systemPrompt },
           ...messages.slice(-10),
         ],
-        stream: true,
+        tools: [premiumTool],
+        stream: false,
       }),
     });
 
-    if (!response.ok) {
-      if (response.status === 429) {
+    if (!firstResponse.ok) {
+      if (firstResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Zu viele Anfragen. Bitte versuchen Sie es später erneut." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 402) {
+      if (firstResponse.status === 402) {
         return new Response(JSON.stringify({ error: "Service vorübergehend nicht verfügbar." }), {
           status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      const t = await firstResponse.text();
+      console.error("AI gateway error:", firstResponse.status, t);
       return new Response(JSON.stringify({ error: "AI-Service nicht verfügbar." }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // We need to intercept the stream to save the assistant response
-    const reader = response.body!.getReader();
-    let assistantContent = "";
+    const firstResult = await firstResponse.json();
+    const firstChoice = firstResult.choices?.[0];
 
-    const stream = new ReadableStream({
-      async pull(controller) {
-        const { done, value } = await reader.read();
-        if (done) {
-          // Save assistant response when stream ends
-          if (currentSessionId && assistantContent.trim()) {
-            sb.from("chat_messages").insert({
-              session_id: currentSessionId,
-              role: "assistant",
-              content: assistantContent,
-            }).then(() => {});
-          }
-          controller.close();
-          return;
-        }
+    // Check if the model wants to call a tool
+    if (firstChoice?.finish_reason === "tool_calls" || firstChoice?.message?.tool_calls?.length > 0) {
+      const toolCalls = firstChoice.message.tool_calls;
+      const toolResults: any[] = [];
 
-        // Parse SSE to capture assistant content
-        const text = new TextDecoder().decode(value);
-        const lines = text.split("\n");
-        for (const line of lines) {
-          if (line.startsWith("data: ") && line.trim() !== "data: [DONE]") {
-            try {
-              const parsed = JSON.parse(line.slice(6));
-              const delta = parsed.choices?.[0]?.delta?.content;
-              if (delta) assistantContent += delta;
-            } catch { /* partial JSON, ignore */ }
+      for (const tc of toolCalls) {
+        if (tc.function.name === "lookup_visana_premiums") {
+          try {
+            const args = JSON.parse(tc.function.arguments);
+            const premiumData = await fetchVisanaPremiums(args);
+            toolResults.push({
+              role: "tool",
+              tool_call_id: tc.id,
+              content: JSON.stringify(premiumData),
+            });
+          } catch (err) {
+            toolResults.push({
+              role: "tool",
+              tool_call_id: tc.id,
+              content: JSON.stringify({ error: "Prämien konnten nicht abgerufen werden." }),
+            });
           }
         }
+      }
 
-        controller.enqueue(value);
-      },
-    });
+      // Second call: stream the final response with tool results
+      const secondResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: systemPrompt },
+            ...messages.slice(-10),
+            firstChoice.message,
+            ...toolResults,
+          ],
+          stream: true,
+        }),
+      });
 
-    return new Response(stream, {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "text/event-stream",
-        "X-Session-Id": currentSessionId || "",
-      },
+      if (!secondResponse.ok) {
+        const t = await secondResponse.text();
+        console.error("AI gateway second call error:", secondResponse.status, t);
+        return new Response(JSON.stringify({ error: "AI-Service nicht verfügbar." }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Stream with assistant content capture
+      const reader = secondResponse.body!.getReader();
+      let assistantContent = "";
+      const stream = new ReadableStream({
+        async pull(controller) {
+          const { done, value } = await reader.read();
+          if (done) {
+            if (currentSessionId && assistantContent.trim()) {
+              sb.from("chat_messages").insert({
+                session_id: currentSessionId,
+                role: "assistant",
+                content: assistantContent,
+              }).then(() => {});
+            }
+            controller.close();
+            return;
+          }
+          const text = new TextDecoder().decode(value);
+          for (const line of text.split("\n")) {
+            if (line.startsWith("data: ") && line.trim() !== "data: [DONE]") {
+              try {
+                const parsed = JSON.parse(line.slice(6));
+                const delta = parsed.choices?.[0]?.delta?.content;
+                if (delta) assistantContent += delta;
+              } catch { /* partial JSON */ }
+            }
+          }
+          controller.enqueue(value);
+        },
+      });
+
+      return new Response(stream, {
+        headers: { ...corsHeaders, "Content-Type": "text/event-stream", "X-Session-Id": currentSessionId || "" },
+      });
+    }
+
+    // No tool call — stream the response directly
+    // Since we already consumed a non-streaming response, we re-format it as SSE
+    const content = firstChoice?.message?.content || "Entschuldigung, ich konnte keine Antwort generieren.";
+    
+    // Save assistant response
+    if (currentSessionId && content.trim()) {
+      sb.from("chat_messages").insert({
+        session_id: currentSessionId,
+        role: "assistant",
+        content: content,
+      }).then(() => {});
+    }
+
+    // Re-stream as SSE for consistent frontend handling
+    const sseData = `data: ${JSON.stringify({ choices: [{ delta: { content } }] })}\n\ndata: [DONE]\n\n`;
+    return new Response(sseData, {
+      headers: { ...corsHeaders, "Content-Type": "text/event-stream", "X-Session-Id": currentSessionId || "" },
     });
   } catch (e) {
     console.error("chat error:", e);
