@@ -379,7 +379,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell }: { plz: stri
         </button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Vergleichen Sie aktuelle Krankenkassenprämien basierend auf Ihren Angaben (PLZ, Alter, Franchise).
+        Aktuelle Visana-Prämien basierend auf Ihren Angaben (PLZ, Alter, Franchise).
       </p>
 
       {searched && !loading && offers.length === 0 && (
