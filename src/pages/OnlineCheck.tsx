@@ -643,6 +643,14 @@ const InsuranceWizard = () => {
                           </div>
                         ))}
                       </div>
+                      {catId === "krankenkasse" && (
+                        <BagPremiumComparison
+                          plz={personalData.plz}
+                          birthDate={personalData.birthDate}
+                          franchise={productDetails.krankenkasse?.franchise || ""}
+                          modell={productDetails.krankenkasse?.modell || ""}
+                        />
+                      )}
                     </div>
                   );
                 })}
