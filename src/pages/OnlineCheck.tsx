@@ -756,6 +756,9 @@ const OnlineCheck = () => {
           <InsuranceWizard />
         </div>
       </section>
+
+      {/* Trust Bar */}
+      <TrustBar />
     </div>
   );
 };
