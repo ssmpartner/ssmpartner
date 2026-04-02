@@ -720,16 +720,21 @@ const InsuranceWizard = () => {
                       <option>Eingetragene Partnerschaft</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-1 block">Wohnort / PLZ *</label>
+                  <div className="md:col-span-2">
+                    <label className="text-sm font-medium text-foreground mb-1 block">Strasse & Nr. *</label>
                     <AddressAutocomplete
                       value={addressInput}
                       onChange={setAddressInput}
-                      onPlzSelect={(plz) => setPersonalData(p => ({ ...p, plz }))}
+                      onSelect={({ address, plz, ort }) => setPersonalData(p => ({ ...p, address: address || addressInput, plz, ort }))}
                     />
-                    {personalData.plz && (
-                      <p className="text-xs text-primary mt-1">PLZ: {personalData.plz}</p>
-                    )}
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">PLZ *</label>
+                    <input value={personalData.plz} onChange={e => setPersonalData(p => ({ ...p, plz: e.target.value }))} className={inputClass} placeholder="z.B. 3000" />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">Ort *</label>
+                    <input value={personalData.ort} onChange={e => setPersonalData(p => ({ ...p, ort: e.target.value }))} className={inputClass} placeholder="z.B. Bern" />
                   </div>
                   <div>
                     <label className="text-sm font-medium text-foreground mb-1 block">E-Mail *</label>
