@@ -306,7 +306,7 @@ const coveragePackages: Record<string, { basis: string; komfort: string; premium
   krankenkasse: { basis: "Grundversicherung", komfort: "Grund + Spital halbprivat", premium: "Grund + Spital privat + Zusatz" },
 };
 
-const packageDetails = {
+const packageDetails: Record<string, { title: string; desc: string; color: string; badge?: string }> = {
   basis: { title: "Basis", desc: "Solider Grundschutz zum besten Preis", color: "border-border" },
   komfort: { title: "Komfort", desc: "Erweiterter Schutz für mehr Sicherheit", color: "border-primary", badge: "Beliebt" },
   premium: { title: "Premium", desc: "Maximaler Schutz ohne Kompromisse", color: "border-accent" },
