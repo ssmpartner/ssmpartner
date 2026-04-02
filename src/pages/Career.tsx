@@ -166,7 +166,7 @@ const Career = () => {
 
   return (
     <main>
-      <PageHero pageKey="career" fallbackImage="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=80" />
+      <PageHero pageKey="career" />
 
       {/* ── Hero Text ── */}
       <section className="py-24 lg:py-32 relative overflow-hidden bg-background">

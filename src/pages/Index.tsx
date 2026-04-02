@@ -116,9 +116,9 @@ const Index = () => {
   }, [cmsContent]);
 
   // Helper: get CMS image by page_key
-  const heroImg = useCallback((key: string, fallback: string) => {
+  const heroImg = useCallback((key: string, _fallback?: string) => {
     const found = (cmsHeroes || []).find((h) => h.page_key === key);
-    return found?.image_url || fallback;
+    return found?.image_url || "";
   }, [cmsHeroes]);
 
   const slides = dbSlides && dbSlides.length > 0

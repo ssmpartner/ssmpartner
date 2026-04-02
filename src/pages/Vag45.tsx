@@ -51,7 +51,7 @@ const Vag45 = () => {
 
   return (
     <main>
-      <PageHero pageKey="vag45" fallbackImage="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80" />
+      <PageHero pageKey="vag45" />
 
       {/* VAG 45 Info + Downloads */}
       <section className="py-24 lg:py-32 relative overflow-hidden bg-background">
