@@ -1191,16 +1191,16 @@ const OnlineCheck = () => {
           />
         </div>
 
-        {/* Chat Overlay — anchored to bottom of hero, independent of wizard */}
+        {/* Chat Overlay — centered on hero/content boundary */}
         <div className="absolute bottom-0 left-0 right-0 z-10 translate-y-1/2 px-4">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <ChatOverlay />
           </div>
         </div>
       </div>
 
       {/* Spacer for chat overlap */}
-      <div className="h-16 lg:h-20" />
+      <div className="h-24 lg:h-28" />
 
       {/* Wizard Section */}
       <section className="relative py-12 md:py-20 px-4 bg-background">
