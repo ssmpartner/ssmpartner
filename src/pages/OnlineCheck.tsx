@@ -1206,6 +1206,56 @@ const OnlineCheck = () => {
         </div>
       </section>
 
+      {/* Cashback & Weiterempfehlung */}
+      <section className="py-16 md:py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-primary/10">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Cashback & Weiterempfehlung</h2>
+            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Profitieren Sie doppelt — bei Ihrem Abschluss und bei jeder erfolgreichen Empfehlung.</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Cashback Card */}
+            <div className="bg-card border border-border rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <Award size={24} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-foreground text-lg">CHF 150.– Cashback</h3>
+                  <p className="text-xs text-muted-foreground">Bei Online-Abschluss</p>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Schliessen Sie Ihre Versicherung direkt über unseren Online-Wizard ab und erhalten Sie einen Cashback im Wert von <span className="font-semibold text-primary">CHF 150.–</span> als Dankeschön.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-xs text-primary font-medium">
+                <CheckCircle2 size={14} />
+                <span>Automatische Gutschrift nach Vertragsabschluss</span>
+              </div>
+            </div>
+            {/* Weiterempfehlung Card */}
+            <div className="bg-card border border-border rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <Heart size={24} className="text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-heading font-bold text-foreground text-lg">Freunde & Familie empfehlen</h3>
+                  <p className="text-xs text-muted-foreground">Für jede erfolgreiche Empfehlung</p>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Empfehlen Sie uns an Familie oder Freunde weiter. Bei jedem erfolgreichen Abschluss durch Ihre Empfehlung profitieren beide Seiten von attraktiven Prämien.
+              </p>
+              <div className="mt-6 flex items-center gap-2 text-xs text-primary font-medium">
+                <CheckCircle2 size={14} />
+                <span>Unbegrenzte Empfehlungen möglich</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Trust Bar */}
       <TrustBar />
     </div>
