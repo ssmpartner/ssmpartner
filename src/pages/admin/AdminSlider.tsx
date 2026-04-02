@@ -54,7 +54,18 @@ const AdminSlider = () => {
     },
   });
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMove = async (index: number, direction: "up" | "down") => {
+    if (!images) return;
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= images.length) return;
+    const a = images[index];
+    const b = images[swapIndex];
+    await supabase.from("slider_images").update({ sort_order: b.sort_order }).eq("id", a.id);
+    await supabase.from("slider_images").update({ sort_order: a.sort_order }).eq("id", b.id);
+    queryClient.invalidateQueries({ queryKey: ["admin-slider"] });
+  };
+
+
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
