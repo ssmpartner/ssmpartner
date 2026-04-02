@@ -340,6 +340,13 @@ const ChatOverlay = () => {
           />
           <div className="flex items-center gap-1 shrink-0">
             <button
+              onClick={toggleRecording}
+              className={`p-2 rounded-lg transition-colors ${isRecording ? "bg-red-500/20 text-red-500 animate-pulse" : "text-muted-foreground hover:text-foreground"}`}
+              title={isRecording ? "Aufnahme stoppen" : "Spracheingabe"}
+            >
+              {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
+            </button>
+            <button
               onClick={() => setTtsEnabled(!ttsEnabled)}
               className={`p-2 rounded-lg transition-colors ${ttsEnabled ? "bg-accent/20 text-accent" : "text-muted-foreground hover:text-foreground"}`}
               title={ttsEnabled ? "Sprachausgabe aus" : "Sprachausgabe an"}
