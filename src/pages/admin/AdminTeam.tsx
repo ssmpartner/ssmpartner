@@ -33,6 +33,7 @@ const AdminTeam = () => {
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState("");
   const [cropModal, setCropModal] = useState<{ src: string; memberId?: string } | null>(null);
+  const [mediaPickerOpen, setMediaPickerOpen] = useState<{ memberId?: string } | null>(null);
 
   const { data: agencies } = useQuery({
     queryKey: ["admin-agencies-list"],
