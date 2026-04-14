@@ -145,7 +145,7 @@ const AdminMediaLibrary = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Mediathek</h1>
+          <h1 className="font-heading text-2xl font-semibold text-foreground">Mediathek</h1>
           <p className="font-body text-sm text-muted-foreground mt-1">Alle hochgeladenen Dateien verwalten</p>
         </div>
         <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90 cursor-pointer">
@@ -164,7 +164,7 @@ const AdminMediaLibrary = () => {
         ].map((s) => (
           <div key={s.label} className="bg-card border rounded-lg p-4">
             <p className="font-body text-xs text-muted-foreground">{s.label}</p>
-            <p className="font-heading text-xl font-bold text-foreground">{s.value}</p>
+            <p className="font-heading text-xl font-semibold text-foreground">{s.value}</p>
           </div>
         ))}
       </div>

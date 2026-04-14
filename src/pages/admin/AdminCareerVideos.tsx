@@ -81,7 +81,7 @@ const AdminCareerVideos = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Karriere-Videos</h1>
+          <h1 className="font-heading text-2xl font-semibold text-foreground">Karriere-Videos</h1>
           <p className="font-body text-sm text-muted-foreground mt-1">Video-Karten auf der Karriere-Seite verwalten</p>
         </div>
         <button

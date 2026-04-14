@@ -137,7 +137,7 @@ const AgencyDetail = () => {
               <ArrowLeft size={16} />
               Alle Agenturen
             </button>
-            <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">
+            <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">
               Agentur {agency.name}
             </h1>
             <div className="brand-rule mt-4" />
@@ -197,7 +197,7 @@ const AgencyDetail = () => {
                       </div>
                       <div>
                         <p className="font-body text-xs font-medium text-primary uppercase tracking-wider mb-1">Agenturleitung</p>
-                        <h3 className="font-heading text-xl lg:text-2xl font-bold text-foreground">{leaderName}</h3>
+                        <h3 className="font-heading text-xl lg:text-2xl font-semibold text-foreground">{leaderName}</h3>
                         {leaderRole && (
                           <p className="font-body text-sm text-muted-foreground mt-1">{leaderRole}</p>
                         )}
@@ -352,7 +352,7 @@ const AgencyDetail = () => {
         <section className="py-20 lg:py-28 border-t bg-card">
           <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">
                 Unser Team in {agency.name}
               </h2>
               <div className="brand-rule mt-4 mx-auto" />
@@ -441,7 +441,7 @@ const AgencyDetail = () => {
         <section className="py-20 lg:py-28 border-t">
           <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Standort</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">Standort</h2>
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
             <div className="mt-14">
@@ -461,7 +461,7 @@ const AgencyDetail = () => {
         <section className="py-20 lg:py-28 border-t bg-card">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">
                 Das sagen unsere Kunden
               </h2>
               <div className="brand-rule mt-4 mx-auto" />

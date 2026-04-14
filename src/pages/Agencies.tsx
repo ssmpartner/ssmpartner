@@ -44,7 +44,7 @@ const Agencies = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <AnimatedSection>
-              <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">
+              <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">
                 Unsere Agenturen
               </h1>
               <div className="brand-rule mt-4" />
@@ -94,7 +94,7 @@ const Agencies = () => {
       <section className="py-16 bg-primary">
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl text-center">
           <AnimatedSection>
-            <h2 className="font-heading text-2xl lg:text-3xl font-bold text-primary-foreground">
+            <h2 className="font-heading text-2xl lg:text-3xl font-semibold text-primary-foreground">
               Moderne Büroräumlichkeiten. Persönliche Beratung.
             </h2>
             <p className="font-body text-sm text-primary-foreground/70 mt-4 max-w-2xl mx-auto leading-relaxed">
@@ -109,7 +109,7 @@ const Agencies = () => {
       <section className="py-20 lg:py-28 bg-card">
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">
               Finden Sie Ihre Agentur
             </h2>
             <div className="brand-rule mt-4 mx-auto" />
@@ -175,7 +175,7 @@ const Agencies = () => {
       <section className="py-20 lg:py-28">
         <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
               Bereit für ein persönliches Gespräch?
             </h2>
             <p className="font-body text-base text-muted-foreground mt-4 leading-relaxed">
@@ -247,7 +247,7 @@ const HQGallerySection = ({ onImageClick }: { onImageClick: (url: string) => voi
       <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
         <AnimatedSection>
           <div className="text-center mb-12">
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
               Entdecke unser HQ
             </h2>
             <div className="brand-rule mt-4 mx-auto" />

@@ -70,7 +70,7 @@ const Vag45 = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl relative z-10">
           <AnimatedSection>
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">VAG 45</h1>
+              <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">VAG 45</h1>
               <div className="brand-rule mt-4 mx-auto" />
               <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">
                 Am 1. Januar 2024 ist das revidierte Versicherungsaufsichtsgesetz (VAG) und die revidierte Aufsichtsverordnung (AVO) in Kraft getreten.
@@ -104,7 +104,7 @@ const Vag45 = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Versicherungspartner</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">Versicherungspartner</h2>
               <div className="brand-rule mt-4 mx-auto" />
               <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">
                 Die SSM Partner AG und die SSM Life AG sind Unternehmen der VISANA-Gruppe und als solche gebundene Versicherungsvermittlerin gemäss VAG. In den untenstehenden Versicherungszweigen erfolgt die Versicherungsvermittlung ausschliesslich im Auftrag einer der folgenden Gesellschaften:
@@ -115,7 +115,7 @@ const Vag45 = () => {
           {lifeInsurance.length > 0 && (
             <AnimatedSection delay={0.1}>
               <div className="bg-card border border-border rounded-2xl p-8 lg:p-10 mb-8">
-                <h3 className="font-heading text-xl font-bold text-foreground mb-2">Rubrik Lebensversicherung (A)</h3>
+                <h3 className="font-heading text-xl font-semibold text-foreground mb-2">Rubrik Lebensversicherung (A)</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-3 mb-2 border-b border-border">
                   <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungszweig</p>
                   <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungspartner / Risikoträger</p>
@@ -128,7 +128,7 @@ const Vag45 = () => {
           {damageInsurance.length > 0 && (
             <AnimatedSection delay={0.15}>
               <div className="bg-card border border-border rounded-2xl p-8 lg:p-10">
-                <h3 className="font-heading text-xl font-bold text-foreground mb-2">Rubrik Schadenversicherung (B)</h3>
+                <h3 className="font-heading text-xl font-semibold text-foreground mb-2">Rubrik Schadenversicherung (B)</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-3 mb-2 border-b border-border">
                   <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungszweig</p>
                   <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungspartner / Risikoträger</p>

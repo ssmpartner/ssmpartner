@@ -32,7 +32,7 @@ const Team = () => {
       <section className="py-24 lg:py-32" style={{ backgroundColor: "#f5f7f5" }}>
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
-            <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">{t("about.team.title")}</h1>
+            <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">{t("about.team.title")}</h1>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
 

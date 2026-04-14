@@ -64,7 +64,7 @@ const AdminInquiries = () => {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-foreground mb-8">Anfragen</h1>
+      <h1 className="font-heading text-2xl font-semibold text-foreground mb-8">Anfragen</h1>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -83,7 +83,7 @@ const AdminInquiries = () => {
           >
             <s.icon size={20} className={filterStatus === s.key ? "text-primary" : "text-muted-foreground"} />
             <div className="text-left">
-              <p className="font-heading text-xl font-bold text-foreground">{s.count}</p>
+              <p className="font-heading text-xl font-semibold text-foreground">{s.count}</p>
               <p className="font-body text-xs text-muted-foreground">{s.label}</p>
             </div>
           </button>

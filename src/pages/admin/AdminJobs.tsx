@@ -72,7 +72,7 @@ const AdminJobs = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-heading text-2xl font-bold text-foreground">Offene Stellen</h1>
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Offene Stellen</h1>
         <button onClick={() => { setEditingId("new"); setForm({ title: "", location: "", workload: "", description_de: "", description_fr: "", description_it: "", description_en: "" }); }}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90">
           <Plus size={18} /> Stelle hinzufügen

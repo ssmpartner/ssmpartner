@@ -45,7 +45,7 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-bold text-foreground mb-8">Dashboard</h1>
+      <h1 className="font-heading text-2xl font-semibold text-foreground mb-8">Dashboard</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {cards.map((card) => (
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
             <div className={`w-10 h-10 rounded-lg ${card.color} flex items-center justify-center mb-4`}>
               <card.icon size={20} className="text-primary-foreground" />
             </div>
-            <p className="font-heading text-3xl font-bold text-foreground">{card.count ?? "—"}</p>
+            <p className="font-heading text-3xl font-semibold text-foreground">{card.count ?? "—"}</p>
             <p className="font-body text-sm text-muted-foreground mt-1 group-hover:text-foreground transition-colors">{card.label}</p>
           </Link>
         ))}

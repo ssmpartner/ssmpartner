@@ -80,7 +80,7 @@ const AdminNav = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="font-heading text-2xl font-bold text-foreground">Menüpunkte</h1>
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Menüpunkte</h1>
         <button
           onClick={startAdd}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90 transition-opacity"

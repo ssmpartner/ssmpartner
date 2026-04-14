@@ -94,7 +94,7 @@ const AdminDocs = () => {
   return (
     <div className="max-w-3xl">
       <div className="flex items-center justify-between mb-1">
-        <h1 className="font-heading text-2xl font-bold text-foreground">Dokumentation</h1>
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Dokumentation</h1>
         <span className="text-xs font-mono bg-muted text-muted-foreground px-2 py-1 rounded-md">v{CMS_VERSION}</span>
       </div>
       <p className="font-body text-sm text-muted-foreground mb-8">

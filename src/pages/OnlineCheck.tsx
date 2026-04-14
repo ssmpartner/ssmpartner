@@ -453,7 +453,7 @@ const Vag45PartnerBadge = ({ catId }: { catId: string }) => {
     <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 space-y-1.5">
       <div className="flex items-center gap-1.5">
         <Shield size={14} className="text-primary" />
-        <span className="text-xs font-bold text-primary">Unsere Versicherungspartner (VAG 45)</span>
+        <span className="text-xs font-semibold text-primary">Unsere Versicherungspartner (VAG 45)</span>
       </div>
       {partners.map(p => (
         <div key={p.id} className="flex items-center justify-between text-xs">
@@ -552,7 +552,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
     <div className="mt-4 bg-muted/50 rounded-xl p-4 space-y-3 border border-border">
       <div className="flex items-center gap-2">
         <TrendingDown size={16} className="text-primary" />
-        <h5 className="text-sm font-bold text-foreground">Visana Prämien 2026 (BAG)</h5>
+        <h5 className="text-sm font-semibold text-foreground">Visana Prämien 2026 (BAG)</h5>
         {loading && <Loader2 size={14} className="animate-spin text-primary" />}
       </div>
 
@@ -584,7 +584,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
                     }`}
                   >
                     {isCheapest && (
-                      <span className="absolute -top-2 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">Günstigste</span>
+                      <span className="absolute -top-2 right-3 bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full">Günstigste</span>
                     )}
                     <div className="flex items-center gap-2">
                       {isSelected(o) ? (
@@ -598,7 +598,7 @@ const BagPremiumComparison = ({ plz, birthDate, franchise, modell, selectedOffer
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-primary">CHF {o.price.total.toFixed(2)}</p>
+                      <p className="text-sm font-semibold text-primary">CHF {o.price.total.toFixed(2)}</p>
                       <p className="text-[10px] text-muted-foreground">pro Monat</p>
                     </div>
                   </button>
@@ -638,14 +638,14 @@ const NearbyAgencyCard = ({ plz }: { plz: string }) => {
     <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-3">
       <div className="flex items-center gap-2">
         <MapPin size={16} className="text-primary" />
-        <h4 className="text-sm font-bold text-primary">Ihre Agentur in der Nähe</h4>
+        <h4 className="text-sm font-semibold text-primary">Ihre Agentur in der Nähe</h4>
       </div>
       <div className="flex items-start gap-4">
         {nearestAgency.image_url && (
           <img src={nearestAgency.image_url} alt={nearestAgency.name} className="w-16 h-16 rounded-xl object-cover shrink-0" />
         )}
         <div className="flex-1 space-y-1">
-          <p className="text-sm font-bold text-foreground">{nearestAgency.name}</p>
+          <p className="text-sm font-semibold text-foreground">{nearestAgency.name}</p>
           {nearestAgency.address && <p className="text-xs text-muted-foreground">{nearestAgency.address}</p>}
           {nearestAgency.leader_name && (
             <p className="text-xs text-foreground">
@@ -814,7 +814,7 @@ const InsuranceWizard = () => {
         {step === 0 && (
           <motion.div key="s0" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
             <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Prämien & Angebotsanfrage</h2>
+              <h2 className="text-2xl md:text-3xl font-heading font-semibold text-foreground">Prämien & Angebotsanfrage</h2>
               <p className="text-muted-foreground mt-2">Wählen Sie die gewünschten Versicherungen — mehrere gleichzeitig möglich.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
@@ -828,7 +828,7 @@ const InsuranceWizard = () => {
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center mb-3`}>
                       <cat.icon size={22} className="text-white" />
                     </div>
-                    <h3 className="font-heading font-bold text-foreground text-sm">{cat.label}</h3>
+                    <h3 className="font-heading font-semibold text-foreground text-sm">{cat.label}</h3>
                     <p className="text-xs text-muted-foreground mt-1">{cat.desc}</p>
                   </motion.button>
                 );
@@ -836,7 +836,7 @@ const InsuranceWizard = () => {
             </div>
             {selectedCategories.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center mt-8">
-                <button onClick={() => setStep(1)} className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity">
+                <button onClick={() => setStep(1)} className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground rounded-xl font-heading font-semibold hover:opacity-90 transition-opacity">
                   Weiter <ArrowRight size={18} />
                 </button>
                 <p className="text-xs text-muted-foreground mt-2">{selectedCategories.length} Versicherung(en) ausgewählt</p>
@@ -852,7 +852,7 @@ const InsuranceWizard = () => {
               <button onClick={() => setStep(0)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
               <div className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
                 <div>
-                  <h3 className="font-heading font-bold text-lg text-foreground">Persönliche Angaben</h3>
+                  <h3 className="font-heading font-semibold text-lg text-foreground">Persönliche Angaben</h3>
                   <p className="text-sm text-muted-foreground mt-1">Diese Daten benötigen wir für Ihr individuelles Angebot.</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -905,7 +905,7 @@ const InsuranceWizard = () => {
                   </div>
                 </div>
                 <button onClick={() => setStep(2)} disabled={!isPersonalValid}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-semibold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
                   Weiter zur Deckung <ArrowRight size={18} />
                 </button>
               </div>
@@ -920,7 +920,7 @@ const InsuranceWizard = () => {
               <button onClick={() => setStep(1)} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"><ArrowLeft size={14} /> Zurück</button>
               <div className="space-y-8">
                 <div>
-                  <h3 className="font-heading font-bold text-lg text-foreground">Deckung & Details</h3>
+                  <h3 className="font-heading font-semibold text-lg text-foreground">Deckung & Details</h3>
                   <p className="text-sm text-muted-foreground mt-1">Füllen Sie die Angaben pro Versicherung aus und wählen Sie Ihr Deckungspaket.</p>
                 </div>
                 {selectedCategories.map(catId => {
@@ -933,7 +933,7 @@ const InsuranceWizard = () => {
                         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center`}>
                           <cat.icon size={18} className="text-white" />
                         </div>
-                        <h4 className="font-heading font-bold text-foreground">{cat.label}</h4>
+                        <h4 className="font-heading font-semibold text-foreground">{cat.label}</h4>
                       </div>
 
                       {/* Product-specific questions */}
@@ -970,7 +970,7 @@ const InsuranceWizard = () => {
 
                       {/* Coverage package selection */}
                       <div className="space-y-3 pt-2 border-t border-border">
-                        <h5 className="text-sm font-bold text-foreground">Deckungspaket wählen</h5>
+                        <h5 className="text-sm font-semibold text-foreground">Deckungspaket wählen</h5>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           {(["basis", "komfort", "premium"] as const).map(tier => {
                             const pkg = packageDetails[tier];
@@ -980,11 +980,11 @@ const InsuranceWizard = () => {
                                 className={`relative p-4 rounded-xl border-2 text-left transition-all ${isSelected ? "border-primary bg-primary/5 shadow-md" : `${pkg.color} bg-card hover:shadow-sm`}`}
                               >
                                 {pkg.badge && (
-                                  <span className="absolute -top-2.5 right-3 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full">{pkg.badge}</span>
+                                  <span className="absolute -top-2.5 right-3 bg-primary text-primary-foreground text-[10px] font-semibold px-2 py-0.5 rounded-full">{pkg.badge}</span>
                                 )}
-                                <h5 className="font-heading font-bold text-foreground">{pkg.title}</h5>
+                                <h5 className="font-heading font-semibold text-foreground">{pkg.title}</h5>
                                 <p className="text-xs text-muted-foreground mt-0.5">{getPricingDescription(catId, tier)}</p>
-                                <p className="text-sm font-bold text-primary mt-2">{packages[tier] || "—"}</p>
+                                <p className="text-sm font-semibold text-primary mt-2">{packages[tier] || "—"}</p>
                               </button>
                             );
                           })}
@@ -995,7 +995,7 @@ const InsuranceWizard = () => {
                 })}
                 <button onClick={() => setStep(3)}
                   disabled={selectedCategories.some(id => !selectedPackages[id])}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-semibold disabled:opacity-40 hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2">
                   Weiter zur Zusammenfassung <ArrowRight size={18} />
                 </button>
               </div>
@@ -1011,7 +1011,7 @@ const InsuranceWizard = () => {
               <div id="wizard-summary" className="bg-card rounded-2xl border border-border p-6 md:p-8 space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-heading font-bold text-lg text-foreground">Zusammenfassung</h3>
+                    <h3 className="font-heading font-semibold text-lg text-foreground">Zusammenfassung</h3>
                     <p className="text-sm text-muted-foreground mt-1">Übersicht Ihrer Angaben und ca. Richtpreise — keine definitiven Preise.</p>
                   </div>
                   <button
@@ -1027,7 +1027,7 @@ const InsuranceWizard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-muted-foreground">Richtofferte für</p>
-                      <p className="text-base font-bold text-foreground">{personalData.firstName} {personalData.lastName}</p>
+                      <p className="text-base font-semibold text-foreground">{personalData.firstName} {personalData.lastName}</p>
                       <p className="text-xs text-muted-foreground">{personalData.address && `${personalData.address}, `}{personalData.plz} {personalData.ort}</p>
                     </div>
                     <div className="text-right">
@@ -1045,7 +1045,7 @@ const InsuranceWizard = () => {
 
                 {/* Product summaries with prices */}
                 <div className="space-y-4">
-                  <h4 className="text-sm font-bold text-foreground border-b border-border pb-2">Gewählte Versicherungen & Richtpreise</h4>
+                  <h4 className="text-sm font-semibold text-foreground border-b border-border pb-2">Gewählte Versicherungen & Richtpreise</h4>
                   {selectedCategories.map(catId => {
                     const cat = wizardCategories.find(c => c.id === catId)!;
                     const details = productDetails[catId] || {};
@@ -1057,11 +1057,11 @@ const InsuranceWizard = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <cat.icon size={16} className="text-primary" />
-                            <h4 className="text-sm font-bold text-foreground">{cat.label}</h4>
+                            <h4 className="text-sm font-semibold text-foreground">{cat.label}</h4>
                           </div>
                           <div className="flex items-center gap-2">
                             {pkg && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium capitalize">{pkg}</span>}
-                            <span className="text-sm font-bold text-primary">{priceText}</span>
+                            <span className="text-sm font-semibold text-primary">{priceText}</span>
                           </div>
                         </div>
                         {Object.entries(details).filter(([,v]) => v).length > 0 && (
@@ -1075,14 +1075,14 @@ const InsuranceWizard = () => {
                           <div className="mt-2 p-3 bg-primary/5 border border-primary/20 rounded-lg">
                             <div className="flex items-center gap-1.5 mb-1">
                               <CheckCircle2 size={14} className="text-primary" />
-                              <span className="text-xs font-bold text-primary">Gewähltes Visana-Angebot</span>
+                              <span className="text-xs font-semibold text-primary">Gewähltes Visana-Angebot</span>
                             </div>
                             <div className="flex items-center justify-between">
                               <div>
                                 <p className="text-sm font-medium text-foreground">{selectedBagOffer.insurer}</p>
                                 <p className="text-xs text-muted-foreground">{selectedBagOffer.model} · Franchise CHF {selectedBagOffer.deductible}</p>
                               </div>
-                              <p className="text-sm font-bold text-primary">CHF {selectedBagOffer.price.total.toFixed(2)}/Mt.</p>
+                              <p className="text-sm font-semibold text-primary">CHF {selectedBagOffer.price.total.toFixed(2)}/Mt.</p>
                             </div>
                           </div>
                         )}
@@ -1106,7 +1106,7 @@ const InsuranceWizard = () => {
                 </label>
 
                 <button onClick={handleSubmit} disabled={!agbAccepted}
-                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-bold disabled:opacity-40 hover:opacity-90 transition-opacity">
+                  className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-heading font-semibold disabled:opacity-40 hover:opacity-90 transition-opacity">
                   Offertenanfrage einreichen
                 </button>
 
@@ -1130,7 +1130,7 @@ const InsuranceWizard = () => {
                 <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
                   <CheckCircle2 size={40} className="text-primary" />
                 </div>
-                <h2 className="text-2xl font-heading font-bold text-foreground">Vielen Dank für Ihre Anfrage!</h2>
+                <h2 className="text-2xl font-heading font-semibold text-foreground">Vielen Dank für Ihre Anfrage!</h2>
                 <p className="text-muted-foreground mt-2 max-w-md mx-auto">
                   Wir stellen Ihr persönliches Angebot zusammen und jemand aus einer unserer Agenturen in Ihrer Nähe wird sich bei Ihnen melden.
                 </p>
@@ -1140,7 +1140,7 @@ const InsuranceWizard = () => {
               <div className="text-center mb-8">
                 <div className="inline-block bg-muted rounded-xl px-6 py-3">
                   <p className="text-xs text-muted-foreground">Ihre Referenznummer</p>
-                  <p className="text-lg font-heading font-bold text-foreground tracking-wider">{referenceNumber}</p>
+                  <p className="text-lg font-heading font-semibold text-foreground tracking-wider">{referenceNumber}</p>
                 </div>
               </div>
 
@@ -1151,18 +1151,18 @@ const InsuranceWizard = () => {
 
               {/* Next actions */}
               <div className="bg-card rounded-2xl border border-border p-6 space-y-4">
-                <h4 className="text-sm font-bold text-foreground text-center">Wie möchten Sie weiterfahren?</h4>
+                <h4 className="text-sm font-semibold text-foreground text-center">Wie möchten Sie weiterfahren?</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <a
                     href="/kontakt"
-                    className="flex items-center justify-center gap-2 p-4 bg-primary text-primary-foreground rounded-xl font-heading font-bold hover:opacity-90 transition-opacity"
+                    className="flex items-center justify-center gap-2 p-4 bg-primary text-primary-foreground rounded-xl font-heading font-semibold hover:opacity-90 transition-opacity"
                   >
                     <Calendar size={18} />
                     Sofort Online-Termin vereinbaren
                   </a>
                   <button
                     onClick={() => { setStep(0); setSelectedCategories([]); setProductDetails({}); setSelectedPackages({}); setAgbAccepted(false); setSelectedBagOffer(null); }}
-                    className="flex items-center justify-center gap-2 p-4 bg-card border-2 border-primary text-primary rounded-xl font-heading font-bold hover:bg-primary/5 transition-colors"
+                    className="flex items-center justify-center gap-2 p-4 bg-card border-2 border-primary text-primary rounded-xl font-heading font-semibold hover:bg-primary/5 transition-colors"
                   >
                     <Plus size={18} />
                     Weitere Anfrage senden
@@ -1233,7 +1233,7 @@ const OnlineCheck = () => {
               transition={{ duration: 0.6 }}
               className="text-center"
             >
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-white drop-shadow-lg">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-semibold text-white drop-shadow-lg">
                 Online-Beratung
               </h1>
               <p className="text-white/80 mt-2 text-sm md:text-base max-w-lg mx-auto">
@@ -1271,7 +1271,7 @@ const OnlineCheck = () => {
       <section className="py-16 md:py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-primary/10">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">Cashback & Weiterempfehlung</h2>
+            <h2 className="text-2xl md:text-3xl font-heading font-semibold text-foreground">Cashback & Weiterempfehlung</h2>
             <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">Profitieren Sie doppelt — bei Ihrem Abschluss und bei jeder erfolgreichen Empfehlung.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
@@ -1282,7 +1282,7 @@ const OnlineCheck = () => {
                   <Award size={24} className="text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-foreground text-lg">CHF 150.– Cashback</h3>
+                  <h3 className="font-heading font-semibold text-foreground text-lg">CHF 150.– Cashback</h3>
                   <p className="text-xs text-muted-foreground">Bei Online-Abschluss</p>
                 </div>
               </div>
@@ -1301,7 +1301,7 @@ const OnlineCheck = () => {
                   <Heart size={24} className="text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-foreground text-lg">Freunde & Familie empfehlen</h3>
+                  <h3 className="font-heading font-semibold text-foreground text-lg">Freunde & Familie empfehlen</h3>
                   <p className="text-xs text-muted-foreground">Für jede erfolgreiche Empfehlung</p>
                 </div>
               </div>
