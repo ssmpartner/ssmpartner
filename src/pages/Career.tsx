@@ -13,6 +13,7 @@ import {
   ChevronRight, CheckCircle2, ChevronDown,
 } from "lucide-react";
 import ssmPattern from "@/assets/ssm-structure-pattern.png";
+import { useCmsContent } from "@/hooks/useCmsContent";
 
 /* ── FAQ Accordion Item ── */
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
@@ -78,6 +79,7 @@ const phases = [
 
 const Career = () => {
   const { t } = useLanguage();
+  const { cmsTitle, cmsBody } = useCmsContent("career");
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [showProcess, setShowProcess] = useState(false);
   const [activePhase, setActivePhase] = useState(0);
@@ -152,9 +154,9 @@ const Career = () => {
   });
 
   const reasons = [
-    { num: "01", title: t("career.why.1.title"), desc: t("career.why.1.desc") },
-    { num: "02", title: t("career.why.2.title"), desc: t("career.why.2.desc") },
-    { num: "03", title: t("career.why.3.title"), desc: t("career.why.3.desc") },
+    { num: "01", title: cmsTitle("career_why_1", t("career.why.1.title")), desc: cmsBody("career_why_1", t("career.why.1.desc")) },
+    { num: "02", title: cmsTitle("career_why_2", t("career.why.2.title")), desc: cmsBody("career_why_2", t("career.why.2.desc")) },
+    { num: "03", title: cmsTitle("career_why_3", t("career.why.3.title")), desc: cmsBody("career_why_3", t("career.why.3.desc")) },
   ];
 
   const steps = [
@@ -174,10 +176,10 @@ const Career = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl relative z-10">
           <AnimatedSection>
             <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-semibold text-foreground leading-tight">
-              {t("career.hero.title")}
+              {cmsTitle("career_hero", t("career.hero.title"))}
             </h1>
             <p className="font-body text-base text-muted-foreground mt-6 leading-relaxed">
-              {t("career.hero.sub")}
+              {cmsBody("career_hero", t("career.hero.sub"))}
             </p>
             <div className="flex flex-wrap gap-3 mt-8">
               <button
@@ -208,7 +210,7 @@ const Career = () => {
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3a99, #6A938766)" }} />
         <div className="absolute inset-0 flex items-center justify-center">
           <p className="font-heading text-2xl lg:text-3xl font-semibold text-white text-center px-6 drop-shadow-lg">
-            «Gemeinsam gestalten wir die Zukunft der Finanzberatung.»
+            {cmsBody("career_divider_1", "«Gemeinsam gestalten wir die Zukunft der Finanzberatung.»")}
           </p>
         </div>
       </div>
@@ -218,9 +220,9 @@ const Career = () => {
         <section className="py-20 lg:py-28">
           <div className="container mx-auto px-6 lg:px-8">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">Einblick in unsere Welt</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{cmsTitle("career_videos", "Einblick in unsere Welt")}</h2>
               <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
-                Erleben Sie, wie der Arbeitsalltag bei SSM Partner aussieht — authentisch, motivierend und voller Möglichkeiten.
+                {cmsBody("career_videos", "Erleben Sie, wie der Arbeitsalltag bei SSM Partner aussieht — authentisch, motivierend und voller Möglichkeiten.")}
               </p>
               <div className="brand-rule mt-4" />
             </AnimatedSection>
@@ -259,7 +261,7 @@ const Career = () => {
       <section className="py-20 lg:py-28 bg-card">
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">Was dich erwartet bei SSM</h2>
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{cmsTitle("career_benefits", "Was dich erwartet bei SSM")}</h2>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mt-12">
@@ -306,7 +308,7 @@ const Career = () => {
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3acc, #6A938788)" }} />
         <div className="absolute inset-0 flex items-center justify-center">
           <p className="font-heading text-2xl lg:text-3xl font-semibold text-white text-center px-6 drop-shadow-lg">
-            Moderne Arbeitsplätze. Inspirierendes Umfeld.
+            {cmsBody("career_divider_2", "Moderne Arbeitsplätze. Inspirierendes Umfeld.")}
           </p>
         </div>
       </div>

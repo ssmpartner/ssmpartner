@@ -9,6 +9,7 @@ const MAPBOX_TOKEN = "pk.eyJ1Ijoic3NtcGFydG5lciIsImEiOiJjbW40bDI4engwMWg3MnFzbnp
 import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
+import { useCmsContent } from "@/hooks/useCmsContent";
 
 const ContactMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -48,6 +49,7 @@ const ContactMap = () => {
 
 const Contact = () => {
   const { t } = useLanguage();
+  const { cmsTitle, cmsBody } = useCmsContent("contact");
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
@@ -99,7 +101,7 @@ const Contact = () => {
         <div className="container mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-16 lg:gap-24">
           {/* Form */}
           <AnimatedSection>
-            <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">{t("contact.title")}</h1>
+            <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">{cmsTitle("contact_title", t("contact.title"))}</h1>
             <div className="brand-rule mt-4" />
 
             {submitted ? (
@@ -182,7 +184,7 @@ const Contact = () => {
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Clock className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="font-heading text-lg font-semibold text-foreground">Öffnungszeiten</h3>
+                <h3 className="font-heading text-lg font-semibold text-foreground">{cmsTitle("contact_hours", "Öffnungszeiten")}</h3>
               </div>
               <div className="font-body text-sm text-muted-foreground space-y-2">
                 <div className="flex justify-between">

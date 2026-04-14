@@ -8,12 +8,14 @@ import ssmPattern from "@/assets/ssm-structure-pattern.png";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
+import { useCmsContent } from "@/hooks/useCmsContent";
 
 const hqImageKeys = ["hq-1", "hq-2", "hq-3", "hq-4", "hq-5"];
 
 const Agencies = () => {
   const { lang } = useLanguage();
   const navigate = useNavigate();
+  const { cmsTitle, cmsBody } = useCmsContent("agencies");
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   const { data: agencies, isLoading } = useQuery({
@@ -45,16 +47,11 @@ const Agencies = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <AnimatedSection>
               <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">
-                Unsere Agenturen
+                {cmsTitle("agencies_intro", "Unsere Agenturen")}
               </h1>
               <div className="brand-rule mt-4" />
               <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">
-                Entdecken Sie die Agenturen der SSM Partner AG und finden Sie die richtigen Ansprechpersonen
-                in Ihrer Nähe. Mit {agencies?.length || 7} Standorten in der ganzen Schweiz sind wir immer für Sie da.
-              </p>
-              <p className="font-body text-base text-muted-foreground mt-4 leading-relaxed">
-                Unsere modernen Büroräumlichkeiten bieten Ihnen eine professionelle und angenehme
-                Atmosphäre für persönliche Beratungsgespräche.
+                {cmsBody("agencies_intro", `Entdecken Sie die Agenturen der SSM Partner AG und finden Sie die richtigen Ansprechpersonen in Ihrer Nähe. Mit ${agencies?.length || 7} Standorten in der ganzen Schweiz sind wir immer für Sie da.`)}
               </p>
               <div className="flex flex-wrap gap-4 mt-8">
                 <div className="flex items-center gap-2 bg-card border rounded-xl px-4 py-3">
@@ -95,11 +92,10 @@ const Agencies = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl text-center">
           <AnimatedSection>
             <h2 className="font-heading text-2xl lg:text-3xl font-semibold text-primary-foreground">
-              Moderne Büroräumlichkeiten. Persönliche Beratung.
+              {cmsTitle("agencies_cta", "Moderne Büroräumlichkeiten. Persönliche Beratung.")}
             </h2>
             <p className="font-body text-sm text-primary-foreground/70 mt-4 max-w-2xl mx-auto leading-relaxed">
-              Jede unserer Agenturen ist mit modernsten Arbeitsplätzen und Besprechungsräumen ausgestattet —
-              für Beratungen auf höchstem Niveau.
+              {cmsBody("agencies_cta", "Jede unserer Agenturen ist mit modernsten Arbeitsplätzen und Besprechungsräumen ausgestattet — für Beratungen auf höchstem Niveau.")}
             </p>
           </AnimatedSection>
         </div>
@@ -110,7 +106,7 @@ const Agencies = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
           <AnimatedSection>
             <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">
-              Finden Sie Ihre Agentur
+              {cmsTitle("agencies_grid", "Finden Sie Ihre Agentur")}
             </h2>
             <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
@@ -176,10 +172,10 @@ const Agencies = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center">
           <AnimatedSection>
             <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
-              Bereit für ein persönliches Gespräch?
+              {cmsTitle("agencies_bottom", "Bereit für ein persönliches Gespräch?")}
             </h2>
             <p className="font-body text-base text-muted-foreground mt-4 leading-relaxed">
-              Kontaktieren Sie die Agentur in Ihrer Nähe oder besuchen Sie uns direkt — wir freuen uns auf Sie.
+              {cmsBody("agencies_bottom", "Kontaktieren Sie die Agentur in Ihrer Nähe oder besuchen Sie uns direkt — wir freuen uns auf Sie.")}
             </p>
             <button
               onClick={() => navigate("/kontakt")}
