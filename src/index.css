@@ -1,3 +1,27 @@
+@font-face {
+  font-family: 'Neue Alte Grotesk';
+  src: url('/fonts/NeueAlteGrotesk-Book.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neue Alte Grotesk';
+  src: url('/fonts/NeueAlteGrotesk-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Neue Alte Grotesk';
+  src: url('/fonts/NeueAlteGrotesk-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -59,8 +83,8 @@
     --gradient-hero: linear-gradient(135deg, hsl(168, 20%, 14%), hsl(168, 17%, 23%));
     --gradient-accent: linear-gradient(135deg, hsl(162, 17%, 50%), hsl(67, 16%, 66%));
 
-    --font-heading: 'Space Grotesk', 'DM Sans', system-ui, sans-serif;
-    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-heading: 'Neue Alte Grotesk', sans-serif;
+    --font-body: 'Neue Alte Grotesk', sans-serif;
   }
 }
 
@@ -72,6 +96,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-body);
+    font-weight: 400;
   }
 
   h1, h2, h3, h4, h5, h6 {
