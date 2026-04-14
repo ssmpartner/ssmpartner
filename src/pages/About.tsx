@@ -7,15 +7,17 @@ import ssmPattern from "@/assets/ssm-structure-pattern.png";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import { ContactCardModal } from "@/components/ContactCardModal";
+import { useCmsContent } from "@/hooks/useCmsContent";
 
 const About = () => {
   const { lang, t } = useLanguage();
   const [selectedMember, setSelectedMember] = useState<any>(null);
+  const { cmsTitle, cmsBody } = useCmsContent("about");
 
   const values = [
-    { title: t("about.values.1.title"), desc: t("about.values.1.desc") },
-    { title: t("about.values.2.title"), desc: t("about.values.2.desc") },
-    { title: t("about.values.3.title"), desc: t("about.values.3.desc") },
+    { title: cmsTitle("about_value_1", t("about.values.1.title")), desc: cmsBody("about_value_1", t("about.values.1.desc")) },
+    { title: cmsTitle("about_value_2", t("about.values.2.title")), desc: cmsBody("about_value_2", t("about.values.2.desc")) },
+    { title: cmsTitle("about_value_3", t("about.values.3.title")), desc: cmsBody("about_value_3", t("about.values.3.desc")) },
   ];
 
   const { data: aboutImage } = useQuery({
