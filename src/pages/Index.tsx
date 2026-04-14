@@ -415,22 +415,22 @@ const Index = () => {
               </div>
             </AnimatedSection>
             <AnimatedSection delay={0.15}>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  <div className="rounded-2xl overflow-hidden aspect-[3/4]" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)" }}>
+              <div className="grid grid-cols-2 gap-4 h-full">
+                <div className="flex flex-col">
+                  <div className="rounded-2xl overflow-hidden w-full" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)", aspectRatio: "3/4" }}>
                     <img
                       src={heroImg("home_who_1", "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=80")}
                       alt="Team"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-center"
                     />
                   </div>
                 </div>
-                <div className="space-y-4 pt-8">
-                  <div className="rounded-2xl overflow-hidden aspect-[3/4]" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)" }}>
+                <div className="flex flex-col pt-8">
+                  <div className="rounded-2xl overflow-hidden w-full" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)", aspectRatio: "3/4" }}>
                     <img
                       src={heroImg("home_who_2", "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80")}
                       alt="Beratung"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover object-center"
                     />
                   </div>
                 </div>
