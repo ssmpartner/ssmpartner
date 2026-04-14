@@ -14,8 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ["'Space Grotesk'", "'DM Sans'", "system-ui", "sans-serif"],
-        body: ["'DM Sans'", "system-ui", "sans-serif"],
+        heading: ["'Neue Alte Grotesk'", "sans-serif"],
+        body: ["'Neue Alte Grotesk'", "sans-serif"],
+        sans: ["'Neue Alte Grotesk'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
