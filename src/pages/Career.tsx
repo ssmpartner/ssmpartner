@@ -13,6 +13,7 @@ import {
   ChevronRight, CheckCircle2, ChevronDown,
 } from "lucide-react";
 import ssmPattern from "@/assets/ssm-structure-pattern.png";
+import { useCmsContent } from "@/hooks/useCmsContent";
 
 /* ── FAQ Accordion Item ── */
 const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
