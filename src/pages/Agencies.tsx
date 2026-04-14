@@ -8,6 +8,7 @@ import ssmPattern from "@/assets/ssm-structure-pattern.png";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
+import { useCmsContent } from "@/hooks/useCmsContent";
 
 const hqImageKeys = ["hq-1", "hq-2", "hq-3", "hq-4", "hq-5"];
 
