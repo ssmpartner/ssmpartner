@@ -79,6 +79,7 @@ const phases = [
 
 const Career = () => {
   const { t } = useLanguage();
+  const { cmsTitle, cmsBody } = useCmsContent("career");
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [showProcess, setShowProcess] = useState(false);
   const [activePhase, setActivePhase] = useState(0);
