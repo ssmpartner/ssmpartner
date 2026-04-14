@@ -292,7 +292,7 @@ const ChatWidget = () => {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 bg-[#243e3a] text-white">
               <div>
-                <p className="font-heading text-sm font-bold">SSM Partner Assistent</p>
+                <p className="font-heading text-sm font-semibold">SSM Partner Assistent</p>
                 <p className="text-xs text-white/70">Wir helfen Ihnen gerne</p>
               </div>
               <button onClick={() => setOpen(false)} className="p-1 hover:bg-white/10 rounded-lg transition-colors">

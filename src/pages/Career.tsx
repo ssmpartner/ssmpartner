@@ -173,7 +173,7 @@ const Career = () => {
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "right bottom", backgroundRepeat: "no-repeat", opacity: 0.07, mixBlendMode: "multiply", transform: "scaleY(-1)" }} />
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl relative z-10">
           <AnimatedSection>
-            <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-bold text-foreground leading-tight">
+            <h1 className="font-heading text-4xl lg:text-5xl xl:text-6xl font-semibold text-foreground leading-tight">
               {t("career.hero.title")}
             </h1>
             <p className="font-body text-base text-muted-foreground mt-6 leading-relaxed">
@@ -207,7 +207,7 @@ const Career = () => {
         />
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3a99, #6A938766)" }} />
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="font-heading text-2xl lg:text-3xl font-bold text-white text-center px-6 drop-shadow-lg">
+          <p className="font-heading text-2xl lg:text-3xl font-semibold text-white text-center px-6 drop-shadow-lg">
             «Gemeinsam gestalten wir die Zukunft der Finanzberatung.»
           </p>
         </div>
@@ -218,7 +218,7 @@ const Career = () => {
         <section className="py-20 lg:py-28">
           <div className="container mx-auto px-6 lg:px-8">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Einblick in unsere Welt</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">Einblick in unsere Welt</h2>
               <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
                 Erleben Sie, wie der Arbeitsalltag bei SSM Partner aussieht — authentisch, motivierend und voller Möglichkeiten.
               </p>
@@ -259,7 +259,7 @@ const Career = () => {
       <section className="py-20 lg:py-28 bg-card">
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">Was dich erwartet bei SSM</h2>
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">Was dich erwartet bei SSM</h2>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mt-12">
@@ -288,7 +288,7 @@ const Career = () => {
         <div className="container mx-auto px-6 lg:px-8 grid md:grid-cols-3 gap-12 lg:gap-16">
           {reasons.map((r, i) => (
             <AnimatedSection key={i} delay={i * 0.1}>
-              <span className="font-heading text-5xl font-bold" style={{ color: "#6A938730" }}>{r.num}</span>
+              <span className="font-heading text-5xl font-semibold" style={{ color: "#6A938730" }}>{r.num}</span>
               <h3 className="font-heading text-base font-semibold text-foreground mt-3">{r.title}</h3>
               <p className="font-body text-sm text-muted-foreground mt-3 leading-relaxed">{r.desc}</p>
             </AnimatedSection>
@@ -305,7 +305,7 @@ const Career = () => {
         />
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3acc, #6A938788)" }} />
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="font-heading text-2xl lg:text-3xl font-bold text-white text-center px-6 drop-shadow-lg">
+          <p className="font-heading text-2xl lg:text-3xl font-semibold text-white text-center px-6 drop-shadow-lg">
             Moderne Arbeitsplätze. Inspirierendes Umfeld.
           </p>
         </div>
@@ -329,7 +329,7 @@ const Career = () => {
                   </div>
                   <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
                     <span className="font-body text-xs font-medium uppercase tracking-widest text-muted-foreground">Dein Ansprechpartner</span>
-                    <h3 className="font-heading text-2xl lg:text-3xl font-bold text-foreground mt-2">{recruitingPartner.name}</h3>
+                    <h3 className="font-heading text-2xl lg:text-3xl font-semibold text-foreground mt-2">{recruitingPartner.name}</h3>
                     <p className="font-body text-sm font-medium mt-1" style={{ color: "#6A9387" }}>
                       {recruitingPartner.role_de || "Recruiting Partner"}
                     </p>
@@ -376,7 +376,7 @@ const Career = () => {
             {/* Right: Title + Steps vertical */}
             <div className="flex-1 flex flex-col justify-center">
               <AnimatedSection>
-                <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("career.onboarding.title")}</h2>
+                <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{t("career.onboarding.title")}</h2>
                 <p className="font-body text-base text-muted-foreground mt-4 max-w-lg leading-relaxed">
                   Von der Bewerbung bis zum ersten Arbeitstag — wir begleiten dich durch jeden Schritt.
                 </p>
@@ -402,7 +402,7 @@ const Career = () => {
                       >
                         <card.icon size={22} />
                       </span>
-                      <h3 className="font-heading text-lg font-bold text-foreground">{card.title}</h3>
+                      <h3 className="font-heading text-lg font-semibold text-foreground">{card.title}</h3>
                       <p className="font-body text-sm text-muted-foreground leading-relaxed">{card.desc}</p>
                     </motion.div>
                   </AnimatedSection>
@@ -459,7 +459,7 @@ const Career = () => {
               <div className="sticky top-0 z-10 bg-background rounded-t-2xl border-b">
                 <div className="flex items-center justify-between p-5">
                   <div>
-                    <h2 className="font-heading text-xl font-bold text-foreground">Dein Weg zu uns</h2>
+                    <h2 className="font-heading text-xl font-semibold text-foreground">Dein Weg zu uns</h2>
                     <p className="font-body text-xs text-muted-foreground mt-0.5">Schritt für Schritt zum neuen Job</p>
                   </div>
                   <button onClick={() => setShowProcess(false)} className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors">
@@ -499,7 +499,7 @@ const Career = () => {
                       <span className="inline-flex items-center gap-2 font-body text-[11px] font-medium uppercase tracking-widest px-3 py-1.5 rounded-full text-white" style={{ backgroundColor: phases[activePhase].color }}>
                         {phases[activePhase].phase}
                       </span>
-                      <h3 className="font-heading text-2xl font-bold text-foreground mt-4">{phases[activePhase].motto}</h3>
+                      <h3 className="font-heading text-2xl font-semibold text-foreground mt-4">{phases[activePhase].motto}</h3>
                       <p className="font-body text-sm text-muted-foreground mt-1">{phases[activePhase].sub}</p>
                     </div>
 
@@ -554,7 +554,7 @@ const Career = () => {
         <section className="py-20 lg:py-28">
           <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Häufig gestellte Fragen</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">Häufig gestellte Fragen</h2>
               <p className="font-body text-base text-muted-foreground mt-4 text-center">
                 Alles, was du über eine Karriere bei SSM Partner wissen musst.
               </p>
@@ -592,7 +592,7 @@ const Career = () => {
             >
               <div className="flex items-center justify-between p-5 border-b">
                 <div>
-                  <h2 className="font-heading text-xl font-bold text-foreground">Jetzt bewerben</h2>
+                  <h2 className="font-heading text-xl font-semibold text-foreground">Jetzt bewerben</h2>
                   <p className="font-body text-xs text-muted-foreground mt-0.5">SSM Partner — Bewerbungsformular</p>
                 </div>
                 <button onClick={() => setShowApply(false)} className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors">

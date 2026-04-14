@@ -123,7 +123,7 @@ const About = () => {
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${ssmPattern})`, backgroundSize: "900px auto", backgroundPosition: "right bottom", backgroundRepeat: "no-repeat", opacity: 0.07, mixBlendMode: "multiply", transform: "scaleY(-1)" }} />
         <div className="container mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center max-w-6xl relative z-10">
           <AnimatedSection>
-            <h1 className="font-heading text-4xl lg:text-5xl font-bold text-foreground">{t("about.title")}</h1>
+            <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">{t("about.title")}</h1>
             <div className="brand-rule mt-4" />
             <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">{t("about.text")}</p>
           </AnimatedSection>
@@ -142,7 +142,7 @@ const About = () => {
       <section className="py-20 lg:py-28 border-t bg-card">
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{t("about.values.title")}</h2>
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{t("about.values.title")}</h2>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
           <div className="grid md:grid-cols-3 gap-10 lg:gap-14 mt-14">
@@ -161,7 +161,7 @@ const About = () => {
       <section className="py-20 lg:py-28 border-t">
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Geschäftsleitung</h2>
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">Geschäftsleitung</h2>
             <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 mt-14">
@@ -178,7 +178,7 @@ const About = () => {
       <section className="py-20 lg:py-28 border-t bg-card">
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Fachführung</h2>
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">Fachführung</h2>
             <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 mt-14">
@@ -196,7 +196,7 @@ const About = () => {
         <section className="py-20 lg:py-28 border-t">
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground text-center">Erweitertes Team</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">Erweitertes Team</h2>
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 lg:gap-6 mt-14">

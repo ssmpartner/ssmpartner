@@ -84,7 +84,7 @@ const AdminChatLogs = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">Chat-Verläufe</h1>
+          <h1 className="font-heading text-2xl font-semibold text-foreground">Chat-Verläufe</h1>
           <p className="font-body text-sm text-muted-foreground mt-1">
             Alle Gespräche aus dem KI-Chat – zur Analyse und Verbesserung der Wissensbasis.
           </p>

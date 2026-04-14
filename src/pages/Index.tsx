@@ -283,7 +283,7 @@ const Index = () => {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-heading text-sm font-bold text-white">{quickstart1Title}</p>
+                <p className="font-heading text-sm font-semibold text-white">{quickstart1Title}</p>
                 <p className="font-body text-xs text-white/70 mt-0.5">{quickstart1Desc}</p>
               </div>
               <ArrowRight size={18} className="text-white shrink-0 group-hover:translate-x-1 transition-transform" />
@@ -307,7 +307,7 @@ const Index = () => {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-heading text-sm font-bold text-white">{quickstart2Title}</p>
+                <p className="font-heading text-sm font-semibold text-white">{quickstart2Title}</p>
                 <p className="font-body text-xs text-white/70 mt-0.5">{quickstart2Desc}</p>
               </div>
               <ArrowRight size={18} className="text-white shrink-0 group-hover:translate-x-1 transition-transform" />
@@ -329,7 +329,7 @@ const Index = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="font-heading text-xs font-bold text-white flex-1">{quickstart1Title}</p>
+            <p className="font-heading text-xs font-semibold text-white flex-1">{quickstart1Title}</p>
             <ArrowRight size={14} className="text-white" />
           </Link>
           <Link
@@ -344,7 +344,7 @@ const Index = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <p className="font-heading text-xs font-bold text-white flex-1">{quickstart2Title}</p>
+            <p className="font-heading text-xs font-semibold text-white flex-1">{quickstart2Title}</p>
             <ArrowRight size={14} className="text-white" />
           </Link>
         </div>
@@ -371,7 +371,7 @@ const Index = () => {
             className="flex items-center gap-3 text-white hover:opacity-80 transition-opacity"
           >
             <Phone size={24} className="shrink-0" />
-            <span className="font-heading text-2xl lg:text-3xl font-bold tracking-wide">041 220 20 50</span>
+            <span className="font-heading text-2xl lg:text-3xl font-semibold tracking-wide">041 220 20 50</span>
           </a>
           <Link
             to="/kontakt"
@@ -390,7 +390,7 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <AnimatedSection>
               <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{whoLabel}</p>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
                 {whoTitle}
               </h2>
               <div className="w-16 h-1 rounded-full mt-4" style={{ backgroundColor: "#B3B69C" }} />
@@ -446,7 +446,7 @@ const Index = () => {
           <AnimatedSection>
             <div className="text-center max-w-2xl mx-auto mb-16">
               <p className="font-body text-sm font-medium uppercase tracking-wider mb-3" style={{ color: "rgba(255,255,255,0.7)" }}>{servicesLabel}</p>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-white">
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-white">
                 {servicesTitle}
               </h2>
               <div className="w-16 h-1 rounded-full mt-4 mx-auto" style={{ backgroundColor: "#B3B69C" }} />
@@ -507,7 +507,7 @@ const Index = () => {
               <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-14">
                 <div>
                   <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{agencyLabel}</p>
-                  <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">{agencyTitle}</h2>
+                  <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{agencyTitle}</h2>
                   <div className="w-16 h-1 rounded-full mt-4" style={{ backgroundColor: "#B3B69C" }} />
                 </div>
                 <Link
@@ -564,7 +564,7 @@ const Index = () => {
             </AnimatedSection>
             <AnimatedSection delay={0.15}>
               <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{careerLabel}</p>
-              <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
                 {careerTitle}
               </h2>
               <div className="w-16 h-1 rounded-full mt-4" style={{ backgroundColor: "#B3B69C" }} />
@@ -614,7 +614,7 @@ const Index = () => {
             </div>
             <a
               href={`tel:${phoneNumber.replace(/\s/g, "")}`}
-              className="font-heading text-2xl lg:text-3xl font-bold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex items-center gap-3"
+              className="font-heading text-2xl lg:text-3xl font-semibold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex items-center gap-3"
             >
               <Phone size={24} />
               {phoneNumber}
@@ -628,7 +628,7 @@ const Index = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-3xl text-center">
           <AnimatedSection>
             <p className="font-body text-sm font-medium text-primary uppercase tracking-wider mb-3">{contactLabel}</p>
-            <h2 className="font-heading text-3xl lg:text-4xl font-bold text-foreground">
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
               {contactTitle}
             </h2>
             <div className="w-16 h-1 rounded-full mt-4 mx-auto" style={{ backgroundColor: "#B3B69C" }} />

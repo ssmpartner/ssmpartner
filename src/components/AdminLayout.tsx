@@ -33,7 +33,7 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-card border-r flex flex-col">
         <div className="p-6 border-b">
-          <Link to="/" className="font-heading text-xl font-bold text-primary">SSM Partner AG</Link>
+          <Link to="/" className="font-heading text-xl font-semibold text-primary">SSM Partner AG</Link>
           <p className="font-body text-xs text-muted-foreground mt-1">Content Management</p>
         </div>
 

@@ -110,7 +110,7 @@ const Legal = () => {
             <p className="font-body text-sm text-muted-foreground text-center">Laden...</p>
           ) : !content?.length ? (
             <div className="text-center">
-              <h1 className="font-heading text-3xl font-bold text-foreground mb-4">
+              <h1 className="font-heading text-3xl font-semibold text-foreground mb-4">
                 {TABS.find((t) => t.key === activeTab)?.label || activeTab}
               </h1>
               <p className="font-body text-muted-foreground">Inhalt wird bald ergänzt.</p>
@@ -152,7 +152,7 @@ const Legal = () => {
                   return (
                     <div key={block.id} id={id} className="scroll-mt-28">
                       {block.title && (
-                        <h2 className="font-heading text-2xl font-bold text-foreground mb-3">
+                        <h2 className="font-heading text-2xl font-semibold text-foreground mb-3">
                           {block.title}
                         </h2>
                       )}

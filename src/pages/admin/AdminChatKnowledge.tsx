@@ -92,7 +92,7 @@ const AdminChatKnowledge = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="font-heading text-2xl font-bold text-foreground flex items-center gap-2">
+        <h1 className="font-heading text-2xl font-semibold text-foreground flex items-center gap-2">
           <Bot size={24} /> KI-Chat Wissensbasis
         </h1>
         <p className="font-body text-sm text-muted-foreground mt-1">

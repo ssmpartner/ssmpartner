@@ -133,7 +133,7 @@ const AdminVag45 = () => {
 
   return (
     <div className="space-y-8">
-      <h1 className="font-heading text-2xl font-bold">VAG 45 verwalten</h1>
+      <h1 className="font-heading text-2xl font-semibold">VAG 45 verwalten</h1>
 
       <Tabs defaultValue="downloads">
         <TabsList>

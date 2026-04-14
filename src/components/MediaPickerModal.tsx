@@ -188,7 +188,7 @@ const MediaPickerModal = ({ open, onClose, onSelect, accept = "all", title = "Me
       <div className="bg-card border rounded-2xl w-[900px] max-h-[80vh] flex flex-col shadow-2xl" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b">
-          <h2 className="font-heading text-lg font-bold text-foreground">{title}</h2>
+          <h2 className="font-heading text-lg font-semibold text-foreground">{title}</h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
         </div>
 

@@ -93,7 +93,7 @@ const AdminContent = () => {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-heading text-2xl font-bold text-foreground">Seitentexte</h1>
+        <h1 className="font-heading text-2xl font-semibold text-foreground">Seitentexte</h1>
         <button onClick={startNew} className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90">
           <Plus size={18} /> Neuer Inhalt
         </button>

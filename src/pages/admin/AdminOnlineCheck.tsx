@@ -83,7 +83,7 @@ const AdminOnlineCheck = () => {
   return (
     <div className="max-w-5xl space-y-8">
       <div>
-        <h1 className="text-2xl font-heading font-bold text-foreground">Online-Beratung</h1>
+        <h1 className="text-2xl font-heading font-semibold text-foreground">Online-Beratung</h1>
         <p className="text-muted-foreground mt-1">Verwalten Sie den KI-Chat, Wizard-Preise und Einstellungen.</p>
       </div>
 
@@ -137,7 +137,7 @@ const AdminOnlineCheck = () => {
                   if (rows.length === 0) return null;
                   return (
                     <div key={cat.id} className="space-y-3">
-                      <h4 className="font-heading font-bold text-foreground text-sm border-b border-border pb-1">{cat.label}</h4>
+                      <h4 className="font-heading font-semibold text-foreground text-sm border-b border-border pb-1">{cat.label}</h4>
                       <div className="grid gap-3">
                         {TIERS.map(tier => {
                           const row = rows.find(r => r.tier === tier);
