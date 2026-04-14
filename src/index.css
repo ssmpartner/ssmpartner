@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Neue Alte Grotesk';
-  src: url('/fonts/NeueAlteGrotesk-Book.ttf') format('truetype');
+  src: url('/NeueAlteGrotesk-Book.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: 'Neue Alte Grotesk';
-  src: url('/fonts/NeueAlteGrotesk-Regular.ttf') format('truetype');
+  src: url('/NeueAlteGrotesk-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: 'Neue Alte Grotesk';
-  src: url('/fonts/NeueAlteGrotesk-SemiBold.ttf') format('truetype');
+  src: url('/NeueAlteGrotesk-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
