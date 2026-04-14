@@ -67,7 +67,7 @@ const AdminCareerVideos = () => {
 
     // If editing existing item, save directly
     if (editingId && editingId !== "new") {
-      supabase.from("career_videos").update({ [mediaPicker.field]: url }).eq("id", editingId)
+      supabase.from("career_videos").update({ [mediaPicker.field]: url } as { image_url?: string; video_url?: string }).eq("id", editingId)
         .then(({ error }) => {
           if (error) toast.error(error.message);
           else { queryClient.invalidateQueries({ queryKey: ["admin-career-videos"] }); toast.success("Aktualisiert"); }
