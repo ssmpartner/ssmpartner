@@ -9,6 +9,7 @@ const MAPBOX_TOKEN = "pk.eyJ1Ijoic3NtcGFydG5lciIsImEiOiJjbW40bDI4engwMWg3MnFzbnp
 import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
+import { useCmsContent } from "@/hooks/useCmsContent";
 
 const ContactMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
