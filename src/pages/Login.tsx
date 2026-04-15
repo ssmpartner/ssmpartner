@@ -1,25 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const Login = () => {
   const { user, loading, signIn } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState(() => localStorage.getItem("ssm_remember_email") || "");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("ssm_remember_me") === "true");
 
+  // SSO redirect params
+  const ssoRedirect = searchParams.get("redirect_uri");
+  const ssoProjectKey = searchParams.get("project_key");
+  const ssoState = searchParams.get("state");
+
   if (loading) return <div className="min-h-screen flex items-center justify-center font-body text-muted-foreground">Laden...</div>;
-  if (user) return <Navigate to="/admin" replace />;
+
+  // If already logged in and no SSO redirect, go to admin
+  if (user && !ssoRedirect) return <Navigate to="/admin" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password) return;
     setSubmitting(true);
+
+    // SSO redirect flow: verify via SSO API, then redirect back
+    if (ssoRedirect && ssoProjectKey) {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sso-auth`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "verify",
+            email: email.trim(),
+            password,
+            project_key: ssoProjectKey,
+          }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        // Build redirect URL with token
+        const redirectUrl = new URL(ssoRedirect);
+        redirectUrl.searchParams.set("sso_token", data.sso_token);
+        redirectUrl.searchParams.set("email", data.user.email);
+        redirectUrl.searchParams.set("role", data.user.role || "");
+        redirectUrl.searchParams.set("display_name", data.user.display_name || "");
+        if (ssoState) redirectUrl.searchParams.set("state", ssoState);
+
+        window.location.href = redirectUrl.toString();
+        return;
+      } catch (err: any) {
+        setSubmitting(false);
+        toast.error(err.message || "SSO-Authentifizierung fehlgeschlagen");
+        return;
+      }
+    }
+
+    // Normal login flow
     const { error } = await signIn(email.trim(), password);
     setSubmitting(false);
     if (!error) {
@@ -47,10 +90,24 @@ const Login = () => {
           <h1 className="text-3xl font-semibold tracking-tight text-foreground font-heading">
             SSM Partner AG
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground font-body">Melden Sie sich an, um fortzufahren</p>
+          <p className="mt-2 text-sm text-muted-foreground font-body">
+            {ssoProjectKey
+              ? `Anmelden für ${ssoProjectKey.replace("ssm-", "SSM ").replace(/\b\w/g, (c) => c.toUpperCase())}`
+              : "Melden Sie sich an, um fortzufahren"
+            }
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="rounded-2xl border bg-card p-8 shadow-lg space-y-5">
+          {ssoProjectKey && (
+            <div className="bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 text-center">
+              <p className="font-body text-xs text-muted-foreground">Zentrale SSO-Anmeldung</p>
+              <p className="font-body text-sm font-medium text-foreground mt-0.5">
+                {ssoProjectKey.replace("ssm-", "SSM ").replace(/\b\w/g, (c) => c.toUpperCase())}
+              </p>
+            </div>
+          )}
+
           <div>
             <label className="text-sm font-medium text-foreground font-body">E-Mail</label>
             <input
@@ -88,18 +145,20 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="remember-me"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="h-4 w-4 rounded border border-primary accent-primary cursor-pointer"
-            />
-            <label htmlFor="remember-me" className="text-sm text-muted-foreground font-body cursor-pointer select-none">
-              Angemeldet bleiben
-            </label>
-          </div>
+          {!ssoProjectKey && (
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="remember-me"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 rounded border border-primary accent-primary cursor-pointer"
+              />
+              <label htmlFor="remember-me" className="text-sm text-muted-foreground font-body cursor-pointer select-none">
+                Angemeldet bleiben
+              </label>
+            </div>
+          )}
 
           <button
             type="submit"
