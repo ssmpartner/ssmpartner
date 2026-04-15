@@ -171,7 +171,7 @@ Deno.serve(async (req) => {
 
     // === Admin endpoints (require auth) ===
 
-    if (action === "grant_access" || action === "revoke_access" || action === "audit_log") {
+    if (action === "grant_access" || action === "revoke_access" || action === "audit_log" || action === "generate_secret") {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader) throw new Error("Nicht autorisiert");
 
