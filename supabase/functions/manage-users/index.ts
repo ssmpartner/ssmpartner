@@ -5,6 +5,62 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const decodeJwtPayload = (authHeader: string) => {
+  const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+  const [, payload] = token.split(".");
+
+  if (!payload) {
+    return null;
+  }
+
+  try {
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+};
+
+const getCallerContext = async (authHeader: string) => {
+  const payload = decodeJwtPayload(authHeader);
+  const callerId = payload?.sub;
+
+  if (!callerId || typeof callerId !== "string") {
+    throw new Error("Nicht autorisiert");
+  }
+
+  const supabaseUser = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_ANON_KEY")!,
+    { global: { headers: { Authorization: authHeader } } },
+  );
+
+  const { data: roleRows, error } = await supabaseUser
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", callerId);
+
+  if (error || !roleRows?.length) {
+    throw new Error("Nicht autorisiert");
+  }
+
+  const elevatedRole = roleRows.find((row: { role: string }) =>
+    row.role === "superadmin" || row.role === "admin"
+  )?.role;
+
+  return {
+    id: callerId,
+    role: elevatedRole ?? roleRows[0].role,
+  };
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -12,34 +68,27 @@ Deno.serve(async (req) => {
 
   try {
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("Nicht autorisiert");
+    if (!authHeader) {
+      return json({ error: "Nicht autorisiert" }, 401);
+    }
 
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const { data: { user: caller } } = await supabaseClient.auth.getUser();
-    if (!caller) throw new Error("Nicht autorisiert");
+    const { action, ...payload } = await req.json();
+    if (!action || typeof action !== "string") {
+      throw new Error("Unbekannte Aktion");
+    }
+
+    const caller = await getCallerContext(authHeader);
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // Check caller is superadmin or admin
-    const { data: callerRole } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", caller.id)
-      .single();
-
-    if (callerRole?.role !== "superadmin" && callerRole?.role !== "admin") {
-      throw new Error("Nur Superadmins und Admins können Benutzer verwalten");
+    if (caller.role !== "superadmin" && caller.role !== "admin") {
+      return json({ error: "Nur Superadmins und Admins können Benutzer verwalten" }, 403);
     }
 
-    const isSuperadminCaller = callerRole?.role === "superadmin";
-    const { action, ...payload } = await req.json();
+    const isSuperadminCaller = caller.role === "superadmin";
 
     if (action === "create") {
       const { email, password, display_name, role, project_ids } = payload;
@@ -62,7 +111,6 @@ Deno.serve(async (req) => {
         .insert({ user_id: userData.user.id, role });
       if (roleError) throw roleError;
 
-      // Grant project access if project_ids provided
       if (Array.isArray(project_ids) && project_ids.length > 0) {
         const accessRows = project_ids.map((pid: string) => ({
           user_id: userData.user.id,
@@ -73,9 +121,7 @@ Deno.serve(async (req) => {
         await supabaseAdmin.from("project_access").insert(accessRows);
       }
 
-      return new Response(JSON.stringify({ success: true, user_id: userData.user.id }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ success: true, user_id: userData.user.id });
     }
 
     if (action === "update_role") {
@@ -95,12 +141,10 @@ Deno.serve(async (req) => {
         if (isLastSuperadmin) throw new Error("Es muss mindestens ein Superadmin existieren");
       }
 
-      // Upsert role
       const { error } = await supabaseAdmin
         .from("user_roles")
         .upsert({ user_id, role }, { onConflict: "user_id,role" });
       if (error) {
-        // If conflict on unique, update instead
         const { error: updateError } = await supabaseAdmin
           .from("user_roles")
           .update({ role })
@@ -108,9 +152,7 @@ Deno.serve(async (req) => {
         if (updateError) throw updateError;
       }
 
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ success: true });
     }
 
     if (action === "update_email") {
@@ -125,9 +167,7 @@ Deno.serve(async (req) => {
       });
       if (error) throw error;
 
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ success: true });
     }
 
     if (action === "reset_password") {
@@ -141,9 +181,7 @@ Deno.serve(async (req) => {
       });
       if (error) throw error;
 
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ success: true });
     }
 
     if (action === "delete") {
@@ -166,17 +204,17 @@ Deno.serve(async (req) => {
       const { error } = await supabaseAdmin.auth.admin.deleteUser(user_id);
       if (error) throw error;
 
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ success: true });
     }
 
     if (action === "list") {
       const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers();
       if (error) throw error;
 
-      const { data: roles } = await supabaseAdmin.from("user_roles").select("*");
-      const { data: profiles } = await supabaseAdmin.from("profiles").select("*");
+      const [{ data: roles }, { data: profiles }] = await Promise.all([
+        supabaseAdmin.from("user_roles").select("*"),
+        supabaseAdmin.from("profiles").select("*"),
+      ]);
 
       const enriched = users.map((u: any) => ({
         id: u.id,
@@ -187,16 +225,20 @@ Deno.serve(async (req) => {
         created_at: u.created_at,
       }));
 
-      return new Response(JSON.stringify({ users: enriched }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return json({ users: enriched });
     }
 
     throw new Error("Unbekannte Aktion");
   } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    const message = error?.message || "Unbekannter Fehler";
+    const status = message === "Nicht autorisiert"
+      ? 401
+      : message === "Nur Superadmins und Admins können Benutzer verwalten"
+      ? 403
+      : message === "Ungültige Anfrage"
+      ? 400
+      : 400;
+
+    return json({ error: message }, status);
   }
 });
