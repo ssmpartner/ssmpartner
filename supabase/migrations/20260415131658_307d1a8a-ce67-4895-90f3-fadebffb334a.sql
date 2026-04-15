@@ -1,0 +1,1 @@
+UPDATE public.sso_projects SET api_url = 'https://recruit.ssmpartner.ch' WHERE project_key = 'ssm-recruit';
