@@ -12,6 +12,7 @@ import {
   ArrowRight, Star, HeartHandshake, Award
 } from "lucide-react";
 import ssmPattern from "@/assets/ssm-structure-pattern.png";
+import ProgressiveImage from "@/components/ProgressiveImage";
 
 const fallbackSlides = [
   {
@@ -197,18 +198,20 @@ const Index = () => {
             className={`absolute inset-0 transition-opacity duration-1000 ${i === current ? "opacity-100" : "opacity-0"}`}
           >
             {/* Desktop image */}
-            <img
+            <ProgressiveImage
               src={slide.image}
               alt={slide.headline || `Slide ${i + 1}`}
-              className={`absolute inset-0 w-full h-full object-cover ${slide.mobileImage ? "hidden sm:block" : ""}`}
+              className={`w-full h-full object-cover ${slide.mobileImage ? "hidden sm:block" : ""}`}
+              containerClassName={`absolute inset-0 ${slide.mobileImage ? "hidden sm:block" : ""}`}
               loading={i === 0 ? "eager" : "lazy"}
             />
             {/* Mobile image */}
             {slide.mobileImage && (
-              <img
+              <ProgressiveImage
                 src={slide.mobileImage}
                 alt={slide.headline || `Slide ${i + 1}`}
-                className="absolute inset-0 w-full h-full object-cover sm:hidden"
+                className="w-full h-full object-cover"
+                containerClassName="absolute inset-0 sm:hidden"
                 loading={i === 0 ? "eager" : "lazy"}
               />
             )}
@@ -276,10 +279,11 @@ const Index = () => {
               style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
             >
               <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/40">
-                <img
+                <ProgressiveImage
                   src={heroImg("home_quickstart_1", "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=200&q=80")}
                   alt="Karriere"
                   className="w-full h-full object-cover"
+                  containerClassName="w-full h-full"
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -300,10 +304,11 @@ const Index = () => {
               style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)" }}
             >
               <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/40">
-                <img
+                <ProgressiveImage
                   src={heroImg("home_quickstart_2", "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&q=80")}
                   alt="Agenturen"
                   className="w-full h-full object-cover"
+                  containerClassName="w-full h-full"
                 />
               </div>
               <div className="flex-1 min-w-0">
@@ -323,10 +328,11 @@ const Index = () => {
             style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
             <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
-              <img
+              <ProgressiveImage
                 src={heroImg("home_quickstart_1", "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=100&q=80")}
                 alt="Karriere"
                 className="w-full h-full object-cover"
+                containerClassName="w-full h-full"
               />
             </div>
             <p className="font-heading text-xs font-semibold text-white flex-1">{quickstart1Title}</p>
@@ -338,10 +344,11 @@ const Index = () => {
             style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
           >
             <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/40">
-              <img
+              <ProgressiveImage
                 src={heroImg("home_quickstart_2", "https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&q=80")}
                 alt="Agenturen"
                 className="w-full h-full object-cover"
+                containerClassName="w-full h-full"
               />
             </div>
             <p className="font-heading text-xs font-semibold text-white flex-1">{quickstart2Title}</p>
@@ -418,19 +425,21 @@ const Index = () => {
               <div className="grid grid-cols-2 gap-4 h-full">
                 <div className="flex flex-col">
                   <div className="rounded-2xl overflow-hidden w-full" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)", aspectRatio: "3/4" }}>
-                    <img
+                    <ProgressiveImage
                       src={heroImg("home_who_1", "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&q=80")}
                       alt="Team"
                       className="w-full h-full object-cover object-center"
+                      containerClassName="w-full h-full"
                     />
                   </div>
                 </div>
                 <div className="flex flex-col pt-8">
                   <div className="rounded-2xl overflow-hidden w-full" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)", aspectRatio: "3/4" }}>
-                    <img
+                    <ProgressiveImage
                       src={heroImg("home_who_2", "https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=600&q=80")}
                       alt="Beratung"
                       className="w-full h-full object-cover object-center"
+                      containerClassName="w-full h-full"
                     />
                   </div>
                 </div>
@@ -478,10 +487,11 @@ const Index = () => {
       {/* Trust Quote */}
       <section className="relative py-28 lg:py-36 overflow-hidden">
         <div className="absolute inset-0">
-          <img
+          <ProgressiveImage
             src={heroImg("home_trust_bg", "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80")}
             alt=""
             className="w-full h-full object-cover"
+            containerClassName="w-full h-full"
           />
           <div className="absolute inset-0 bg-primary/85" />
         </div>
@@ -530,7 +540,7 @@ const Index = () => {
                     >
                       <div className="aspect-[16/10] bg-muted overflow-hidden">
                         {agency.image_url ? (
-                          <img src={agency.image_url} alt={agency.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <ProgressiveImage src={agency.image_url} alt={agency.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" containerClassName="w-full h-full" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-primary/5">
                             <Building2 size={32} className="text-primary/20" />
@@ -555,10 +565,11 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <AnimatedSection>
               <div className="rounded-2xl overflow-hidden aspect-[16/10]" style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.12)" }}>
-                <img
+                <ProgressiveImage
                   src={heroImg("home_career", "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80")}
                   alt="Karriere bei SSM"
                   className="w-full h-full object-cover"
+                  containerClassName="w-full h-full"
                 />
               </div>
             </AnimatedSection>
