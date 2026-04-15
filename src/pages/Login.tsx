@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ssmLogoWhite from "@/assets/SSM_logo-white.png";
 import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
