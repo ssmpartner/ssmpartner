@@ -3,8 +3,9 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2 } from "lucide-react";
+import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle } from "lucide-react";
 import { toast } from "sonner";
+import myssmLogo from "@/assets/myssm-logo.png";
 
 const projectMeta: Record<string, { icon: React.ReactNode; description: string; color: string }> = {
   "ssm-partner": {
@@ -23,6 +24,44 @@ const projectMeta: Record<string, { icon: React.ReactNode; description: string; 
     color: "from-emerald-600 to-emerald-400",
   },
 };
+
+const externalApps = [
+  {
+    name: "BrokerAdmin",
+    description: "Kunden & Lead-Management",
+    url: "https://brokeradmin.ch/login",
+    icon: <Users className="h-8 w-8" />,
+    color: "from-sky-600 to-sky-400",
+  },
+  {
+    name: "SSM Academy",
+    description: "Das Digitale Lernprogramm",
+    url: "https://academy.ssmpartner.ch/login",
+    icon: <BookOpen className="h-8 w-8" />,
+    color: "from-amber-600 to-amber-400",
+  },
+  {
+    name: "SSM Wiki",
+    description: "Die Wissensdatenbank",
+    url: "https://wiki.ssmpartner.ch/xwiki/bin/login/XWiki/XWikiLogin?xredirect=%2Fxwiki%2Fbin%2Fview%2FMain%2F",
+    icon: <Globe className="h-8 w-8" />,
+    color: "from-violet-600 to-violet-400",
+  },
+  {
+    name: "SSM Vorsorge",
+    description: "Vorsorge Rechner",
+    url: "https://ssm-vorsorge.ch/login",
+    icon: <Calculator className="h-8 w-8" />,
+    color: "from-rose-600 to-rose-400",
+  },
+  {
+    name: "Abacus",
+    description: "Mein Personaldossier",
+    url: "https://ssm.arcon.ch:20516/oauth/oauth2/v1/auth?response_type=code&client_id=myabacus&redirect_uri=%2Fportal%2Fmyabacus%2Foauthcb&scope=abacus+abacus.entity+openid+lic.app.any.opt.abaconnect&state=NDMC6HUT7X78B2UY&response_mode=form_post",
+    icon: <UserCircle className="h-8 w-8" />,
+    color: "from-teal-600 to-teal-400",
+  },
+];
 
 const Portal = () => {
   const { user, profile, role, loading, signOut } = useAuth();
@@ -152,7 +191,8 @@ const Portal = () => {
       {/* Main */}
       <main className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-4xl">
-          <div className="text-center mb-10">
+          <div className="text-center mb-10 flex flex-col items-center">
+            <img src={myssmLogo} alt="MySSM" className="h-14 mb-4" loading="lazy" />
             <h2 className="text-2xl font-semibold text-foreground font-heading">
               Willkommen, {profile?.display_name?.split(" ")[0] || "zurück"}
             </h2>
@@ -230,6 +270,38 @@ const Portal = () => {
               })}
             </div>
           )}
+
+          {/* External Apps */}
+          <div className="mt-12">
+            <h3 className="text-lg font-semibold text-foreground font-heading mb-6">Weitere Tools</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {externalApps.map((app) => (
+                <a
+                  key={app.name}
+                  href={app.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative rounded-2xl border bg-card p-6 text-left shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                >
+                  <div
+                    className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${app.color} flex items-center justify-center text-white mb-5 group-hover:scale-105 transition-transform`}
+                  >
+                    {app.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground font-heading">
+                    {app.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-body mt-1">
+                    {app.description}
+                  </p>
+                  <div className="mt-4 flex items-center gap-1.5 text-xs font-medium text-primary font-body">
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Öffnen
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
 
