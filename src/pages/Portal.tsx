@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, ExternalLink, Shield, BarChart3, Users } from "lucide-react";
+import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const projectMeta: Record<string, { icon: React.ReactNode; description: string; color: string }> = {
   "ssm-partner": {
