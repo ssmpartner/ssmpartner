@@ -21,13 +21,11 @@ Deno.serve(async (req) => {
     // === Public SSO endpoints (called by other projects) ===
 
     if (action === "verify") {
-      // Other projects send email + password to verify a user
       const { email, password, project_key } = payload;
       if (!email || !password || !project_key) {
         throw new Error("email, password und project_key sind erforderlich");
       }
 
-      // Verify API key for project
       const apiKey = req.headers.get("x-sso-api-key");
       const { data: project } = await supabaseAdmin
         .from("sso_projects")
@@ -41,7 +39,6 @@ Deno.serve(async (req) => {
         throw new Error("Ungültiger API-Schlüssel");
       }
 
-      // Try to sign in the user
       const { data: authData, error: authError } = await supabaseAdmin.auth.signInWithPassword({
         email,
         password,
@@ -50,7 +47,6 @@ Deno.serve(async (req) => {
 
       const userId = authData.user.id;
 
-      // Check project access
       const { data: access } = await supabaseAdmin
         .from("project_access")
         .select("active")
@@ -62,13 +58,11 @@ Deno.serve(async (req) => {
         throw new Error("Kein Zugang zu diesem Projekt");
       }
 
-      // Get role and profile
       const [roleRes, profileRes] = await Promise.all([
         supabaseAdmin.from("user_roles").select("role").eq("user_id", userId).single(),
         supabaseAdmin.from("profiles").select("*").eq("id", userId).single(),
       ]);
 
-      // Log the authentication
       await supabaseAdmin.from("auth_audit_log").insert({
         user_id: userId,
         user_email: email,
@@ -95,7 +89,6 @@ Deno.serve(async (req) => {
     }
 
     if (action === "check_access") {
-      // Quick check if a user email has access to a project
       const { email, project_key } = payload;
       if (!email || !project_key) throw new Error("email und project_key sind erforderlich");
 
@@ -129,14 +122,13 @@ Deno.serve(async (req) => {
 
       return new Response(JSON.stringify({
         has_access: !!access?.active,
-        role: null, // Can be enriched
+        role: null,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (action === "get_user_info") {
-      // Get user info by email (for displaying in other projects)
       const { email } = payload;
       if (!email) throw new Error("email ist erforderlich");
 
@@ -169,9 +161,87 @@ Deno.serve(async (req) => {
       });
     }
 
+    // === Validate redirect token (called by external projects) ===
+    if (action === "validate_token") {
+      const { token, project_key } = payload;
+      if (!token || !project_key) throw new Error("token und project_key sind erforderlich");
+
+      // Verify API key
+      const apiKey = req.headers.get("x-sso-api-key");
+      const { data: project } = await supabaseAdmin
+        .from("sso_projects")
+        .select("*")
+        .eq("project_key", project_key)
+        .eq("active", true)
+        .single();
+
+      if (!project) throw new Error("Unbekanntes oder inaktives Projekt");
+      if (project.api_secret && project.api_secret !== apiKey) {
+        throw new Error("Ungültiger API-Schlüssel");
+      }
+
+      // Find and validate token
+      const { data: tokenData, error: tokenError } = await supabaseAdmin
+        .from("sso_redirect_tokens")
+        .select("*")
+        .eq("token", token)
+        .eq("project_key", project_key)
+        .eq("used", false)
+        .single();
+
+      if (tokenError || !tokenData) {
+        throw new Error("Ungültiger oder bereits verwendeter Token");
+      }
+
+      // Check expiration
+      if (new Date(tokenData.expires_at) < new Date()) {
+        throw new Error("Token abgelaufen");
+      }
+
+      // Mark token as used
+      await supabaseAdmin
+        .from("sso_redirect_tokens")
+        .update({ used: true })
+        .eq("id", tokenData.id);
+
+      // Get user info
+      const userId = tokenData.user_id;
+      const { data: { user: authUser } } = await supabaseAdmin.auth.admin.getUserById(userId);
+      if (!authUser) throw new Error("Benutzer nicht gefunden");
+
+      const [roleRes, profileRes] = await Promise.all([
+        supabaseAdmin.from("user_roles").select("role").eq("user_id", userId).single(),
+        supabaseAdmin.from("profiles").select("*").eq("id", userId).single(),
+      ]);
+
+      // Log the SSO redirect login
+      await supabaseAdmin.from("auth_audit_log").insert({
+        user_id: userId,
+        user_email: authUser.email,
+        project_key,
+        action: "sso_redirect_login",
+        ip_address: req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || "unknown",
+        user_agent: req.headers.get("user-agent") || "unknown",
+        metadata: { project_name: project.name },
+      });
+
+      return new Response(JSON.stringify({
+        success: true,
+        user: {
+          id: userId,
+          email: authUser.email,
+          display_name: profileRes.data?.display_name || authUser.email,
+          avatar_url: profileRes.data?.avatar_url || null,
+          role: roleRes.data?.role || null,
+        },
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // === Admin endpoints (require auth) ===
 
-    if (action === "grant_access" || action === "revoke_access" || action === "audit_log" || action === "generate_secret") {
+    if (action === "grant_access" || action === "revoke_access" || action === "audit_log" || action === "generate_secret" || action === "generate_redirect_token") {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader) throw new Error("Nicht autorisiert");
 
@@ -183,6 +253,62 @@ Deno.serve(async (req) => {
       const { data: { user: caller } } = await supabaseClient.auth.getUser();
       if (!caller) throw new Error("Nicht autorisiert");
 
+      // generate_redirect_token: any authenticated user can generate for themselves
+      if (action === "generate_redirect_token") {
+        const { project_key } = payload;
+        if (!project_key) throw new Error("project_key ist erforderlich");
+
+        // Verify project exists and is active
+        const { data: project } = await supabaseAdmin
+          .from("sso_projects")
+          .select("id, project_key")
+          .eq("project_key", project_key)
+          .eq("active", true)
+          .single();
+
+        if (!project) throw new Error("Unbekanntes oder inaktives Projekt");
+
+        // Verify user has access to this project
+        const { data: access } = await supabaseAdmin
+          .from("project_access")
+          .select("active")
+          .eq("user_id", caller.id)
+          .eq("project_id", project.id)
+          .single();
+
+        // Superadmins bypass access check
+        const { data: callerRoleData } = await supabaseAdmin
+          .from("user_roles").select("role").eq("user_id", caller.id).single();
+        const isSuperadmin = callerRoleData?.role === "superadmin";
+
+        if (!isSuperadmin && !access?.active) {
+          throw new Error("Kein Zugang zu diesem Projekt");
+        }
+
+        // Generate a secure random token (64 chars hex)
+        const array = new Uint8Array(32);
+        crypto.getRandomValues(array);
+        const token = Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
+
+        // Store token with 5-minute expiration
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+        const { error: insertError } = await supabaseAdmin
+          .from("sso_redirect_tokens")
+          .insert({
+            token,
+            user_id: caller.id,
+            project_key,
+            expires_at: expiresAt,
+          });
+
+        if (insertError) throw insertError;
+
+        return new Response(JSON.stringify({ success: true, token, expires_at: expiresAt }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // All other admin actions require superadmin
       const { data: callerRole } = await supabaseAdmin
         .from("user_roles").select("role").eq("user_id", caller.id).single();
       if (callerRole?.role !== "superadmin") {
@@ -243,7 +369,6 @@ Deno.serve(async (req) => {
         const { project_id } = payload;
         if (!project_id) throw new Error("project_id ist erforderlich");
 
-        // Generate a secure random API secret
         const array = new Uint8Array(32);
         crypto.getRandomValues(array);
         const secret = Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
