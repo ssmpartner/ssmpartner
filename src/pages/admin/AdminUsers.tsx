@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { Plus, Trash2, KeyRound, Shield, Mail } from "lucide-react";
+import { Plus, Trash2, KeyRound, Shield, FolderKey } from "lucide-react";
 import { toast } from "sonner";
 
 const roleLabels: Record<string, string> = {
@@ -43,6 +43,7 @@ const AdminUsers = () => {
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState({ email: "", password: "", display_name: "", role: "admin" });
+  const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [editingRole, setEditingRole] = useState<string | null>(null);
   const [resetPw, setResetPw] = useState<{ userId: string; password: string } | null>(null);
 
@@ -58,6 +59,24 @@ const AdminUsers = () => {
     },
   });
 
+  const { data: projects } = useQuery({
+    queryKey: ["sso-projects"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("sso_projects" as any).select("*").order("created_at");
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const { data: accessList } = useQuery({
+    queryKey: ["sso-access"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("project_access" as any).select("*");
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
   const callAction = async (action: string, payload: Record<string, any>) => {
     const { data, error } = await supabase.functions.invoke("manage-users", {
       body: { action, ...payload },
@@ -68,11 +87,13 @@ const AdminUsers = () => {
   };
 
   const createMutation = useMutation({
-    mutationFn: () => callAction("create", createForm),
+    mutationFn: () => callAction("create", { ...createForm, project_ids: selectedProjects }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({ queryKey: ["sso-access"] });
       setShowCreate(false);
       setCreateForm({ email: "", password: "", display_name: "", role: "admin" });
+      setSelectedProjects([]);
       toast.success("Benutzer erstellt");
     },
     onError: (err: any) => toast.error(err.message),
@@ -108,6 +129,16 @@ const AdminUsers = () => {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const toggleProject = (projectId: string) => {
+    setSelectedProjects((prev) =>
+      prev.includes(projectId) ? prev.filter((id) => id !== projectId) : [...prev, projectId]
+    );
+  };
+
+  const getUserProjects = (userId: string) => {
+    return accessList?.filter((a: any) => a.user_id === userId && a.active) || [];
+  };
+
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
 
   return (
@@ -136,6 +167,37 @@ const AdminUsers = () => {
               ))}
             </select>
           </div>
+
+          {/* Project Access Checkboxes */}
+          {projects && projects.length > 0 && (
+            <div>
+              <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-2">
+                <FolderKey size={12} />
+                Projektzugriff
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {projects.map((p: any) => (
+                  <label
+                    key={p.id}
+                    className={`inline-flex items-center gap-2 font-body text-sm px-3 py-2 rounded-lg border cursor-pointer transition-colors select-none ${
+                      selectedProjects.includes(p.id)
+                        ? "border-primary bg-primary/10 text-foreground"
+                        : "border-border bg-muted/20 text-muted-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedProjects.includes(p.id)}
+                      onChange={() => toggleProject(p.id)}
+                      className="h-3.5 w-3.5 rounded border-border accent-[hsl(var(--primary))]"
+                    />
+                    {p.name}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-2">
             <button
               onClick={() => createMutation.mutate()}
@@ -144,7 +206,7 @@ const AdminUsers = () => {
             >
               Erstellen
             </button>
-            <button onClick={() => setShowCreate(false)} className="font-body text-sm text-muted-foreground px-4 py-2">Abbrechen</button>
+            <button onClick={() => { setShowCreate(false); setSelectedProjects([]); }} className="font-body text-sm text-muted-foreground px-4 py-2">Abbrechen</button>
           </div>
         </div>
       )}
@@ -159,106 +221,124 @@ const AdminUsers = () => {
               <tr className="border-b bg-muted/30">
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Benutzer</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Rolle</th>
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Projekte</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Erstellt</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-right px-4 py-3">Aktionen</th>
               </tr>
             </thead>
             <tbody>
-              {users?.map((u) => (
-                <tr key={u.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary">
-                        {(u.display_name || u.email).charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="font-body text-sm font-medium text-foreground">{u.display_name || u.email}</p>
-                        <p className="font-body text-xs text-muted-foreground">{u.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    {editingRole === u.id ? (
-                      <select
-                        defaultValue={u.role || ""}
-                        onChange={(e) => {
-                          updateRoleMutation.mutate({ user_id: u.id, role: e.target.value });
-                        }}
-                        onBlur={() => setEditingRole(null)}
-                        autoFocus
-                        className={inputClass + " w-40"}
-                      >
-                        {Object.entries(roleLabels).map(([val, label]) => (
-                          <option key={val} value={val}>{label}</option>
-                        ))}
-                      </select>
-                    ) : (
-                      <button
-                        onClick={() => setEditingRole(u.id)}
-                        className={`inline-flex items-center gap-1 font-body text-xs px-2.5 py-1 rounded-full ${roleColors[u.role || ""] || "bg-muted text-muted-foreground"}`}
-                      >
-                        <Shield size={10} />
-                        {roleLabels[u.role || ""] || "Keine Rolle"}
-                      </button>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="font-body text-xs text-muted-foreground">
-                      {new Date(u.created_at).toLocaleDateString("de-CH")}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      {/* Reset password */}
-                      {resetPw?.userId === u.id ? (
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="password"
-                            placeholder="Neues Passwort"
-                            value={resetPw.password}
-                            onChange={(e) => setResetPw({ ...resetPw, password: e.target.value })}
-                            className="bg-background border border-border px-2 py-1 font-body text-xs rounded w-32"
-                          />
-                          <button
-                            onClick={() => resetPwMutation.mutate({ user_id: u.id, new_password: resetPw.password })}
-                            className="font-body text-xs text-primary hover:underline"
-                          >
-                            OK
-                          </button>
-                          <button
-                            onClick={() => setResetPw(null)}
-                            className="font-body text-xs text-muted-foreground"
-                          >
-                            ✕
-                          </button>
+              {users?.map((u) => {
+                const userProjects = getUserProjects(u.id);
+                return (
+                  <tr key={u.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary">
+                          {(u.display_name || u.email).charAt(0).toUpperCase()}
                         </div>
+                        <div>
+                          <p className="font-body text-sm font-medium text-foreground">{u.display_name || u.email}</p>
+                          <p className="font-body text-xs text-muted-foreground">{u.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {editingRole === u.id ? (
+                        <select
+                          defaultValue={u.role || ""}
+                          onChange={(e) => {
+                            updateRoleMutation.mutate({ user_id: u.id, role: e.target.value });
+                          }}
+                          onBlur={() => setEditingRole(null)}
+                          autoFocus
+                          className={inputClass + " w-40"}
+                        >
+                          {Object.entries(roleLabels).map(([val, label]) => (
+                            <option key={val} value={val}>{label}</option>
+                          ))}
+                        </select>
                       ) : (
                         <button
-                          onClick={() => setResetPw({ userId: u.id, password: "" })}
-                          className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
-                          title="Passwort zurücksetzen"
+                          onClick={() => setEditingRole(u.id)}
+                          className={`inline-flex items-center gap-1 font-body text-xs px-2.5 py-1 rounded-full ${roleColors[u.role || ""] || "bg-muted text-muted-foreground"}`}
                         >
-                          <KeyRound size={14} />
+                          <Shield size={10} />
+                          {roleLabels[u.role || ""] || "Keine Rolle"}
                         </button>
                       )}
-                      {/* Delete */}
-                      {u.id !== user?.id && (
-                        <button
-                          onClick={() => {
-                            if (confirm(`"${u.display_name || u.email}" wirklich löschen?`)) {
-                              deleteMutation.mutate(u.id);
-                            }
-                          }}
-                          className="p-1.5 text-muted-foreground hover:text-destructive rounded-md hover:bg-destructive/10 transition-colors"
-                          title="Benutzer löschen"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {userProjects.length > 0 ? (
+                          userProjects.map((a: any) => {
+                            const proj = projects?.find((p: any) => p.id === a.project_id);
+                            return proj ? (
+                              <span key={a.id} className="font-body text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                                {proj.name}
+                              </span>
+                            ) : null;
+                          })
+                        ) : (
+                          <span className="font-body text-[10px] text-muted-foreground">–</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="font-body text-xs text-muted-foreground">
+                        {new Date(u.created_at).toLocaleDateString("de-CH")}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-1">
+                        {resetPw?.userId === u.id ? (
+                          <div className="flex items-center gap-1">
+                            <input
+                              type="password"
+                              placeholder="Neues Passwort"
+                              value={resetPw.password}
+                              onChange={(e) => setResetPw({ ...resetPw, password: e.target.value })}
+                              className="bg-background border border-border px-2 py-1 font-body text-xs rounded w-32"
+                            />
+                            <button
+                              onClick={() => resetPwMutation.mutate({ user_id: u.id, new_password: resetPw.password })}
+                              className="font-body text-xs text-primary hover:underline"
+                            >
+                              OK
+                            </button>
+                            <button
+                              onClick={() => setResetPw(null)}
+                              className="font-body text-xs text-muted-foreground"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setResetPw({ userId: u.id, password: "" })}
+                            className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
+                            title="Passwort zurücksetzen"
+                          >
+                            <KeyRound size={14} />
+                          </button>
+                        )}
+                        {u.id !== user?.id && (
+                          <button
+                            onClick={() => {
+                              if (confirm(`"${u.display_name || u.email}" wirklich löschen?`)) {
+                                deleteMutation.mutate(u.id);
+                              }
+                            }}
+                            className="p-1.5 text-muted-foreground hover:text-destructive rounded-md hover:bg-destructive/10 transition-colors"
+                            title="Benutzer löschen"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
