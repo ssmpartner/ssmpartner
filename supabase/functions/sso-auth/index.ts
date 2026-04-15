@@ -245,13 +245,19 @@ Deno.serve(async (req) => {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader || !authHeader.startsWith("Bearer ")) throw new Error("Nicht autorisiert");
 
-      const supabaseClient = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_ANON_KEY")!,
-        { global: { headers: { Authorization: authHeader } } }
-      );
-      const { data: { user: caller }, error: userError } = await supabaseClient.auth.getUser();
-      if (userError || !caller) throw new Error("Nicht autorisiert");
+      // Decode JWT to get user ID (verification happens via admin.getUserById)
+      const jwt = authHeader.replace("Bearer ", "");
+      const payloadBase64 = jwt.split(".")[1];
+      const payloadJson = JSON.parse(atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/")));
+      if (!payloadJson.sub) throw new Error("Nicht autorisiert");
+      
+      // Verify token is not expired
+      if (payloadJson.exp && payloadJson.exp * 1000 < Date.now()) throw new Error("Token abgelaufen");
+      
+      // Verify user exists via admin API
+      const { data: { user: callerUser }, error: userError } = await supabaseAdmin.auth.admin.getUserById(payloadJson.sub);
+      if (userError || !callerUser) throw new Error("Nicht autorisiert");
+      const caller = callerUser;
 
       // generate_redirect_token: any authenticated user can generate for themselves
       if (action === "generate_redirect_token") {
