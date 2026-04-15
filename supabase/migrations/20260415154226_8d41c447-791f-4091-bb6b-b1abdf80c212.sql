@@ -1,0 +1,1 @@
+UPDATE sso_projects SET api_url = 'https://ssmcockpit.ssmpartner.ch' WHERE project_key = 'ssm-cockpit';
