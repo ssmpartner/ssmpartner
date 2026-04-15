@@ -199,7 +199,12 @@ const Portal = () => {
                     </p>
 
                     <div className="mt-4 flex items-center gap-1.5 text-xs font-medium text-primary font-body">
-                      {isExternal ? (
+                      {redirectingProject === project.project_key ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          Verbinden...
+                        </>
+                      ) : isExternal ? (
                         <>
                           <ExternalLink className="h-3.5 w-3.5" />
                           Öffnen
