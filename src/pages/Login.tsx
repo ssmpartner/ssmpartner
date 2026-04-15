@@ -98,7 +98,7 @@ const Login = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border bg-card p-8 shadow-lg space-y-5">
+        <form onSubmit={handleSubmit} className="rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md p-8 shadow-lg space-y-5">
           {ssoProjectKey && (
             <div className="bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 text-center">
               <p className="font-body text-xs text-muted-foreground">Zentrale SSO-Anmeldung</p>
