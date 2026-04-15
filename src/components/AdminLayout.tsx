@@ -26,12 +26,12 @@ const adminLinks = [
   { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
-  { to: "/admin/users", label: "Benutzer", icon: UserCog },
-  { to: "/admin/sso", label: "SSO & Zugriff", icon: KeyRound },
 ];
 
 const bottomLinks = [
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },
+  { to: "/admin/users", label: "Benutzer", icon: UserCog },
+  { to: "/admin/sso", label: "SSO & Zugriff", icon: KeyRound },
   { to: "/admin/api-docs", label: "API-Docs", icon: Code2 },
   { to: "/admin/docs", label: "Dokumentation", icon: Book },
 ];
