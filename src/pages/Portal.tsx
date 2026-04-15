@@ -27,6 +27,7 @@ const projectMeta: Record<string, { icon: React.ReactNode; description: string; 
 const Portal = () => {
   const { user, profile, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [redirectingProject, setRedirectingProject] = useState<string | null>(null);
 
   const { data: accessibleProjects, isLoading } = useQuery({
     queryKey: ["portal-projects", user?.id],
