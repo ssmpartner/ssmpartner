@@ -81,6 +81,7 @@ const App = () => (
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />
+            <Route path="/portal" element={<Portal />} />
 
             {/* Admin CMS */}
             <Route element={<ProtectedRoute />}>
