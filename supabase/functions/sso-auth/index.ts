@@ -245,16 +245,10 @@ Deno.serve(async (req) => {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader || !authHeader.startsWith("Bearer ")) throw new Error("Nicht autorisiert");
 
-      const token = authHeader.replace("Bearer ", "");
-      const supabaseClient = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_ANON_KEY")!,
-        { global: { headers: { Authorization: authHeader } } }
-      );
-      const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-      if (claimsError || !claimsData?.claims) throw new Error("Nicht autorisiert");
-
-      const caller = { id: claimsData.claims.sub, email: claimsData.claims.email };
+      const jwt = authHeader.replace("Bearer ", "");
+      // Use admin client to verify the user from the JWT
+      const { data: { user: caller }, error: userError } = await supabaseAdmin.auth.getUser(jwt);
+      if (userError || !caller) throw new Error("Nicht autorisiert");
 
       // generate_redirect_token: any authenticated user can generate for themselves
       if (action === "generate_redirect_token") {
