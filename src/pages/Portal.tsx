@@ -76,14 +76,37 @@ const Portal = () => {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  const handleProjectClick = (project: any) => {
+  const handleProjectClick = async (project: any) => {
     if (project.project_key === "ssm-partner") {
       navigate("/admin");
       return;
     }
-    // For external projects, open in new tab with the project URL
-    if (project.api_url) {
-      window.open(project.api_url, "_blank");
+
+    // For external projects: generate SSO redirect token, then redirect
+    if (!project.api_url) {
+      toast.error("Keine Projekt-URL konfiguriert");
+      return;
+    }
+
+    setRedirectingProject(project.project_key);
+    try {
+      const { data, error } = await supabase.functions.invoke("sso-auth", {
+        body: { action: "generate_redirect_token", project_key: project.project_key },
+      });
+
+      if (error || data?.error) {
+        throw new Error(data?.error || error?.message || "Token-Generierung fehlgeschlagen");
+      }
+
+      // Redirect to project with SSO token
+      const redirectUrl = new URL("/sso-callback", project.api_url);
+      redirectUrl.searchParams.set("token", data.token);
+      redirectUrl.searchParams.set("project_key", project.project_key);
+      window.open(redirectUrl.toString(), "_blank");
+    } catch (err: any) {
+      toast.error(err.message || "SSO-Redirect fehlgeschlagen");
+    } finally {
+      setRedirectingProject(null);
     }
   };
 
