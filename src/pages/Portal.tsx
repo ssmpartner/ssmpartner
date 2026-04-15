@@ -88,7 +88,7 @@ const Portal = () => {
       return;
     }
 
-    const popup = window.open("", "_blank", "noopener,noreferrer");
+    const popup = window.open("about:blank", "_blank");
     setRedirectingProject(project.project_key);
 
     try {
@@ -105,11 +105,12 @@ const Portal = () => {
       redirectUrl.searchParams.set("token", data.token);
       redirectUrl.searchParams.set("project_key", project.project_key);
 
-      if (popup) {
-        popup.location.href = redirectUrl.toString();
-      } else {
-        window.location.href = redirectUrl.toString();
+      if (!popup) {
+        throw new Error("Neuer Tab konnte nicht geöffnet werden. Bitte Pop-up-Blocker prüfen.");
       }
+
+      popup.location.replace(redirectUrl.toString());
+      popup.opener = null;
     } catch (err: any) {
       popup?.close();
       toast.error(err.message || "SSO-Redirect fehlgeschlagen");
