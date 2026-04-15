@@ -100,30 +100,30 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md p-8 shadow-lg space-y-5">
           {ssoProjectKey && (
-            <div className="bg-primary/5 border border-primary/20 rounded-xl px-4 py-3 text-center">
-              <p className="font-body text-xs text-muted-foreground">Zentrale SSO-Anmeldung</p>
-              <p className="font-body text-sm font-medium text-foreground mt-0.5">
+            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center">
+              <p className="font-body text-xs text-white/50">Zentrale SSO-Anmeldung</p>
+              <p className="font-body text-sm font-medium text-white mt-0.5">
                 {ssoProjectKey.replace("ssm-", "SSM ").replace(/\b\w/g, (c) => c.toUpperCase())}
               </p>
             </div>
           )}
 
           <div>
-            <label className="text-sm font-medium text-foreground font-body">E-Mail</label>
+            <label className="text-sm font-medium text-white font-body">E-Mail</label>
             <input
               type="email"
               required
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 h-11 w-full rounded-xl border bg-background px-4 text-sm font-body outline-none focus:ring-2 focus:ring-ring transition-shadow"
+              className="mt-1 h-11 w-full rounded-xl border border-white/20 bg-white/10 px-4 text-sm text-white font-body outline-none focus:ring-2 focus:ring-white/30 transition-shadow placeholder:text-white/40"
               placeholder="name@ssmpartner.ch"
             />
           </div>
 
           <div>
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-foreground font-body">Passwort</label>
+              <label className="text-sm font-medium text-white font-body">Passwort</label>
             </div>
             <div className="relative mt-1">
               <input
@@ -132,13 +132,13 @@ const Login = () => {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-11 w-full rounded-xl border bg-background px-4 pr-10 text-sm font-body outline-none focus:ring-2 focus:ring-ring transition-shadow"
+                className="h-11 w-full rounded-xl border border-white/20 bg-white/10 px-4 pr-10 text-sm text-white font-body outline-none focus:ring-2 focus:ring-white/30 transition-shadow placeholder:text-white/40"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPw(!showPw)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white"
               >
                 {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -152,9 +152,9 @@ const Login = () => {
                 id="remember-me"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 rounded border border-primary accent-primary cursor-pointer"
+                className="h-4 w-4 rounded border border-white/30 accent-white cursor-pointer"
               />
-              <label htmlFor="remember-me" className="text-sm text-muted-foreground font-body cursor-pointer select-none">
+              <label htmlFor="remember-me" className="text-sm text-white/60 font-body cursor-pointer select-none">
                 Angemeldet bleiben
               </label>
             </div>
@@ -163,7 +163,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={submitting}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground font-body hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-[hsl(160,18%,23%)] font-body hover:bg-white/90 transition-opacity disabled:opacity-50"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
             {submitting ? "Wird angemeldet..." : "Anmelden"}
