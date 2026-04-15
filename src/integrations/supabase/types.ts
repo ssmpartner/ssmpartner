@@ -177,6 +177,42 @@ export type Database = {
           },
         ]
       }
+      auth_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          project_key: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          project_key?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          project_key?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       career_faqs: {
         Row: {
           active: boolean
@@ -523,6 +559,44 @@ export type Database = {
         }
         Relationships: []
       }
+      project_access: {
+        Row: {
+          active: boolean
+          created_at: string
+          granted_by: string | null
+          id: string
+          project_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          project_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          project_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_access_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "sso_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_content: {
         Row: {
           body: string | null
@@ -600,6 +674,39 @@ export type Database = {
           mobile_image_url?: string | null
           sort_order?: number
           subline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sso_projects: {
+        Row: {
+          active: boolean
+          api_secret: string | null
+          api_url: string | null
+          created_at: string
+          id: string
+          name: string
+          project_key: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          api_secret?: string | null
+          api_url?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          project_key: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          api_secret?: string | null
+          api_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          project_key?: string
           updated_at?: string
         }
         Relationships: []
