@@ -22,7 +22,7 @@ const Login = () => {
   if (loading) return <div className="min-h-screen flex items-center justify-center font-body text-muted-foreground">Laden...</div>;
 
   // If already logged in and no SSO redirect, go to admin
-  if (user && !ssoRedirect) return <Navigate to="/admin" replace />;
+  if (user && !ssoRedirect) return <Navigate to="/portal" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +73,7 @@ const Login = () => {
         localStorage.removeItem("ssm_remember_me");
         localStorage.removeItem("ssm_remember_email");
       }
-      navigate("/admin");
+      navigate("/portal");
     } else {
       toast.error(
         error.message === "Invalid login credentials"

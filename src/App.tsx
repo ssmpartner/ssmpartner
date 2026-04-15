@@ -15,6 +15,7 @@ import AgencyDetail from "./pages/AgencyDetail";
 import Career from "./pages/Career";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
+import Portal from "./pages/Portal";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSlider from "./pages/admin/AdminSlider";
 import AdminContent from "./pages/admin/AdminContent";
@@ -80,6 +81,7 @@ const App = () => (
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />
+            <Route path="/portal" element={<Portal />} />
 
             {/* Admin CMS */}
             <Route element={<ProtectedRoute />}>
