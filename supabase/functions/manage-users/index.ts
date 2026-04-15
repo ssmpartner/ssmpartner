@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     const { action, ...payload } = await req.json();
 
     if (action === "create") {
-      const { email, password, display_name, role } = payload;
+      const { email, password, display_name, role, project_ids } = payload;
 
       const adminAllowedRoles = ["controlling", "geschaeftsleitung", "hr"];
       if (!isSuperadminCaller && !adminAllowedRoles.includes(role)) {
@@ -61,6 +61,17 @@ Deno.serve(async (req) => {
         .from("user_roles")
         .insert({ user_id: userData.user.id, role });
       if (roleError) throw roleError;
+
+      // Grant project access if project_ids provided
+      if (Array.isArray(project_ids) && project_ids.length > 0) {
+        const accessRows = project_ids.map((pid: string) => ({
+          user_id: userData.user.id,
+          project_id: pid,
+          granted_by: caller.id,
+          active: true,
+        }));
+        await supabaseAdmin.from("project_access").insert(accessRows);
+      }
 
       return new Response(JSON.stringify({ success: true, user_id: userData.user.id }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
