@@ -18,6 +18,7 @@ const roleLabels: Record<string, string> = {
   backoffice: "Backoffice",
   analyst: "Analyst",
   agency_manager: "Agenturleiter",
+  verkaufsleiter: "Verkaufsleiter",
 };
 
 const roleColors: Record<string, string> = {
@@ -33,6 +34,7 @@ const roleColors: Record<string, string> = {
   backoffice: "bg-blue-500/10 text-blue-600",
   analyst: "bg-purple-500/10 text-purple-600",
   agency_manager: "bg-teal-500/10 text-teal-600",
+  verkaufsleiter: "bg-rose-500/10 text-rose-600",
 };
 
 interface UserData {

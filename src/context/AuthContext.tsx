@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-type AppRole = "superadmin" | "admin" | "backoffice" | "analyst" | "teamleiter" | "controlling" | "geschaeftsleitung" | "hr" | "agency_manager" | "vertriebsleiter" | "agenturleiter" | "finanzcoach" | "trainee";
+type AppRole = "superadmin" | "admin" | "backoffice" | "analyst" | "teamleiter" | "controlling" | "geschaeftsleitung" | "hr" | "agency_manager" | "vertriebsleiter" | "agenturleiter" | "finanzcoach" | "trainee" | "verkaufsleiter";
 
 interface Profile {
   id: string;
