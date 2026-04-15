@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import {
-  LayoutDashboard, Image, Users, Briefcase, FileText, LogOut,
+  LayoutDashboard, Image, Users, UserCog, Briefcase, FileText, LogOut,
   Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2,
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
   MessageSquare, PanelLeftClose, PanelLeft,
@@ -26,6 +26,7 @@ const adminLinks = [
   { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
+  { to: "/admin/users", label: "Benutzer", icon: UserCog },
 ];
 
 const bottomLinks = [

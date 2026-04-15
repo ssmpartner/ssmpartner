@@ -34,6 +34,7 @@ import AdminChatKnowledge from "./pages/admin/AdminChatKnowledge";
 import AdminChatLogs from "./pages/admin/AdminChatLogs";
 import AdminVag45 from "./pages/admin/AdminVag45";
 import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
+import AdminUsers from "./pages/admin/AdminUsers";
 import ChatWidget from "@/components/ChatWidget";
 import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
@@ -101,6 +102,7 @@ const App = () => (
                 <Route path="/admin/chat-logs" element={<AdminChatLogs />} />
                 <Route path="/admin/vag45" element={<AdminVag45 />} />
                 <Route path="/admin/onlinecheck" element={<AdminOnlineCheck />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
               </Route>
             </Route>
 
