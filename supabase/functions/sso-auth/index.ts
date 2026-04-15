@@ -238,6 +238,34 @@ Deno.serve(async (req) => {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+
+      if (action === "generate_secret") {
+        const { project_id } = payload;
+        if (!project_id) throw new Error("project_id ist erforderlich");
+
+        // Generate a secure random API secret
+        const array = new Uint8Array(32);
+        crypto.getRandomValues(array);
+        const secret = Array.from(array, (b) => b.toString(16).padStart(2, "0")).join("");
+
+        const { error } = await supabaseAdmin
+          .from("sso_projects")
+          .update({ api_secret: secret })
+          .eq("id", project_id);
+        if (error) throw error;
+
+        await supabaseAdmin.from("auth_audit_log").insert({
+          user_id: caller.id,
+          user_email: caller.email,
+          project_key: "admin",
+          action: "secret_generated",
+          metadata: { project_id },
+        });
+
+        return new Response(JSON.stringify({ success: true, api_secret: secret }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     throw new Error("Unbekannte Aktion");
