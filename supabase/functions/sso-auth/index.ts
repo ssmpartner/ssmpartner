@@ -243,12 +243,15 @@ Deno.serve(async (req) => {
 
     if (action === "grant_access" || action === "revoke_access" || action === "audit_log" || action === "generate_secret" || action === "generate_redirect_token") {
       const authHeader = req.headers.get("Authorization");
+      console.log("Auth header present:", !!authHeader, authHeader?.substring(0, 20));
       if (!authHeader || !authHeader.startsWith("Bearer ")) throw new Error("Nicht autorisiert");
 
       const jwt = authHeader.replace("Bearer ", "");
+      console.log("JWT length:", jwt.length);
       // Use admin client to verify the user from the JWT
       const { data: { user: caller }, error: userError } = await supabaseAdmin.auth.getUser(jwt);
-      if (userError || !caller) throw new Error("Nicht autorisiert");
+      console.log("getUser result:", !!caller, userError?.message);
+      if (userError || !caller) throw new Error("Nicht autorisiert - getUser failed: " + (userError?.message || "no user"));
 
       // generate_redirect_token: any authenticated user can generate for themselves
       if (action === "generate_redirect_token") {
