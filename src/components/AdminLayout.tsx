@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import {
-  LayoutDashboard, Image, Users, UserCog, Briefcase, FileText, LogOut,
+  LayoutDashboard, Image, Users, UserCog, Briefcase, FileText, LogOut, KeyRound,
   Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2,
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
   MessageSquare, PanelLeftClose, PanelLeft,
