@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import ProgressiveImage from "@/components/ProgressiveImage";
 
 interface PageHeroProps {
   pageKey: string;
@@ -48,10 +49,11 @@ const PageHero = ({ pageKey, fallbackImage }: PageHeroProps) => {
     <div className="w-full relative">
       {/* Hero image — full top, behind navbar */}
       <div className="w-full h-[35vh] lg:h-[42vh] overflow-hidden relative">
-        <img
+        <ProgressiveImage
           src={imageUrl}
           alt={hero?.alt_text || ""}
           className="w-full h-full object-cover"
+          containerClassName="w-full h-full"
         />
         {/* Floating rounded overlap with shadow */}
         <div
