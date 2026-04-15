@@ -9,7 +9,7 @@ const roleLabels: Record<string, string> = {
   superadmin: "Superadmin",
   admin: "Admin",
   vertriebsleiter: "Vertriebsleiter",
-  agenturleiter: "Agenturleiter",
+  agenturleiter: "Agenturleiter (neu)",
   teamleiter: "Teamleiter",
   finanzcoach: "Finanzcoach",
   trainee: "Trainee",
