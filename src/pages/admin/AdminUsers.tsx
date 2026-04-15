@@ -18,7 +18,7 @@ const roleLabels: Record<string, string> = {
   hr: "HR",
   backoffice: "Backoffice",
   analyst: "Analyst",
-  agency_manager: "Agenturleiter (Legacy)",
+  agency_manager: "Agency Manager",
 };
 
 const roleColors: Record<string, string> = {
