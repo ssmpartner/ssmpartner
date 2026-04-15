@@ -87,10 +87,10 @@ const Login = () => {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[hsl(160,18%,23%)] via-[hsl(160,18%,28%)] to-[hsl(160,18%,20%)] px-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground font-heading">
+          <h1 className="text-3xl font-semibold tracking-tight text-white font-heading">
             SSM Partner AG
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground font-body">
+          <p className="mt-2 text-sm text-white/60 font-body">
             {ssoProjectKey
               ? `Anmelden für ${ssoProjectKey.replace("ssm-", "SSM ").replace(/\b\w/g, (c) => c.toUpperCase())}`
               : "Melden Sie sich an, um fortzufahren"
