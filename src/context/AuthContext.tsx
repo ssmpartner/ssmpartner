@@ -33,11 +33,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loadUserData = async (userId: string) => {
     const [profileRes, roleRes] = await Promise.all([
-      supabase.from("profiles" as any).select("*").eq("id", userId).single(),
-      supabase.from("user_roles" as any).select("role").eq("user_id", userId).single(),
+      supabase.from("profiles" as any).select("*").eq("id", userId).single() as any,
+      supabase.from("user_roles" as any).select("role").eq("user_id", userId).single() as any,
     ]);
     setProfile(profileRes.data as Profile | null);
-    setRole((roleRes.data as any)?.role as AppRole ?? null);
+    setRole(roleRes.data?.role as AppRole ?? null);
   };
 
   useEffect(() => {
