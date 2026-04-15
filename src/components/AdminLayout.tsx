@@ -27,6 +27,7 @@ const adminLinks = [
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/users", label: "Benutzer", icon: UserCog },
+  { to: "/admin/sso", label: "SSO & Zugriff", icon: KeyRound },
 ];
 
 const bottomLinks = [
