@@ -5,6 +5,7 @@ type: feature
 ---
 ## Architecture
 SSM Partner = **Auth Master**. Other projects authenticate via the `sso-auth` edge function API.
+No self-registration — all users are created centrally by admins.
 
 ## Registered Projects
 | Key | Name | Roles |
@@ -34,11 +35,19 @@ External projects call:
 
 Admin actions (superadmin auth required):
 - `grant_access` / `revoke_access` — toggle user's project access
+- `generate_secret` — generate/rotate API secret for a project
 - `audit_log` — fetch activity history
 
+## Login Flows
+1. **API-basiert**: Projekt sendet Credentials an SSO-API `verify` endpoint
+2. **Redirect-basiert**: Projekt leitet zu `/login?project_key=ssm-cockpit&redirect_uri=https://...&state=...` weiter. Nach Login wird mit sso_token zurückgeleitet.
+
+## User Creation
+Beim Erstellen eines Benutzers unter `/admin/users` können direkt Projektzugriffe zugewiesen werden (Checkboxen). Die Benutzertabelle zeigt zugewiesene Projekte an.
+
 ## Admin UI
-- `/admin/sso` — Zugangsmatrix, Projektübersicht, Aktivitätslog
-- `/admin/users` — Benutzerverwaltung
+- `/admin/sso` — Zugangsmatrix, Projekte & API-Keys (generieren/kopieren), Aktivitätslog
+- `/admin/users` — Benutzerverwaltung mit Projektzugriff bei Erstellung
 
 ## Sidebar Position
 Benutzer + SSO & Zugriff are in bottomLinks, below Einstellungen.
