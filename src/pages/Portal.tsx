@@ -88,22 +88,30 @@ const Portal = () => {
       return;
     }
 
+    const popup = window.open("", "_blank", "noopener,noreferrer");
     setRedirectingProject(project.project_key);
+
     try {
       const { data, error } = await supabase.functions.invoke("sso-auth", {
         body: { action: "generate_redirect_token", project_key: project.project_key },
       });
 
       if (error || data?.error) {
+        popup?.close();
         throw new Error(data?.error || error?.message || "Token-Generierung fehlgeschlagen");
       }
 
-      // Redirect to project with SSO token
       const redirectUrl = new URL("/sso-callback", project.api_url);
       redirectUrl.searchParams.set("token", data.token);
       redirectUrl.searchParams.set("project_key", project.project_key);
-      window.open(redirectUrl.toString(), "_blank");
+
+      if (popup) {
+        popup.location.href = redirectUrl.toString();
+      } else {
+        window.location.href = redirectUrl.toString();
+      }
     } catch (err: any) {
+      popup?.close();
       toast.error(err.message || "SSO-Redirect fehlgeschlagen");
     } finally {
       setRedirectingProject(null);
