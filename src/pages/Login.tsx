@@ -84,7 +84,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[hsl(160,18%,23%)] via-[hsl(160,18%,28%)] to-[hsl(160,18%,20%)] px-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-semibold tracking-tight text-foreground font-heading">
