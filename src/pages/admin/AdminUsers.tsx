@@ -9,7 +9,6 @@ const roleLabels: Record<string, string> = {
   superadmin: "Superadmin",
   admin: "Admin",
   vertriebsleiter: "Vertriebsleiter",
-  agenturleiter: "Agenturleiter",
   teamleiter: "Teamleiter",
   finanzcoach: "Finanzcoach",
   trainee: "Trainee",
@@ -18,14 +17,13 @@ const roleLabels: Record<string, string> = {
   hr: "HR",
   backoffice: "Backoffice",
   analyst: "Analyst",
-  agency_manager: "Agency Manager",
+  agency_manager: "Agenturleiter",
 };
 
 const roleColors: Record<string, string> = {
   superadmin: "bg-red-500/10 text-red-600",
   admin: "bg-orange-500/10 text-orange-600",
   vertriebsleiter: "bg-indigo-500/10 text-indigo-600",
-  agenturleiter: "bg-teal-500/10 text-teal-600",
   teamleiter: "bg-emerald-500/10 text-emerald-600",
   finanzcoach: "bg-green-500/10 text-green-600",
   trainee: "bg-lime-500/10 text-lime-600",
@@ -34,7 +32,7 @@ const roleColors: Record<string, string> = {
   hr: "bg-pink-500/10 text-pink-600",
   backoffice: "bg-blue-500/10 text-blue-600",
   analyst: "bg-purple-500/10 text-purple-600",
-  agency_manager: "bg-gray-500/10 text-gray-600",
+  agency_manager: "bg-teal-500/10 text-teal-600",
 };
 
 interface UserData {
