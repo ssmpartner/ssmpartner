@@ -711,6 +711,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sso_redirect_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          project_key: string
+          token: string
+          used: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          project_key: string
+          token: string
+          used?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          project_key?: string
+          token?: string
+          used?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       team_members: {
         Row: {
           active: boolean

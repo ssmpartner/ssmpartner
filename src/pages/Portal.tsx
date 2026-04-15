@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, ExternalLink, Shield, BarChart3, Users } from "lucide-react";
+import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const projectMeta: Record<string, { icon: React.ReactNode; description: string; color: string }> = {
   "ssm-partner": {
@@ -25,6 +27,7 @@ const projectMeta: Record<string, { icon: React.ReactNode; description: string; 
 const Portal = () => {
   const { user, profile, role, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const [redirectingProject, setRedirectingProject] = useState<string | null>(null);
 
   const { data: accessibleProjects, isLoading } = useQuery({
     queryKey: ["portal-projects", user?.id],
@@ -73,14 +76,37 @@ const Portal = () => {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  const handleProjectClick = (project: any) => {
+  const handleProjectClick = async (project: any) => {
     if (project.project_key === "ssm-partner") {
       navigate("/admin");
       return;
     }
-    // For external projects, open in new tab with the project URL
-    if (project.api_url) {
-      window.open(project.api_url, "_blank");
+
+    // For external projects: generate SSO redirect token, then redirect
+    if (!project.api_url) {
+      toast.error("Keine Projekt-URL konfiguriert");
+      return;
+    }
+
+    setRedirectingProject(project.project_key);
+    try {
+      const { data, error } = await supabase.functions.invoke("sso-auth", {
+        body: { action: "generate_redirect_token", project_key: project.project_key },
+      });
+
+      if (error || data?.error) {
+        throw new Error(data?.error || error?.message || "Token-Generierung fehlgeschlagen");
+      }
+
+      // Redirect to project with SSO token
+      const redirectUrl = new URL("/sso-callback", project.api_url);
+      redirectUrl.searchParams.set("token", data.token);
+      redirectUrl.searchParams.set("project_key", project.project_key);
+      window.open(redirectUrl.toString(), "_blank");
+    } catch (err: any) {
+      toast.error(err.message || "SSO-Redirect fehlgeschlagen");
+    } finally {
+      setRedirectingProject(null);
     }
   };
 
@@ -155,7 +181,8 @@ const Portal = () => {
                   <button
                     key={project.id}
                     onClick={() => handleProjectClick(project)}
-                    className="group relative rounded-2xl border bg-card p-6 text-left shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                    disabled={redirectingProject === project.project_key}
+                    className="group relative rounded-2xl border bg-card p-6 text-left shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 disabled:opacity-70 disabled:cursor-wait"
                   >
                     {/* Gradient icon area */}
                     <div
@@ -172,7 +199,12 @@ const Portal = () => {
                     </p>
 
                     <div className="mt-4 flex items-center gap-1.5 text-xs font-medium text-primary font-body">
-                      {isExternal ? (
+                      {redirectingProject === project.project_key ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          Verbinden...
+                        </>
+                      ) : isExternal ? (
                         <>
                           <ExternalLink className="h-3.5 w-3.5" />
                           Öffnen
