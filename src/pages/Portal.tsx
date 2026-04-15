@@ -181,7 +181,8 @@ const Portal = () => {
                   <button
                     key={project.id}
                     onClick={() => handleProjectClick(project)}
-                    className="group relative rounded-2xl border bg-card p-6 text-left shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                    disabled={redirectingProject === project.project_key}
+                    className="group relative rounded-2xl border bg-card p-6 text-left shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 disabled:opacity-70 disabled:cursor-wait"
                   >
                     {/* Gradient icon area */}
                     <div
