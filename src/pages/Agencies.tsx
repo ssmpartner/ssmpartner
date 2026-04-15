@@ -4,6 +4,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, ArrowRight, Building2, Users, Phone, X } from "lucide-react";
+import ProgressiveImage from "@/components/ProgressiveImage";
 import ssmPattern from "@/assets/ssm-structure-pattern.png";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
@@ -125,10 +126,11 @@ const Agencies = () => {
                     {/* Agency image */}
                     <div className="w-full aspect-[16/9] bg-muted overflow-hidden">
                       {agency.image_url ? (
-                        <img
+                        <ProgressiveImage
                           src={agency.image_url}
                           alt={agency.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          containerClassName="w-full h-full"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-primary/5">
@@ -261,7 +263,7 @@ const HQGallerySection = ({ onImageClick }: { onImageClick: (url: string) => voi
               onClick={() => onImageClick(img("hq-1"))}
               className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group"
             >
-              <img src={img("hq-1")} alt="Hauptsitz" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <ProgressiveImage src={img("hq-1")} alt="Hauptsitz" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" containerClassName="w-full h-full" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </button>
 
@@ -270,14 +272,14 @@ const HQGallerySection = ({ onImageClick }: { onImageClick: (url: string) => voi
               onClick={() => onImageClick(img("hq-2"))}
               className="relative rounded-2xl overflow-hidden group"
             >
-              <img src={img("hq-2")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <ProgressiveImage src={img("hq-2")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" containerClassName="w-full h-full" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </button>
             <button
               onClick={() => onImageClick(img("hq-3"))}
               className="relative rounded-2xl overflow-hidden group"
             >
-              <img src={img("hq-3")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <ProgressiveImage src={img("hq-3")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" containerClassName="w-full h-full" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </button>
 
@@ -286,14 +288,14 @@ const HQGallerySection = ({ onImageClick }: { onImageClick: (url: string) => voi
               onClick={() => onImageClick(img("hq-4"))}
               className="relative rounded-2xl overflow-hidden group"
             >
-              <img src={img("hq-4")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <ProgressiveImage src={img("hq-4")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" containerClassName="w-full h-full" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </button>
             <button
               onClick={() => onImageClick(img("hq-5"))}
               className="relative rounded-2xl overflow-hidden group"
             >
-              <img src={img("hq-5")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <ProgressiveImage src={img("hq-5")} alt="HQ Ansicht" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" containerClassName="w-full h-full" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </button>
           </div>
