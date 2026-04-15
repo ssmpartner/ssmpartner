@@ -8,19 +8,18 @@ SSM Partner = **Auth Master**. Other projects authenticate via the `sso-auth` ed
 No self-registration — all users are created centrally by admins.
 
 ## Registered Projects
-| Key | Name | Roles |
-|-----|------|-------|
-| ssm-partner | SSM Partner Website | app_role enum (superadmin, admin, backoffice, ...) |
-| ssm-recruit | SSM Recruit | app_role enum (superadmin, admin, backoffice, analyst, teamleiter, controlling, geschaeftsleitung, hr, agency_manager) |
-| ssm-cockpit | SSM Cockpit | user_role enum (super_admin, vertriebsleiter, agenturleiter, berater, teamleiter, verkaufsleiter) |
+| Key | Name |
+|-----|------|
+| ssm-partner | SSM Partner Website |
+| ssm-recruit | SSM Recruit |
+| ssm-cockpit | SSM Cockpit |
 
-## Role Mapping (SSM Partner → other projects)
-| SSM Partner Role | SSM Recruit | SSM Cockpit |
-|-----------------|-------------|-------------|
-| superadmin | superadmin | super_admin |
-| admin | admin | vertriebsleiter |
-| teamleiter | teamleiter | teamleiter |
-| agency_manager | agency_manager | agenturleiter |
+## Unified Roles (all projects)
+superadmin, admin, vertriebsleiter, agenturleiter, teamleiter, finanzcoach, trainee, controlling, geschaeftsleitung, hr, backoffice, analyst
+(Legacy: agency_manager → replaced by agenturleiter)
+
+## Standard Agencies (all projects)
+Urtenen-Schönbühl, Regensdorf, Rothenburg, Olten, Lugano, Spreitenbach, Adliswil
 
 ## Database Tables
 - `sso_projects` — registered projects (project_key, name, api_url, api_secret)
@@ -40,17 +39,14 @@ Admin actions (superadmin auth required):
 
 ## Login Flows
 1. **API-basiert**: Projekt sendet Credentials an SSO-API `verify` endpoint
-2. **Redirect-basiert**: Projekt leitet zu `/login?project_key=ssm-cockpit&redirect_uri=https://...&state=...` weiter. Nach Login wird mit sso_token zurückgeleitet.
+2. **Redirect-basiert**: Projekt leitet zu `/login?project_key=ssm-cockpit&redirect_uri=https://...&state=...` weiter
 
 ## User Creation
-Beim Erstellen eines Benutzers unter `/admin/users` können direkt Projektzugriffe zugewiesen werden (Checkboxen). Die Benutzertabelle zeigt zugewiesene Projekte an.
+Beim Erstellen eines Benutzers unter `/admin/users` können direkt Projektzugriffe zugewiesen werden (Checkboxen).
 
 ## Admin UI
-- `/admin/sso` — Zugangsmatrix, Projekte & API-Keys (generieren/kopieren), Aktivitätslog
+- `/admin/sso` — Zugangsmatrix, Projekte & API-Keys, Aktivitätslog
 - `/admin/users` — Benutzerverwaltung mit Projektzugriff bei Erstellung
 
 ## Sidebar Position
 Benutzer + SSO & Zugriff are in bottomLinks, below Einstellungen.
-
-## Future: Microsoft 365
-When available, Microsoft Entra ID replaces email/password.

@@ -954,6 +954,10 @@ export type Database = {
         | "geschaeftsleitung"
         | "hr"
         | "agency_manager"
+        | "vertriebsleiter"
+        | "agenturleiter"
+        | "finanzcoach"
+        | "trainee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1091,6 +1095,10 @@ export const Constants = {
         "geschaeftsleitung",
         "hr",
         "agency_manager",
+        "vertriebsleiter",
+        "agenturleiter",
+        "finanzcoach",
+        "trainee",
       ],
     },
   },
