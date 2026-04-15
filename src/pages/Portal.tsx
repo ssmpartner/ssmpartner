@@ -165,7 +165,7 @@ const Portal = () => {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold text-foreground font-heading">SSM Partner AG</h1>
-            <p className="text-sm text-muted-foreground font-body">Projektportal</p>
+            <p className="text-sm text-muted-foreground font-body">MySSM</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
@@ -197,7 +197,7 @@ const Portal = () => {
               Willkommen, {profile?.display_name?.split(" ")[0] || "zurück"}
             </h2>
             <p className="text-muted-foreground font-body mt-1">
-              Wählen Sie ein Projekt, um fortzufahren
+              Wähle deine App, um fortzufahren
             </p>
           </div>
 
