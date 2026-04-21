@@ -286,38 +286,60 @@ const AdminTeam = () => {
         )}
       </div>
 
-      {/* Filter */}
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {categories.map((c) => (
+      {/* Filter dropdown + view toggle */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="bg-card border border-border font-body text-sm px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+        >
+          {categories.map((c) => {
+            const count =
+              c.value === ""
+                ? members?.length || 0
+                : c.value === "agentur"
+                ? members?.filter((m) => m.category === "agentur").length || 0
+                : members?.filter((m) => m.category === c.value).length || 0;
+            return (
+              <option key={c.value} value={c.value}>
+                {c.label} ({count})
+              </option>
+            );
+          })}
+          {agencies && agencies.length > 0 && (
+            <optgroup label="Agenturen">
+              {agencies.map((a) => {
+                const count = members?.filter((m) => m.category === "agentur" && (m as any).agency_id === a.id).length || 0;
+                return (
+                  <option key={`agency-${a.id}`} value={`agency-${a.id}`}>
+                    {a.name} ({count})
+                  </option>
+                );
+              })}
+            </optgroup>
+          )}
+        </select>
+
+        <div className="ml-auto inline-flex items-center bg-card border border-border rounded-lg p-0.5">
           <button
-            key={c.value}
-            onClick={() => setFilter(c.value)}
-            className={`font-body text-xs px-3 py-1.5 rounded-full border transition-colors ${
-              filter === c.value
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-card text-muted-foreground border-border hover:border-primary/50"
+            onClick={() => setViewMode("grid")}
+            className={`inline-flex items-center gap-1.5 font-body text-xs px-2.5 py-1.5 rounded-md transition-colors ${
+              viewMode === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             }`}
+            title="Kachelansicht"
           >
-            {c.label}
-            {c.value === "" ? ` (${members?.length || 0})` : c.value === "agentur" ? ` (${members?.filter((m) => m.category === "agentur").length || 0})` : ` (${members?.filter((m) => m.category === c.value).length || 0})`}
+            <LayoutGrid size={14} /> Kacheln
           </button>
-        ))}
-        {agencies?.map((a) => {
-          const count = members?.filter((m) => m.category === "agentur" && (m as any).agency_id === a.id).length || 0;
-          return (
-            <button
-              key={`agency-${a.id}`}
-              onClick={() => setFilter(`agency-${a.id}`)}
-              className={`font-body text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                filter === `agency-${a.id}`
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-card text-muted-foreground border-border hover:border-primary/50"
-              }`}
-            >
-              {a.name} ({count})
-            </button>
-          );
-        })}
+          <button
+            onClick={() => setViewMode("list")}
+            className={`inline-flex items-center gap-1.5 font-body text-xs px-2.5 py-1.5 rounded-md transition-colors ${
+              viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+            title="Listenansicht"
+          >
+            <List size={14} /> Liste
+          </button>
+        </div>
       </div>
 
       {/* Selection toolbar */}
