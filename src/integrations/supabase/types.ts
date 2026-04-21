@@ -761,6 +761,7 @@ export type Database = {
           role_it: string | null
           sort_order: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           active?: boolean
@@ -781,6 +782,7 @@ export type Database = {
           role_it?: string | null
           sort_order?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           active?: boolean
@@ -801,6 +803,7 @@ export type Database = {
           role_it?: string | null
           sort_order?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {

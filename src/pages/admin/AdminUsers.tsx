@@ -104,6 +104,22 @@ const AdminUsers = () => {
     },
   });
 
+  const { data: userAgencyMap } = useQuery({
+    queryKey: ["user-agency-map"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("user_id, agency_id, agencies(name)")
+        .not("user_id", "is", null);
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      (data as any[])?.forEach((row) => {
+        if (row.user_id && row.agencies?.name) map[row.user_id] = row.agencies.name;
+      });
+      return map;
+    },
+  });
+
   const callAction = async (action: string, payload: Record<string, any>) => {
     const { data, error } = await supabase.functions.invoke("manage-users", {
       body: { action, ...payload },
@@ -418,6 +434,7 @@ const AdminUsers = () => {
                 </th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Benutzer</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Rolle</th>
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Agentur</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Projekte</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Erstellt</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-right px-4 py-3">Aktionen</th>
@@ -425,7 +442,7 @@ const AdminUsers = () => {
             </thead>
             <tbody>
               {filteredUsers.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">Keine Benutzer gefunden</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">Keine Benutzer gefunden</td></tr>
               )}
               {filteredUsers.map((u) => {
                 const userProjects = getUserProjects(u.id);
@@ -486,6 +503,15 @@ const AdminUsers = () => {
                           <Shield size={10} />
                           {roleLabels[u.role || ""] || "Keine Rolle"}
                         </button>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {userAgencyMap?.[u.id] ? (
+                        <span className="font-body text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
+                          {userAgencyMap[u.id]}
+                        </span>
+                      ) : (
+                        <span className="font-body text-[10px] text-muted-foreground">–</span>
                       )}
                     </td>
                     <td className="px-4 py-3">

@@ -24,7 +24,7 @@ const badgeOptions = [
   { value: "trainee", label: "Trainee" },
 ];
 
-const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "", badge: "" };
+const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "", badge: "", user_id: "" };
 
 const AdminTeam = () => {
   const queryClient = useQueryClient();
@@ -53,6 +53,16 @@ const AdminTeam = () => {
     },
   });
 
+  const { data: appUsers } = useQuery({
+    queryKey: ["admin-users-for-team"],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("manage-users", { body: { action: "list" } });
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+      return data.users as Array<{ id: string; email: string; display_name: string }>;
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (item: typeof form & { id?: string }) => {
       const agencyId = item.agency_id || null;
@@ -71,6 +81,7 @@ const AdminTeam = () => {
         phone: item.phone || null,
         email: item.email || null,
         badge: item.badge || null,
+        user_id: item.user_id || null,
       };
       if (item.id) {
         const { error } = await supabase.from("team_members").update(payload).eq("id", item.id);
@@ -164,6 +175,7 @@ const AdminTeam = () => {
       phone: m.phone || "",
       email: m.email || "",
       badge: m.badge || "",
+      user_id: (m as any).user_id || "",
     });
   };
 
@@ -317,6 +329,33 @@ const AdminTeam = () => {
           <div className="grid grid-cols-2 gap-3">
             <input placeholder="Telefon" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={inputClass} />
             <input placeholder="E-Mail" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
+          </div>
+
+          <div>
+            <label className="font-heading text-xs font-medium text-muted-foreground block mb-1.5">
+              Verknüpfter Benutzer (optional)
+            </label>
+            <select
+              value={form.user_id}
+              onChange={(e) => setForm({ ...form, user_id: e.target.value })}
+              className={inputClass}
+            >
+              <option value="">– Kein Benutzer verknüpft –</option>
+              {appUsers
+                ?.slice()
+                .sort((a, b) => (a.display_name || a.email).localeCompare(b.display_name || b.email))
+                .map((u) => {
+                  const taken = members?.find((m: any) => m.user_id === u.id && m.id !== editingId);
+                  return (
+                    <option key={u.id} value={u.id} disabled={!!taken}>
+                      {(u.display_name || u.email)} — {u.email}{taken ? ` (bereits: ${taken.name})` : ""}
+                    </option>
+                  );
+                })}
+            </select>
+            <p className="font-body text-[10px] text-muted-foreground mt-1">
+              Verknüpft das Teamprofil mit einem CMS-Benutzerkonto (1:1).
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
