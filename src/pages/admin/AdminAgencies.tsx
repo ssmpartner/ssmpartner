@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, Pencil, X, Check, Upload, ChevronUp, ChevronDown, Users } from "lucide-react";
+import { Trash2, Plus, Pencil, X, Upload, ChevronUp, ChevronDown, Users } from "lucide-react";
 import { toast } from "sonner";
 
 const emptyForm = {
@@ -147,7 +147,32 @@ const AdminAgencies = () => {
 
   const startAdd = () => {
     setAdding(true);
+    setEditing(null);
     setForm(emptyForm);
+  };
+
+  const closeModal = () => {
+    setEditing(null);
+    setAdding(false);
+  };
+
+  const isModalOpen = adding || editing !== null;
+
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeModal();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isModalOpen]);
+
+  const handleSave = () => {
+    if (editing) {
+      saveMutation.mutate({ id: editing, ...form });
+    } else {
+      saveMutation.mutate(form);
+    }
   };
 
   return (
@@ -166,105 +191,167 @@ const AdminAgencies = () => {
         </button>
       </div>
 
-      {/* Add form */}
-      {adding && (
-        <div className="bg-card border rounded-xl p-6 mb-6 space-y-4">
-          <h3 className="font-heading text-base font-semibold">Neue Agentur</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" className="border rounded-lg px-3 py-2 text-sm" />
-            <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="Slug (z.B. rothenburg)" className="border rounded-lg px-3 py-2 text-sm" />
-            <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Telefon" className="border rounded-lg px-3 py-2 text-sm" />
-            <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="E-Mail" className="border rounded-lg px-3 py-2 text-sm" />
-            <input value={form.leader_name} onChange={(e) => setForm({ ...form, leader_name: e.target.value })} placeholder="Agenturleiter Name" className="border rounded-lg px-3 py-2 text-sm" />
-            <input value={form.leader_role} onChange={(e) => setForm({ ...form, leader_role: e.target.value })} placeholder="Agenturleiter Rolle" className="border rounded-lg px-3 py-2 text-sm" />
-            <input value={form.map_lat} onChange={(e) => setForm({ ...form, map_lat: e.target.value })} placeholder="Breitengrad (Lat)" className="border rounded-lg px-3 py-2 text-sm" />
-            <input value={form.map_lng} onChange={(e) => setForm({ ...form, map_lng: e.target.value })} placeholder="Längengrad (Lng)" className="border rounded-lg px-3 py-2 text-sm" />
-          </div>
-          <textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Adresse" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
-          <textarea value={form.opening_hours} onChange={(e) => setForm({ ...form, opening_hours: e.target.value })} placeholder="Öffnungszeiten" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
-          <textarea value={form.description_de} onChange={(e) => setForm({ ...form, description_de: e.target.value })} placeholder="Beschreibung (DE)" rows={3} className="w-full border rounded-lg px-3 py-2 text-sm" />
-          <div className="flex gap-2">
-            <button onClick={() => saveMutation.mutate(form)} className="bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium">Speichern</button>
-            <button onClick={() => setAdding(false)} className="text-muted-foreground px-4 py-2 text-sm">Abbrechen</button>
-          </div>
-        </div>
-      )}
-
       {isLoading ? (
         <p className="font-body text-sm text-muted-foreground">Laden...</p>
       ) : (
         <div className="space-y-4">
           {agencies?.map((agency, idx) => (
             <div key={agency.id} className="bg-card border rounded-xl overflow-hidden">
-              {editing === agency.id ? (
-                <div className="p-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" className="border rounded-lg px-3 py-2 text-sm" />
-                    <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="Slug" className="border rounded-lg px-3 py-2 text-sm" />
-                    <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Telefon" className="border rounded-lg px-3 py-2 text-sm" />
-                    <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="E-Mail" className="border rounded-lg px-3 py-2 text-sm" />
-                    <input value={form.leader_name} onChange={(e) => setForm({ ...form, leader_name: e.target.value })} placeholder="Agenturleiter Name" className="border rounded-lg px-3 py-2 text-sm" />
-                    <input value={form.leader_role} onChange={(e) => setForm({ ...form, leader_role: e.target.value })} placeholder="Agenturleiter Rolle" className="border rounded-lg px-3 py-2 text-sm" />
-                    <input value={form.map_lat} onChange={(e) => setForm({ ...form, map_lat: e.target.value })} placeholder="Breitengrad (Lat)" className="border rounded-lg px-3 py-2 text-sm" />
-                    <input value={form.map_lng} onChange={(e) => setForm({ ...form, map_lng: e.target.value })} placeholder="Längengrad (Lng)" className="border rounded-lg px-3 py-2 text-sm" />
-                  </div>
-                  <textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Adresse" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
-                  <textarea value={form.opening_hours} onChange={(e) => setForm({ ...form, opening_hours: e.target.value })} placeholder="Öffnungszeiten" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
-                  <textarea value={form.description_de} onChange={(e) => setForm({ ...form, description_de: e.target.value })} placeholder="Beschreibung (DE)" rows={3} className="w-full border rounded-lg px-3 py-2 text-sm" />
-                  <textarea value={form.description_fr} onChange={(e) => setForm({ ...form, description_fr: e.target.value })} placeholder="Beschreibung (FR)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
-                  <textarea value={form.description_it} onChange={(e) => setForm({ ...form, description_it: e.target.value })} placeholder="Beschreibung (IT)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
-                  <textarea value={form.description_en} onChange={(e) => setForm({ ...form, description_en: e.target.value })} placeholder="Beschreibung (EN)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
-                  <div className="flex gap-2">
-                    <button onClick={() => saveMutation.mutate({ id: agency.id, ...form })} className="text-primary"><Check size={18} /></button>
-                    <button onClick={() => setEditing(null)} className="text-muted-foreground"><X size={18} /></button>
-                  </div>
+              <div className="flex items-center gap-4 p-4">
+                {/* Thumbnail */}
+                <div className="w-20 h-14 rounded-lg overflow-hidden bg-muted shrink-0">
+                  {agency.image_url ? (
+                    <img src={agency.image_url} alt={agency.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">—</div>
+                  )}
                 </div>
-              ) : (
-                <div className="flex items-center gap-4 p-4">
-                  {/* Thumbnail */}
-                  <div className="w-20 h-14 rounded-lg overflow-hidden bg-muted shrink-0">
-                    {agency.image_url ? (
-                      <img src={agency.image_url} alt={agency.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">—</div>
-                    )}
-                  </div>
 
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-heading text-sm font-semibold text-foreground">{agency.name}</h3>
-                    <p className="font-body text-xs text-muted-foreground truncate">{agency.address || "Keine Adresse"}</p>
-                  </div>
-
-                  {/* Member count */}
-                  <span
-                    title="Anzahl Mitarbeiter"
-                    className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded"
-                  >
-                    <Users size={12} />
-                    {memberCounts?.[agency.id] ?? 0}
-                  </span>
-
-                  {/* Status */}
-                  <span className={`font-body text-xs px-2 py-1 rounded ${agency.active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
-                    {agency.active ? "Aktiv" : "Inaktiv"}
-                  </span>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-1 shrink-0">
-                    <button onClick={() => moveMutation.mutate({ id: agency.id, direction: "up" })} disabled={idx === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1"><ChevronUp size={14} /></button>
-                    <button onClick={() => moveMutation.mutate({ id: agency.id, direction: "down" })} disabled={idx === (agencies?.length || 0) - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1"><ChevronDown size={14} /></button>
-                    <label className="text-muted-foreground hover:text-foreground cursor-pointer p-1">
-                      <Upload size={14} />
-                      <input type="file" accept="image/*" onChange={(e) => handleImageUpload(agency.id, e)} className="hidden" disabled={uploading === agency.id} />
-                    </label>
-                    <button onClick={() => startEdit(agency)} className="text-muted-foreground hover:text-foreground p-1"><Pencil size={14} /></button>
-                    <button onClick={() => deleteMutation.mutate(agency.id)} className="text-muted-foreground hover:text-destructive p-1"><Trash2 size={14} /></button>
-                  </div>
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-heading text-sm font-semibold text-foreground">{agency.name}</h3>
+                  <p className="font-body text-xs text-muted-foreground truncate">{agency.address || "Keine Adresse"}</p>
                 </div>
-              )}
+
+                {/* Member count */}
+                <span
+                  title="Anzahl Mitarbeiter"
+                  className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded"
+                >
+                  <Users size={12} />
+                  {memberCounts?.[agency.id] ?? 0}
+                </span>
+
+                {/* Status */}
+                <span className={`font-body text-xs px-2 py-1 rounded ${agency.active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  {agency.active ? "Aktiv" : "Inaktiv"}
+                </span>
+
+                {/* Actions */}
+                <div className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => moveMutation.mutate({ id: agency.id, direction: "up" })} disabled={idx === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1"><ChevronUp size={14} /></button>
+                  <button onClick={() => moveMutation.mutate({ id: agency.id, direction: "down" })} disabled={idx === (agencies?.length || 0) - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1"><ChevronDown size={14} /></button>
+                  <label className="text-muted-foreground hover:text-foreground cursor-pointer p-1">
+                    <Upload size={14} />
+                    <input type="file" accept="image/*" onChange={(e) => handleImageUpload(agency.id, e)} className="hidden" disabled={uploading === agency.id} />
+                  </label>
+                  <button onClick={() => startEdit(agency)} className="text-muted-foreground hover:text-foreground p-1"><Pencil size={14} /></button>
+                  <button onClick={() => deleteMutation.mutate(agency.id)} className="text-muted-foreground hover:text-destructive p-1"><Trash2 size={14} /></button>
+                </div>
+              </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Edit/Add Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={closeModal}
+        >
+          <div
+            className="bg-card border rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
+              <h3 className="font-heading text-base font-semibold text-foreground">
+                {adding ? "Neue Agentur" : "Agentur bearbeiten"}
+              </h3>
+              <button
+                onClick={closeModal}
+                className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-muted"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="overflow-y-auto px-6 py-5 space-y-4 flex-1">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Name</label>
+                  <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Slug</label>
+                  <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="z.B. rothenburg" className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Telefon</label>
+                  <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">E-Mail</label>
+                  <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Agenturleiter Name</label>
+                  <input value={form.leader_name} onChange={(e) => setForm({ ...form, leader_name: e.target.value })} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Agenturleiter Rolle</label>
+                  <input value={form.leader_role} onChange={(e) => setForm({ ...form, leader_role: e.target.value })} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Breitengrad (Lat)</label>
+                  <input value={form.map_lat} onChange={(e) => setForm({ ...form, map_lat: e.target.value })} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Längengrad (Lng)</label>
+                  <input value={form.map_lng} onChange={(e) => setForm({ ...form, map_lng: e.target.value })} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Adresse</label>
+                <textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} rows={2} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+              </div>
+
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1 block">Öffnungszeiten</label>
+                <textarea value={form.opening_hours} onChange={(e) => setForm({ ...form, opening_hours: e.target.value })} rows={2} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+              </div>
+
+              <div className="space-y-3 pt-2 border-t">
+                <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Beschreibungen</p>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Deutsch</label>
+                  <textarea value={form.description_de} onChange={(e) => setForm({ ...form, description_de: e.target.value })} rows={3} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Französisch</label>
+                  <textarea value={form.description_fr} onChange={(e) => setForm({ ...form, description_fr: e.target.value })} rows={2} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Italienisch</label>
+                  <textarea value={form.description_it} onChange={(e) => setForm({ ...form, description_it: e.target.value })} rows={2} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground mb-1 block">Englisch</label>
+                  <textarea value={form.description_en} onChange={(e) => setForm({ ...form, description_en: e.target.value })} rows={2} className="w-full border rounded-lg px-3 py-2 text-sm bg-background" />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-2 px-6 py-4 border-t shrink-0 bg-muted/30">
+              <button
+                onClick={closeModal}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground px-4 py-2 rounded-lg"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saveMutation.isPending}
+                className="bg-primary text-primary-foreground text-sm font-medium px-4 py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
+              >
+                {saveMutation.isPending ? "Speichern..." : "Speichern"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
