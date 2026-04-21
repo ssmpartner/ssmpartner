@@ -175,6 +175,7 @@ const AdminTeam = () => {
       phone: m.phone || "",
       email: m.email || "",
       badge: m.badge || "",
+      user_id: (m as any).user_id || "",
     });
   };
 
