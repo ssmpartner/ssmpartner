@@ -20,6 +20,88 @@ Deno.serve(async (req) => {
 
     // === Public SSO endpoints (called by other projects) ===
 
+    if (action === "list_project_users") {
+      const { project_key } = payload;
+      const apiKey = req.headers.get("x-sso-api-key");
+
+      if (!apiKey) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!project_key) {
+        return new Response(JSON.stringify({ error: "project_key required" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { data: project } = await supabaseAdmin
+        .from("sso_projects")
+        .select("*")
+        .eq("project_key", project_key)
+        .single();
+
+      if (!project) {
+        return new Response(JSON.stringify({ error: "Project not found" }), {
+          status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!project.api_secret || project.api_secret !== apiKey) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const { data: accessRows, error: accessErr } = await supabaseAdmin
+        .from("project_access")
+        .select("user_id, active, created_at")
+        .eq("project_id", project.id)
+        .eq("active", true);
+      if (accessErr) throw accessErr;
+
+      const userIds = (accessRows || []).map((a: any) => a.user_id);
+      if (userIds.length === 0) {
+        return new Response(JSON.stringify({ success: true, users: [] }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const [profilesRes, rolesRes, teamRes, authUsersRes] = await Promise.all([
+        supabaseAdmin.from("profiles").select("id, display_name, avatar_url").in("id", userIds),
+        supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", userIds),
+        supabaseAdmin.from("team_members")
+          .select("user_id, agency_id, agencies(name)")
+          .in("user_id", userIds),
+        supabaseAdmin.auth.admin.listUsers({ perPage: 1000 }),
+      ]);
+
+      const profileMap = new Map((profilesRes.data || []).map((p: any) => [p.id, p]));
+      const roleMap = new Map((rolesRes.data || []).map((r: any) => [r.user_id, r.role]));
+      const teamMap = new Map((teamRes.data || []).map((t: any) => [t.user_id, t]));
+      const authMap = new Map((authUsersRes.data?.users || []).map((u: any) => [u.id, u]));
+
+      const users = (accessRows || []).map((a: any) => {
+        const authUser: any = authMap.get(a.user_id);
+        const profile: any = profileMap.get(a.user_id);
+        const team: any = teamMap.get(a.user_id);
+        return {
+          id: a.user_id,
+          email: authUser?.email || null,
+          display_name: profile?.display_name || authUser?.email || null,
+          avatar_url: profile?.avatar_url || null,
+          role: roleMap.get(a.user_id) || null,
+          agency_id: team?.agency_id || null,
+          agency_name: team?.agencies?.name || null,
+          is_active: a.active === true,
+          assigned_at: a.created_at,
+        };
+      }).filter((u: any) => u.email);
+
+      return new Response(JSON.stringify({ success: true, users }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     if (action === "verify") {
       const { email, password, project_key } = payload;
       if (!email || !password || !project_key) {
