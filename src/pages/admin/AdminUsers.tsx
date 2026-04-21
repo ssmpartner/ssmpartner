@@ -358,6 +358,11 @@ const AdminUsers = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/30">
+                <th className="w-10 px-4 py-3">
+                  <button onClick={toggleSelectAll} className="text-muted-foreground hover:text-foreground">
+                    {allVisibleSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                  </button>
+                </th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Benutzer</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Rolle</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Projekte</th>
@@ -366,10 +371,19 @@ const AdminUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {users?.map((u) => {
+              {filteredUsers.length === 0 && (
+                <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">Keine Benutzer gefunden</td></tr>
+              )}
+              {filteredUsers.map((u) => {
                 const userProjects = getUserProjects(u.id);
+                const isSelected = selectedUsers.includes(u.id);
                 return (
-                  <tr key={u.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                  <tr key={u.id} className={`border-b last:border-0 hover:bg-muted/20 transition-colors ${isSelected ? "bg-primary/5" : ""}`}>
+                    <td className="px-4 py-3">
+                      <button onClick={() => toggleSelectUser(u.id)} className="text-muted-foreground hover:text-foreground">
+                        {isSelected ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
+                      </button>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary">
