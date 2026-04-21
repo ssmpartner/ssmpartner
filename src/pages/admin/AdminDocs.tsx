@@ -1,6 +1,7 @@
-import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2 } from "lucide-react";
+import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2, Code, History } from "lucide-react";
 
 const CMS_VERSION = "2.5.0";
+const RELEASE_DATE = "22. April 2026";
 
 const sections = [
   {
@@ -105,17 +106,64 @@ const sections = [
   },
 ];
 
+const changelog = [
+  {
+    version: "2.5.0",
+    date: "22. April 2026",
+    changes: [
+      "Neue SSO-Action list_project_users für Pull-Sync",
+      "Team-Verwaltung: Redesign mit Toolbar, Suche, Filter-Dropdown, Kachel-/Listenansicht",
+      "Team-Verwaltung: Modal-Dialog für Bearbeitung statt Inline",
+      "Team-Mehrfachauswahl mit Bulk-Aktionen",
+      "Lösch-Bestätigung per Modal mit «LÖSCHEN»-Eingabe",
+    ],
+  },
+  {
+    version: "2.4.0",
+    date: "Januar 2026",
+    changes: [
+      "SSO-System mit angebundenen Projekten",
+      "Agentur-Verknüpfung über Team-Mitglieder",
+      "Benutzerrollen mit API-Zugriff",
+      "Auth-Audit-Logging",
+    ],
+  },
+  {
+    version: "2.0.0",
+    date: "Oktober 2025",
+    changes: [
+      "KI-Chatbot mit Gemini-Integration",
+      "Online-Check Wizard mit BAG-API",
+      "ElevenLabs TTS & Scribe",
+      "Mehrsprachigkeit (DE/FR/IT/EN)",
+    ],
+  },
+];
+
+const techStack = [
+  { category: "Frontend", items: "React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui, Framer Motion" },
+  { category: "Backend", items: "Supabase (Auth, DB, Storage), Edge Functions (Deno)" },
+  { category: "KI/ML", items: "Google Gemini 2.5 Pro, ElevenLabs TTS & Scribe" },
+  { category: "Maps", items: "Mapbox GL JS" },
+  { category: "Deployment", items: "Lovable Cloud" },
+];
+
 const AdminDocs = () => {
   return (
-    <div className="max-w-3xl">
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="font-heading text-2xl font-semibold text-foreground">Dokumentation</h1>
-        <span className="text-xs font-mono bg-muted text-muted-foreground px-2 py-1 rounded-md">v{CMS_VERSION}</span>
+    <div className="max-w-3xl space-y-8">
+      {/* Header */}
+      <div>
+        <div className="flex items-center justify-between mb-1">
+          <h1 className="font-heading text-2xl font-semibold text-foreground">Dokumentation</h1>
+          <span className="text-xs font-mono bg-muted text-muted-foreground px-2 py-1 rounded-md">v{CMS_VERSION}</span>
+        </div>
+        <p className="font-body text-sm text-muted-foreground">
+          Übersicht aller Funktionen des Content-Management-Systems.
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">Release: {RELEASE_DATE}</p>
       </div>
-      <p className="font-body text-sm text-muted-foreground mb-8">
-        Übersicht aller Funktionen des Content-Management-Systems.
-      </p>
 
+      {/* Feature Sections */}
       <div className="space-y-4">
         {sections.map((s) => (
           <div key={s.title} className="bg-card border rounded-xl p-5">
@@ -132,8 +180,55 @@ const AdminDocs = () => {
         ))}
       </div>
 
-      <p className="text-xs text-muted-foreground text-center mt-8">
-        CMS Version {CMS_VERSION} · Letzte Aktualisierung: April 2026
+      {/* Changelog */}
+      <div className="bg-card border rounded-xl p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="shrink-0 w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center">
+            <History size={18} className="text-primary" />
+          </div>
+          <h2 className="font-heading text-base font-semibold text-foreground">Changelog</h2>
+        </div>
+        <div className="space-y-4">
+          {changelog.map((entry) => (
+            <div key={entry.version} className="border-l-2 border-primary/30 pl-4">
+              <div className="flex items-baseline gap-2 mb-1">
+                <span className="font-mono text-sm font-semibold text-primary">v{entry.version}</span>
+                <span className="text-xs text-muted-foreground">— {entry.date}</span>
+              </div>
+              <ul className="text-sm text-muted-foreground space-y-0.5">
+                {entry.changes.map((change, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-primary mt-1.5">•</span>
+                    <span>{change}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Technology Stack */}
+      <div className="bg-card border rounded-xl p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="shrink-0 w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center">
+            <Code size={18} className="text-primary" />
+          </div>
+          <h2 className="font-heading text-base font-semibold text-foreground">Technologie-Stack</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {techStack.map((tech) => (
+            <div key={tech.category} className="text-sm">
+              <span className="font-medium text-foreground">{tech.category}:</span>
+              <span className="text-muted-foreground ml-1">{tech.items}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <p className="text-xs text-muted-foreground text-center">
+        CMS Version {CMS_VERSION} · Letzte Aktualisierung: {RELEASE_DATE}
       </p>
     </div>
   );
