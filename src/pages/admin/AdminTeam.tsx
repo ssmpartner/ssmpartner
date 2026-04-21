@@ -24,7 +24,7 @@ const badgeOptions = [
   { value: "trainee", label: "Trainee" },
 ];
 
-const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "", badge: "" };
+const emptyForm = { name: "", role_de: "", role_fr: "", role_it: "", role_en: "", category: "geschaeftsleitung", agency_id: "", is_agency_leader: false, is_recruiting_partner: false, image_url: "", phone: "", email: "", badge: "", user_id: "" };
 
 const AdminTeam = () => {
   const queryClient = useQueryClient();
@@ -53,6 +53,16 @@ const AdminTeam = () => {
     },
   });
 
+  const { data: appUsers } = useQuery({
+    queryKey: ["admin-users-for-team"],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("manage-users", { body: { action: "list" } });
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+      return data.users as Array<{ id: string; email: string; display_name: string }>;
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (item: typeof form & { id?: string }) => {
       const agencyId = item.agency_id || null;
@@ -71,6 +81,7 @@ const AdminTeam = () => {
         phone: item.phone || null,
         email: item.email || null,
         badge: item.badge || null,
+        user_id: item.user_id || null,
       };
       if (item.id) {
         const { error } = await supabase.from("team_members").update(payload).eq("id", item.id);
