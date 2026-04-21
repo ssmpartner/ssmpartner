@@ -506,6 +506,15 @@ const AdminUsers = () => {
                       )}
                     </td>
                     <td className="px-4 py-3">
+                      {userAgencyMap?.[u.id] ? (
+                        <span className="font-body text-[10px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
+                          {userAgencyMap[u.id]}
+                        </span>
+                      ) : (
+                        <span className="font-body text-[10px] text-muted-foreground">–</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
                         {userProjects.length > 0 ? (
                           userProjects.map((a: any) => {
