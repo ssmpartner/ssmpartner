@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Check, ExternalLink, Code2, Database, Lock } from "lucide-react";
+import { Copy, Check, ExternalLink, Code2, Database, Lock, Zap } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -18,6 +18,48 @@ const tables = [
   { name: "career_faqs", label: "Karriere-FAQs", description: "Häufig gestellte Fragen zur Karriere mit Frage und Antwort." },
   { name: "career_videos", label: "Karriere-Videos", description: "Video-Testimonials mit Titel, Vorschaubild und Video-URL." },
   { name: "chatbot_knowledge", label: "KI-Chat Wissen", description: "Wissensbasis für den KI-Chatbot mit Kategorie, Frage und Antwort." },
+  { name: "sso_projects", label: "SSO-Projekte", description: "Angebundene Projekte (z.B. SSM Recruit) mit project_key, API-URL und API-Secret. Nur für Superadmins lesbar." },
+  { name: "project_access", label: "Projekt-Zugriffe", description: "Verknüpfung Benutzer ↔ SSO-Projekt. Steuert, welche Benutzer auf welches angebundene Projekt zugreifen dürfen." },
+  { name: "auth_audit_log", label: "Auth-Audit-Log", description: "Login-, Logout- und SSO-Events mit IP, User-Agent und Metadaten. Nur für Superadmins lesbar." },
+];
+
+const edgeFunctions = [
+  {
+    name: "ai-chat",
+    label: "KI-Chat",
+    description: "Streaming-KI-Antworten basierend auf Wissensbasis und BAG-Prämien.",
+    public: true,
+  },
+  {
+    name: "bag-premiums",
+    label: "BAG-Prämien",
+    description: "Aktuelle Krankenkassen-Prämien des Bundesamts für Gesundheit.",
+    public: true,
+  },
+  {
+    name: "manage-users",
+    label: "Benutzerverwaltung",
+    description: "Listen, Erstellen, Aktualisieren und Löschen von CMS-Benutzern. Nur für Superadmins.",
+    public: false,
+  },
+  {
+    name: "sso-auth",
+    label: "SSO-Authentifizierung",
+    description: "Login-Verifizierung und Pull-Sync für angebundene Projekte. Erfordert x-sso-api-key Header.",
+    public: false,
+  },
+  {
+    name: "elevenlabs-tts",
+    label: "Text-to-Speech",
+    description: "Sprachausgabe für den KI-Chat über ElevenLabs.",
+    public: true,
+  },
+  {
+    name: "elevenlabs-scribe-token",
+    label: "Scribe-Token",
+    description: "Erzeugt kurzlebige Tokens für ElevenLabs-Spracheingabe.",
+    public: true,
+  },
 ];
 
 const CopyButton = ({ text }: { text: string }) => {
