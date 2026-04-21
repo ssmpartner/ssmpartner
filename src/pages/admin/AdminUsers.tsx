@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { Plus, Trash2, KeyRound, Shield, FolderKey } from "lucide-react";
+import { Plus, Trash2, KeyRound, Shield, FolderKey, Search, X, CheckSquare, Square } from "lucide-react";
 import { toast } from "sonner";
 
 const roleLabels: Record<string, string> = {
@@ -54,6 +54,10 @@ const AdminUsers = () => {
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [editingRole, setEditingRole] = useState<string | null>(null);
   const [resetPw, setResetPw] = useState<{ userId: string; password: string } | null>(null);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [bulkRole, setBulkRole] = useState<string>("");
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -137,6 +141,31 @@ const AdminUsers = () => {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      for (const id of ids) await callAction("delete", { user_id: id });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setSelectedUsers([]);
+      toast.success("Benutzer gelöscht");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const bulkRoleMutation = useMutation({
+    mutationFn: async ({ ids, role }: { ids: string[]; role: string }) => {
+      for (const id of ids) await callAction("update_role", { user_id: id, role });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setSelectedUsers([]);
+      setBulkRole("");
+      toast.success("Rollen aktualisiert");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const toggleProject = (projectId: string) => {
     setSelectedProjects((prev) =>
       prev.includes(projectId) ? prev.filter((id) => id !== projectId) : [...prev, projectId]
@@ -145,6 +174,31 @@ const AdminUsers = () => {
 
   const getUserProjects = (userId: string) => {
     return accessList?.filter((a: any) => a.user_id === userId && a.active) || [];
+  };
+
+  const filteredUsers = (users || []).filter((u) => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      u.email.toLowerCase().includes(q) ||
+      (u.display_name || "").toLowerCase().includes(q);
+    const matchesRole = roleFilter === "all" || (u.role || "") === roleFilter;
+    return matchesSearch && matchesRole;
+  });
+
+  const allVisibleSelected =
+    filteredUsers.length > 0 && filteredUsers.every((u) => selectedUsers.includes(u.id));
+
+  const toggleSelectAll = () => {
+    if (allVisibleSelected) {
+      setSelectedUsers((prev) => prev.filter((id) => !filteredUsers.some((u) => u.id === id)));
+    } else {
+      setSelectedUsers((prev) => Array.from(new Set([...prev, ...filteredUsers.map((u) => u.id)])));
+    }
+  };
+
+  const toggleSelectUser = (id: string) => {
+    setSelectedUsers((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
@@ -160,6 +214,83 @@ const AdminUsers = () => {
           <Plus size={18} /> Benutzer erstellen
         </button>
       </div>
+
+      {/* Search & Filter */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Suche nach Name oder E-Mail..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-background border border-border pl-9 pr-9 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          className="bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring sm:w-56"
+        >
+          <option value="all">Alle Rollen</option>
+          {Object.entries(roleLabels).map(([val, label]) => (
+            <option key={val} value={val}>{label}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Action toolbar */}
+      {selectedUsers.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-4 px-4 py-3 bg-primary/5 border border-primary/20 rounded-lg">
+          <span className="font-body text-sm font-medium text-foreground">
+            {selectedUsers.length} ausgewählt
+          </span>
+          <div className="flex items-center gap-2 ml-auto">
+            <select
+              value={bulkRole}
+              onChange={(e) => setBulkRole(e.target.value)}
+              className="bg-background border border-border px-3 py-1.5 font-body text-xs rounded-lg"
+            >
+              <option value="">Rolle ändern...</option>
+              {Object.entries(roleLabels).map(([val, label]) => (
+                <option key={val} value={val}>{label}</option>
+              ))}
+            </select>
+            <button
+              disabled={!bulkRole || bulkRoleMutation.isPending}
+              onClick={() => bulkRoleMutation.mutate({ ids: selectedUsers, role: bulkRole })}
+              className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground font-body text-xs px-3 py-1.5 rounded-lg hover:opacity-90 disabled:opacity-50"
+            >
+              Anwenden
+            </button>
+            <button
+              onClick={() => {
+                if (confirm(`${selectedUsers.length} Benutzer wirklich löschen?`)) {
+                  bulkDeleteMutation.mutate(selectedUsers.filter((id) => id !== user?.id));
+                }
+              }}
+              disabled={bulkDeleteMutation.isPending}
+              className="inline-flex items-center gap-1.5 bg-destructive text-destructive-foreground font-body text-xs px-3 py-1.5 rounded-lg hover:opacity-90 disabled:opacity-50"
+            >
+              <Trash2 size={12} /> Löschen
+            </button>
+            <button
+              onClick={() => setSelectedUsers([])}
+              className="font-body text-xs text-muted-foreground hover:text-foreground px-2"
+            >
+              Aufheben
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Create form */}
       {showCreate && (
@@ -227,6 +358,11 @@ const AdminUsers = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/30">
+                <th className="w-10 px-4 py-3">
+                  <button onClick={toggleSelectAll} className="text-muted-foreground hover:text-foreground">
+                    {allVisibleSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                  </button>
+                </th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Benutzer</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Rolle</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Projekte</th>
@@ -235,10 +371,19 @@ const AdminUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {users?.map((u) => {
+              {filteredUsers.length === 0 && (
+                <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">Keine Benutzer gefunden</td></tr>
+              )}
+              {filteredUsers.map((u) => {
                 const userProjects = getUserProjects(u.id);
+                const isSelected = selectedUsers.includes(u.id);
                 return (
-                  <tr key={u.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                  <tr key={u.id} className={`border-b last:border-0 hover:bg-muted/20 transition-colors ${isSelected ? "bg-primary/5" : ""}`}>
+                    <td className="px-4 py-3">
+                      <button onClick={() => toggleSelectUser(u.id)} className="text-muted-foreground hover:text-foreground">
+                        {isSelected ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
+                      </button>
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary">
