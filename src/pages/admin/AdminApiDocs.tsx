@@ -155,6 +155,97 @@ const agencies = await res.json();`}
         />
       </div>
 
+      {/* Edge Functions */}
+      <div className="bg-card border rounded-xl p-6 mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Zap size={20} className="text-primary" />
+          <h2 className="font-heading text-lg font-semibold text-foreground">Edge Functions ({edgeFunctions.length})</h2>
+        </div>
+        <div className="space-y-2 mb-6">
+          {edgeFunctions.map((f) => (
+            <div key={f.name} className="flex items-start justify-between gap-3 px-3 py-2 border border-border rounded-lg">
+              <div className="min-w-0">
+                <div className="font-body text-sm font-medium text-foreground">
+                  {f.label} <span className="font-mono text-xs text-muted-foreground">/functions/v1/{f.name}</span>
+                </div>
+                <p className="font-body text-xs text-muted-foreground mt-0.5">{f.description}</p>
+              </div>
+              <span className={`shrink-0 font-body text-[10px] px-2 py-0.5 rounded ${f.public ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                {f.public ? "Öffentlich" : "API-Key"}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="font-heading text-sm font-semibold text-foreground mb-2">SSO — Action: verify (Login)</h3>
+        <p className="font-body text-xs text-muted-foreground mb-2">
+          Verifiziert E-Mail/Passwort und liefert Benutzerdaten inkl. Agentur-Zuordnung. Header <code className="bg-muted px-1 rounded">x-sso-api-key</code> erforderlich (api_secret aus sso_projects).
+        </p>
+        <CodeBlock
+          label="Request"
+          code={`POST ${SUPABASE_URL}/functions/v1/sso-auth
+x-sso-api-key: <api_secret>
+Content-Type: application/json
+
+{
+  "action": "verify",
+  "project_key": "ssm-recruit",
+  "email": "user@ssmpartner.ch",
+  "password": "..."
+}`}
+        />
+        <CodeBlock
+          label="Response (200)"
+          code={`{
+  "success": true,
+  "user": {
+    "id": "uuid",
+    "email": "user@ssmpartner.ch",
+    "display_name": "Max Mustermann",
+    "avatar_url": "https://.../avatar.jpg",
+    "role": "teamleiter",
+    "agency_id": "uuid",
+    "agency_name": "Zürich Nord"
+  }
+}`}
+        />
+
+        <h3 className="font-heading text-sm font-semibold text-foreground mb-2 mt-6">SSO — Action: list_project_users (Pull-Sync)</h3>
+        <p className="font-body text-xs text-muted-foreground mb-2">
+          Liefert alle Benutzer, die einem Projekt zugewiesen sind — identische Felder wie verify, ideal für regelmäßige Synchronisation.
+        </p>
+        <CodeBlock
+          label="Request"
+          code={`POST ${SUPABASE_URL}/functions/v1/sso-auth
+x-sso-api-key: <api_secret>
+Content-Type: application/json
+
+{
+  "action": "list_project_users",
+  "project_key": "ssm-recruit"
+}`}
+        />
+        <CodeBlock
+          label="Response (200)"
+          code={`{
+  "success": true,
+  "users": [
+    {
+      "id": "uuid",
+      "email": "user@ssmpartner.ch",
+      "display_name": "Max Mustermann",
+      "avatar_url": "https://.../avatar.jpg",
+      "role": "teamleiter",
+      "agency_id": "uuid",
+      "agency_name": "Zürich Nord",
+      "is_active": true,
+      "assigned_at": "2025-01-15T10:00:00Z"
+    }
+  ]
+}`}
+        />
+      </div>
+
       {/* Tables */}
       <div className="bg-card border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
