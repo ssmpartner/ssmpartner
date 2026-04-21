@@ -60,6 +60,19 @@ const AdminUsers = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [bulkRole, setBulkRole] = useState<string>("");
   const [avatarPickerFor, setAvatarPickerFor] = useState<string | null>(null);
+  const [editingUser, setEditingUser] = useState<UserData | null>(null);
+  const [editForm, setEditForm] = useState({ display_name: "", email: "", new_password: "" });
+  const [editAvatarPicker, setEditAvatarPicker] = useState(false);
+  const [editAvatarUrl, setEditAvatarUrl] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<UserData | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+
+  useEffect(() => {
+    if (editingUser) {
+      setEditForm({ display_name: editingUser.display_name || "", email: editingUser.email, new_password: "" });
+      setEditAvatarUrl(editingUser.avatar_url);
+    }
+  }, [editingUser]);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
