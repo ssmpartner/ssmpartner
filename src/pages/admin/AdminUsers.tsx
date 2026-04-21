@@ -431,16 +431,20 @@ const AdminUsers = () => {
                 const userProjects = getUserProjects(u.id);
                 const isSelected = selectedUsers.includes(u.id);
                 return (
-                  <tr key={u.id} className={`border-b last:border-0 hover:bg-muted/20 transition-colors ${isSelected ? "bg-primary/5" : ""}`}>
+                  <tr
+                    key={u.id}
+                    onClick={() => setEditingUser(u)}
+                    className={`border-b last:border-0 hover:bg-muted/20 transition-colors cursor-pointer ${isSelected ? "bg-primary/5" : ""}`}
+                  >
                     <td className="px-4 py-3">
-                      <button onClick={() => toggleSelectUser(u.id)} className="text-muted-foreground hover:text-foreground">
+                      <button onClick={(e) => { e.stopPropagation(); toggleSelectUser(u.id); }} className="text-muted-foreground hover:text-foreground">
                         {isSelected ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
                       </button>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <button
-                          onClick={() => setAvatarPickerFor(u.id)}
+                          onClick={(e) => { e.stopPropagation(); setAvatarPickerFor(u.id); }}
                           title="Profilbild ändern"
                           className="relative w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary overflow-hidden group ring-1 ring-border hover:ring-primary transition"
                         >
