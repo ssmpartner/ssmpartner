@@ -228,6 +228,16 @@ Deno.serve(async (req) => {
       return json({ success: true });
     }
 
+    if (action === "update_avatar") {
+      const { user_id, avatar_url } = payload;
+      const { error } = await supabaseAdmin
+        .from("profiles")
+        .update({ avatar_url: avatar_url || null })
+        .eq("id", user_id);
+      if (error) throw error;
+      return json({ success: true });
+    }
+
     if (action === "reset_password") {
       const { user_id, new_password } = payload;
       if (!new_password || new_password.length < 8) {

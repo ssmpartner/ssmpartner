@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { Plus, Trash2, KeyRound, Shield, FolderKey, Search, X, CheckSquare, Square } from "lucide-react";
+import { Plus, Trash2, KeyRound, Shield, FolderKey, Search, X, CheckSquare, Square, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import MediaPickerModal from "@/components/MediaPickerModal";
 
 const roleLabels: Record<string, string> = {
   superadmin: "Superadmin",
@@ -58,6 +59,7 @@ const AdminUsers = () => {
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [bulkRole, setBulkRole] = useState<string>("");
+  const [avatarPickerFor, setAvatarPickerFor] = useState<string | null>(null);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -137,6 +139,17 @@ const AdminUsers = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       toast.success("Benutzer gelöscht");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const updateAvatarMutation = useMutation({
+    mutationFn: ({ user_id, avatar_url }: { user_id: string; avatar_url: string | null }) =>
+      callAction("update_avatar", { user_id, avatar_url }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setAvatarPickerFor(null);
+      toast.success("Profilbild aktualisiert");
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -386,9 +399,20 @@ const AdminUsers = () => {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary">
-                          {(u.display_name || u.email).charAt(0).toUpperCase()}
-                        </div>
+                        <button
+                          onClick={() => setAvatarPickerFor(u.id)}
+                          title="Profilbild ändern"
+                          className="relative w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary overflow-hidden group ring-1 ring-border hover:ring-primary transition"
+                        >
+                          {u.avatar_url ? (
+                            <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            (u.display_name || u.email).charAt(0).toUpperCase()
+                          )}
+                          <span className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                            <ImageIcon size={12} className="text-white" />
+                          </span>
+                        </button>
                         <div>
                           <p className="font-body text-sm font-medium text-foreground">{u.display_name || u.email}</p>
                           <p className="font-body text-xs text-muted-foreground">{u.email}</p>
@@ -495,6 +519,16 @@ const AdminUsers = () => {
             </tbody>
           </table>
         </div>
+      )}
+
+      {avatarPickerFor && (
+        <MediaPickerModal
+          open={!!avatarPickerFor}
+          onClose={() => setAvatarPickerFor(null)}
+          accept="image"
+          title="Profilbild auswählen"
+          onSelect={(url) => updateAvatarMutation.mutate({ user_id: avatarPickerFor, avatar_url: url })}
+        />
       )}
     </div>
   );
