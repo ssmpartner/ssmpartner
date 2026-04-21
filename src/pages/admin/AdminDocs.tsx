@@ -106,6 +106,48 @@ const sections = [
   },
 ];
 
+const changelog = [
+  {
+    version: "2.5.0",
+    date: "22. April 2026",
+    changes: [
+      "Neue SSO-Action list_project_users für Pull-Sync",
+      "Team-Verwaltung: Redesign mit Toolbar, Suche, Filter-Dropdown, Kachel-/Listenansicht",
+      "Team-Verwaltung: Modal-Dialog für Bearbeitung statt Inline",
+      "Team-Mehrfachauswahl mit Bulk-Aktionen",
+      "Lösch-Bestätigung per Modal mit «LÖSCHEN»-Eingabe",
+    ],
+  },
+  {
+    version: "2.4.0",
+    date: "Januar 2026",
+    changes: [
+      "SSO-System mit angebundenen Projekten",
+      "Agentur-Verknüpfung über Team-Mitglieder",
+      "Benutzerrollen mit API-Zugriff",
+      "Auth-Audit-Logging",
+    ],
+  },
+  {
+    version: "2.0.0",
+    date: "Oktober 2025",
+    changes: [
+      "KI-Chatbot mit Gemini-Integration",
+      "Online-Check Wizard mit BAG-API",
+      "ElevenLabs TTS & Scribe",
+      "Mehrsprachigkeit (DE/FR/IT/EN)",
+    ],
+  },
+];
+
+const techStack = [
+  { category: "Frontend", items: "React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui, Framer Motion" },
+  { category: "Backend", items: "Supabase (Auth, DB, Storage), Edge Functions (Deno)" },
+  { category: "KI/ML", items: "Google Gemini 2.5 Pro, ElevenLabs TTS & Scribe" },
+  { category: "Maps", items: "Mapbox GL JS" },
+  { category: "Deployment", items: "Lovable Cloud" },
+];
+
 const AdminDocs = () => {
   return (
     <div className="max-w-3xl">
