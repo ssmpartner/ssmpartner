@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, Pencil, X, Check, Upload, ChevronUp, ChevronDown } from "lucide-react";
+import { Trash2, Plus, Pencil, X, Check, Upload, ChevronUp, ChevronDown, Users } from "lucide-react";
 import { toast } from "sonner";
 
 const emptyForm = {
@@ -34,6 +34,22 @@ const AdminAgencies = () => {
       const { data, error } = await supabase.from("agencies").select("*").order("sort_order");
       if (error) throw error;
       return data;
+    },
+  });
+
+  const { data: memberCounts } = useQuery({
+    queryKey: ["admin-agencies-member-counts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("agency_id")
+        .not("agency_id", "is", null);
+      if (error) throw error;
+      const counts: Record<string, number> = {};
+      (data || []).forEach((row: any) => {
+        if (row.agency_id) counts[row.agency_id] = (counts[row.agency_id] || 0) + 1;
+      });
+      return counts;
     },
   });
 
@@ -199,7 +215,7 @@ const AdminAgencies = () => {
                   <textarea value={form.description_it} onChange={(e) => setForm({ ...form, description_it: e.target.value })} placeholder="Beschreibung (IT)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
                   <textarea value={form.description_en} onChange={(e) => setForm({ ...form, description_en: e.target.value })} placeholder="Beschreibung (EN)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
                   <div className="flex gap-2">
-                    <button onClick={() => saveMutation.mutate({ id: agency.id, ...form })} className="text-green-600"><Check size={18} /></button>
+                    <button onClick={() => saveMutation.mutate({ id: agency.id, ...form })} className="text-primary"><Check size={18} /></button>
                     <button onClick={() => setEditing(null)} className="text-muted-foreground"><X size={18} /></button>
                   </div>
                 </div>
@@ -220,8 +236,17 @@ const AdminAgencies = () => {
                     <p className="font-body text-xs text-muted-foreground truncate">{agency.address || "Keine Adresse"}</p>
                   </div>
 
+                  {/* Member count */}
+                  <span
+                    title="Anzahl Mitarbeiter"
+                    className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded"
+                  >
+                    <Users size={12} />
+                    {memberCounts?.[agency.id] ?? 0}
+                  </span>
+
                   {/* Status */}
-                  <span className={`font-body text-xs px-2 py-1 rounded ${agency.active ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"}`}>
+                  <span className={`font-body text-xs px-2 py-1 rounded ${agency.active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                     {agency.active ? "Aktiv" : "Inaktiv"}
                   </span>
 
