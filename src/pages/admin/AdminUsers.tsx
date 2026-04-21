@@ -463,7 +463,7 @@ const AdminUsers = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       {editingRole === u.id ? (
                         <select
                           defaultValue={u.role || ""}
@@ -509,46 +509,18 @@ const AdminUsers = () => {
                         {new Date(u.created_at).toLocaleDateString("de-CH")}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
-                        {resetPw?.userId === u.id ? (
-                          <div className="flex items-center gap-1">
-                            <input
-                              type="password"
-                              placeholder="Neues Passwort"
-                              value={resetPw.password}
-                              onChange={(e) => setResetPw({ ...resetPw, password: e.target.value })}
-                              className="bg-background border border-border px-2 py-1 font-body text-xs rounded w-32"
-                            />
-                            <button
-                              onClick={() => resetPwMutation.mutate({ user_id: u.id, new_password: resetPw.password })}
-                              className="font-body text-xs text-primary hover:underline"
-                            >
-                              OK
-                            </button>
-                            <button
-                              onClick={() => setResetPw(null)}
-                              className="font-body text-xs text-muted-foreground"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setResetPw({ userId: u.id, password: "" })}
-                            className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
-                            title="Passwort zurücksetzen"
-                          >
-                            <KeyRound size={14} />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => setEditingUser(u)}
+                          className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
+                          title="Bearbeiten"
+                        >
+                          <Pencil size={14} />
+                        </button>
                         {u.id !== user?.id && (
                           <button
-                            onClick={() => {
-                              if (confirm(`"${u.display_name || u.email}" wirklich löschen?`)) {
-                                deleteMutation.mutate(u.id);
-                              }
-                            }}
+                            onClick={() => { setDeleteTarget(u); setDeleteConfirmText(""); }}
                             className="p-1.5 text-muted-foreground hover:text-destructive rounded-md hover:bg-destructive/10 transition-colors"
                             title="Benutzer löschen"
                           >
