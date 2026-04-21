@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { Plus, Trash2, KeyRound, Shield, FolderKey, Search, X, CheckSquare, Square, Image as ImageIcon } from "lucide-react";
+import { Plus, Trash2, KeyRound, Shield, FolderKey, Search, X, CheckSquare, Square, Image as ImageIcon, Mail, User as UserIcon, RefreshCw, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import MediaPickerModal from "@/components/MediaPickerModal";
 
@@ -60,6 +60,19 @@ const AdminUsers = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [bulkRole, setBulkRole] = useState<string>("");
   const [avatarPickerFor, setAvatarPickerFor] = useState<string | null>(null);
+  const [editingUser, setEditingUser] = useState<UserData | null>(null);
+  const [editForm, setEditForm] = useState({ display_name: "", email: "", new_password: "" });
+  const [editAvatarPicker, setEditAvatarPicker] = useState(false);
+  const [editAvatarUrl, setEditAvatarUrl] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<UserData | null>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+
+  useEffect(() => {
+    if (editingUser) {
+      setEditForm({ display_name: editingUser.display_name || "", email: editingUser.email, new_password: "" });
+      setEditAvatarUrl(editingUser.avatar_url);
+    }
+  }, [editingUser]);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -150,6 +163,33 @@ const AdminUsers = () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       setAvatarPickerFor(null);
       toast.success("Profilbild aktualisiert");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const saveUserMutation = useMutation({
+    mutationFn: async () => {
+      if (!editingUser) return;
+      const tasks: Promise<any>[] = [];
+      if (editForm.display_name !== (editingUser.display_name || "")) {
+        tasks.push(callAction("update_display_name", { user_id: editingUser.id, display_name: editForm.display_name }));
+      }
+      if (editForm.email && editForm.email !== editingUser.email) {
+        tasks.push(callAction("update_email", { user_id: editingUser.id, new_email: editForm.email }));
+      }
+      if (editForm.new_password) {
+        if (editForm.new_password.length < 8) throw new Error("Passwort muss mindestens 8 Zeichen lang sein");
+        tasks.push(callAction("reset_password", { user_id: editingUser.id, new_password: editForm.new_password }));
+      }
+      if (editAvatarUrl !== editingUser.avatar_url) {
+        tasks.push(callAction("update_avatar", { user_id: editingUser.id, avatar_url: editAvatarUrl }));
+      }
+      await Promise.all(tasks);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success("Benutzer aktualisiert");
+      setEditingUser(null);
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -391,16 +431,20 @@ const AdminUsers = () => {
                 const userProjects = getUserProjects(u.id);
                 const isSelected = selectedUsers.includes(u.id);
                 return (
-                  <tr key={u.id} className={`border-b last:border-0 hover:bg-muted/20 transition-colors ${isSelected ? "bg-primary/5" : ""}`}>
+                  <tr
+                    key={u.id}
+                    onClick={() => setEditingUser(u)}
+                    className={`border-b last:border-0 hover:bg-muted/20 transition-colors cursor-pointer ${isSelected ? "bg-primary/5" : ""}`}
+                  >
                     <td className="px-4 py-3">
-                      <button onClick={() => toggleSelectUser(u.id)} className="text-muted-foreground hover:text-foreground">
+                      <button onClick={(e) => { e.stopPropagation(); toggleSelectUser(u.id); }} className="text-muted-foreground hover:text-foreground">
                         {isSelected ? <CheckSquare size={16} className="text-primary" /> : <Square size={16} />}
                       </button>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <button
-                          onClick={() => setAvatarPickerFor(u.id)}
+                          onClick={(e) => { e.stopPropagation(); setAvatarPickerFor(u.id); }}
                           title="Profilbild ändern"
                           className="relative w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xs font-semibold text-primary overflow-hidden group ring-1 ring-border hover:ring-primary transition"
                         >
@@ -419,7 +463,7 @@ const AdminUsers = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       {editingRole === u.id ? (
                         <select
                           defaultValue={u.role || ""}
@@ -465,46 +509,18 @@ const AdminUsers = () => {
                         {new Date(u.created_at).toLocaleDateString("de-CH")}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-1">
-                        {resetPw?.userId === u.id ? (
-                          <div className="flex items-center gap-1">
-                            <input
-                              type="password"
-                              placeholder="Neues Passwort"
-                              value={resetPw.password}
-                              onChange={(e) => setResetPw({ ...resetPw, password: e.target.value })}
-                              className="bg-background border border-border px-2 py-1 font-body text-xs rounded w-32"
-                            />
-                            <button
-                              onClick={() => resetPwMutation.mutate({ user_id: u.id, new_password: resetPw.password })}
-                              className="font-body text-xs text-primary hover:underline"
-                            >
-                              OK
-                            </button>
-                            <button
-                              onClick={() => setResetPw(null)}
-                              className="font-body text-xs text-muted-foreground"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setResetPw({ userId: u.id, password: "" })}
-                            className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
-                            title="Passwort zurücksetzen"
-                          >
-                            <KeyRound size={14} />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => setEditingUser(u)}
+                          className="p-1.5 text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors"
+                          title="Bearbeiten"
+                        >
+                          <Pencil size={14} />
+                        </button>
                         {u.id !== user?.id && (
                           <button
-                            onClick={() => {
-                              if (confirm(`"${u.display_name || u.email}" wirklich löschen?`)) {
-                                deleteMutation.mutate(u.id);
-                              }
-                            }}
+                            onClick={() => { setDeleteTarget(u); setDeleteConfirmText(""); }}
                             className="p-1.5 text-muted-foreground hover:text-destructive rounded-md hover:bg-destructive/10 transition-colors"
                             title="Benutzer löschen"
                           >
@@ -529,6 +545,189 @@ const AdminUsers = () => {
           title="Profilbild auswählen"
           onSelect={(url) => updateAvatarMutation.mutate({ user_id: avatarPickerFor, avatar_url: url })}
         />
+      )}
+
+      {/* Edit User Modal */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setEditingUser(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="bg-card border rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b flex items-center justify-between">
+              <h2 className="font-heading text-lg font-semibold text-foreground">Benutzer bearbeiten</h2>
+              <button onClick={() => setEditingUser(null)} className="text-muted-foreground hover:text-foreground">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-5">
+              {/* Avatar */}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setEditAvatarPicker(true)}
+                  className="relative w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center font-heading text-xl font-semibold text-primary overflow-hidden group ring-1 ring-border hover:ring-primary transition"
+                >
+                  {editAvatarUrl ? (
+                    <img src={editAvatarUrl} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    (editForm.display_name || editingUser.email).charAt(0).toUpperCase()
+                  )}
+                  <span className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                    <ImageIcon size={20} className="text-white" />
+                  </span>
+                </button>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => setEditAvatarPicker(true)}
+                    className="font-body text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition"
+                  >
+                    Profilbild wählen
+                  </button>
+                  {editAvatarUrl && (
+                    <button
+                      onClick={() => setEditAvatarUrl(null)}
+                      className="font-body text-xs text-destructive hover:underline text-left"
+                    >
+                      Entfernen
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Display Name */}
+              <div>
+                <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-1.5">
+                  <UserIcon size={12} /> Anzeigename
+                </label>
+                <input
+                  value={editForm.display_name}
+                  onChange={(e) => setEditForm({ ...editForm, display_name: e.target.value })}
+                  className={inputClass}
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-1.5">
+                  <Mail size={12} /> E-Mail
+                </label>
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  className={inputClass}
+                />
+              </div>
+
+              {/* New Password */}
+              <div>
+                <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-1.5">
+                  <KeyRound size={12} /> Neues Passwort (leer lassen für unverändert)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Min. 8 Zeichen"
+                    value={editForm.new_password}
+                    onChange={(e) => setEditForm({ ...editForm, new_password: e.target.value })}
+                    className={inputClass}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$";
+                      let pw = "";
+                      for (let i = 0; i < 14; i++) pw += chars.charAt(Math.floor(Math.random() * chars.length));
+                      setEditForm({ ...editForm, new_password: pw });
+                    }}
+                    title="Passwort generieren"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border hover:bg-muted font-body text-xs whitespace-nowrap"
+                  >
+                    <RefreshCw size={12} /> Generieren
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t flex items-center justify-between">
+              {editingUser.id !== user?.id ? (
+                <button
+                  onClick={() => { setDeleteTarget(editingUser); setDeleteConfirmText(""); setEditingUser(null); }}
+                  className="inline-flex items-center gap-1.5 font-body text-sm text-destructive hover:underline"
+                >
+                  <Trash2 size={14} /> Löschen
+                </button>
+              ) : <span />}
+              <div className="flex gap-2">
+                <button onClick={() => setEditingUser(null)} className="font-body text-sm text-muted-foreground px-4 py-2">Abbrechen</button>
+                <button
+                  onClick={() => saveUserMutation.mutate()}
+                  disabled={saveUserMutation.isPending}
+                  className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm px-4 py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
+                >
+                  Speichern
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {editAvatarPicker && (
+            <MediaPickerModal
+              open={editAvatarPicker}
+              onClose={() => setEditAvatarPicker(false)}
+              accept="image"
+              title="Profilbild auswählen"
+              onSelect={(url) => { setEditAvatarUrl(url); setEditAvatarPicker(false); }}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={() => setDeleteTarget(null)}>
+          <div onClick={(e) => e.stopPropagation()} className="bg-card border rounded-2xl shadow-xl w-full max-w-md">
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <Trash2 size={18} className="text-destructive" />
+                </div>
+                <h2 className="font-heading text-lg font-semibold text-foreground">Benutzer löschen</h2>
+              </div>
+              <p className="font-body text-sm text-muted-foreground">
+                Diese Aktion kann nicht rückgängig gemacht werden. Der Benutzer
+                <span className="font-semibold text-foreground"> {deleteTarget.display_name || deleteTarget.email}</span> wird unwiderruflich gelöscht.
+              </p>
+              {(deleteTarget.role === "superadmin" || deleteTarget.role === "admin") && (
+                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 font-body text-xs text-destructive">
+                  ⚠️ Achtung: Dieser Benutzer hat <strong>{roleLabels[deleteTarget.role]}</strong>-Rechte.
+                </div>
+              )}
+              <div>
+                <label className="font-body text-xs text-muted-foreground block mb-1.5">
+                  Geben Sie zur Bestätigung <span className="font-mono font-semibold text-foreground">LÖSCHEN</span> ein:
+                </label>
+                <input
+                  autoFocus
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="LÖSCHEN"
+                  className={inputClass}
+                />
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t flex justify-end gap-2">
+              <button onClick={() => setDeleteTarget(null)} className="font-body text-sm text-muted-foreground px-4 py-2">Abbrechen</button>
+              <button
+                disabled={deleteConfirmText !== "LÖSCHEN" || deleteMutation.isPending}
+                onClick={() => {
+                  deleteMutation.mutate(deleteTarget.id, {
+                    onSuccess: () => setDeleteTarget(null),
+                  });
+                }}
+                className="inline-flex items-center gap-2 bg-destructive text-destructive-foreground font-body text-sm px-4 py-2 rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <Trash2 size={14} /> Endgültig löschen
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
