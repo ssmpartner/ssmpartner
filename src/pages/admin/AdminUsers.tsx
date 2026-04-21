@@ -520,6 +520,16 @@ const AdminUsers = () => {
           </table>
         </div>
       )}
+
+      {avatarPickerFor && (
+        <MediaPickerModal
+          open={!!avatarPickerFor}
+          onClose={() => setAvatarPickerFor(null)}
+          accept="image"
+          title="Profilbild auswählen"
+          onSelect={(url) => updateAvatarMutation.mutate({ user_id: avatarPickerFor, avatar_url: url })}
+        />
+      )}
     </div>
   );
 };
