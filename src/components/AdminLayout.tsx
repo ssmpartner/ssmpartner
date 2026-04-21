@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Image, Users, UserCog, Briefcase, FileText, LogOut, KeyRound,
   Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2,
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
-  MessageSquare, PanelLeftClose, PanelLeft,
+  MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
 } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -69,13 +69,14 @@ function SidebarNavItem({
 }
 
 const AdminLayout = () => {
-  const { signOut, user } = useAuth();
+  const { signOut, user, profile } = useAuth();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
 
-  const initials = (user?.email || "A")
-    .split("@")[0]
-    .split(".")
+  const displayName = profile?.display_name || user?.email?.split("@")[0] || "Admin";
+  const initials = displayName
+    .split(/[\s.@]+/)
+    .filter(Boolean)
     .map((w) => w[0])
     .join("")
     .toUpperCase()
@@ -170,15 +171,40 @@ const AdminLayout = () => {
         {/* Main content */}
         <div className={`transition-all duration-300 ${collapsed ? "pl-[68px]" : "pl-64"}`}>
           {/* Top header bar */}
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-end border-b bg-card/90 backdrop-blur-md px-8">
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center text-xs font-semibold text-primary-foreground">
-                {initials}
-              </div>
-              <div className="text-sm">
-                <p className="font-medium leading-none font-body">{user?.email?.split("@")[0] || "Admin"}</p>
-                <p className="text-xs text-muted-foreground font-body">{user?.email}</p>
-              </div>
+          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b bg-card/90 backdrop-blur-md px-8 gap-4">
+            <Link
+              to="/portal"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted hover:border-primary/50 transition-colors font-body"
+              title="Zum Portal wechseln"
+            >
+              <ArrowLeftRight className="h-3.5 w-3.5" />
+              Portal
+            </Link>
+
+            <div className="flex items-center gap-2">
+              <Link
+                to="/admin/settings"
+                className="inline-flex items-center justify-center h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Einstellungen"
+              >
+                <Settings className="h-[18px] w-[18px]" />
+              </Link>
+
+              <div className="h-6 w-px bg-border mx-1" />
+
+              <Link to="/admin/users" className="flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors" title="Profil bearbeiten">
+                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary overflow-hidden ring-1 ring-border">
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    initials
+                  )}
+                </div>
+                <div className="text-sm hidden sm:block">
+                  <p className="font-medium leading-none font-body">{displayName}</p>
+                  <p className="text-xs text-muted-foreground font-body mt-0.5">{user?.email}</p>
+                </div>
+              </Link>
             </div>
           </header>
 
