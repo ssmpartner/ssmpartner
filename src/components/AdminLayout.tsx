@@ -5,9 +5,17 @@ import {
   Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2,
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
   MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
+  User, ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const adminLinks = [
   { to: "/admin", label: "Übersicht", icon: LayoutDashboard, end: true },
