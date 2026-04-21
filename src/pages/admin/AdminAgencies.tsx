@@ -37,6 +37,22 @@ const AdminAgencies = () => {
     },
   });
 
+  const { data: memberCounts } = useQuery({
+    queryKey: ["admin-agencies-member-counts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("agency_id")
+        .not("agency_id", "is", null);
+      if (error) throw error;
+      const counts: Record<string, number> = {};
+      (data || []).forEach((row: any) => {
+        if (row.agency_id) counts[row.agency_id] = (counts[row.agency_id] || 0) + 1;
+      });
+      return counts;
+    },
+  });
+
   const saveMutation = useMutation({
     mutationFn: async (item: any) => {
       const prepared = {
