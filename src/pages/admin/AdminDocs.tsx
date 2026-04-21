@@ -233,7 +233,7 @@ const AdminDocs = () => {
                     }`}>{entry.type}</span>
                     <span className="text-xs text-muted-foreground">{entry.date}</span>
                     {idx === 0 && (
-                      <span className="text-[10px] uppercase tracking-wide bg-green-500/15 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded font-medium">Aktuell</span>
+                      <span className="text-[10px] uppercase tracking-wide bg-primary/10 text-primary px-1.5 py-0.5 rounded font-medium">Aktuell</span>
                     )}
                   </div>
                   <ul className="space-y-1">
