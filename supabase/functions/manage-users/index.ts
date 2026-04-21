@@ -228,6 +228,16 @@ Deno.serve(async (req) => {
       return json({ success: true });
     }
 
+    if (action === "update_display_name") {
+      const { user_id, display_name } = payload;
+      const { error } = await supabaseAdmin
+        .from("profiles")
+        .update({ display_name: display_name || "" })
+        .eq("id", user_id);
+      if (error) throw error;
+      return json({ success: true });
+    }
+
     if (action === "update_avatar") {
       const { user_id, avatar_url } = payload;
       const { error } = await supabaseAdmin
