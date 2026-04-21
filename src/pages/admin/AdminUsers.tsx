@@ -54,6 +54,10 @@ const AdminUsers = () => {
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [editingRole, setEditingRole] = useState<string | null>(null);
   const [resetPw, setResetPw] = useState<{ userId: string; password: string } | null>(null);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [bulkRole, setBulkRole] = useState<string>("");
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
