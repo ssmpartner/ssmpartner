@@ -331,6 +331,33 @@ const AdminTeam = () => {
             <input placeholder="E-Mail" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
           </div>
 
+          <div>
+            <label className="font-heading text-xs font-medium text-muted-foreground block mb-1.5">
+              Verknüpfter Benutzer (optional)
+            </label>
+            <select
+              value={form.user_id}
+              onChange={(e) => setForm({ ...form, user_id: e.target.value })}
+              className={inputClass}
+            >
+              <option value="">– Kein Benutzer verknüpft –</option>
+              {appUsers
+                ?.slice()
+                .sort((a, b) => (a.display_name || a.email).localeCompare(b.display_name || b.email))
+                .map((u) => {
+                  const taken = members?.find((m: any) => m.user_id === u.id && m.id !== editingId);
+                  return (
+                    <option key={u.id} value={u.id} disabled={!!taken}>
+                      {(u.display_name || u.email)} — {u.email}{taken ? ` (bereits: ${taken.name})` : ""}
+                    </option>
+                  );
+                })}
+            </select>
+            <p className="font-body text-[10px] text-muted-foreground mt-1">
+              Verknüpft das Teamprofil mit einem CMS-Benutzerkonto (1:1).
+            </p>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <input placeholder="Rolle (DE)" value={form.role_de} onChange={(e) => setForm({ ...form, role_de: e.target.value })} className={inputClass} />
             <input placeholder="Rolle (FR)" value={form.role_fr} onChange={(e) => setForm({ ...form, role_fr: e.target.value })} className={inputClass} />
