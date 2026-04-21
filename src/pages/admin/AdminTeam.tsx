@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Save, Trash2, Upload, Crop, FolderOpen, Search, X, CheckSquare, Square, Pencil, Eye, EyeOff } from "lucide-react";
+import { Plus, Save, Trash2, Upload, Crop, FolderOpen, Search, X, CheckSquare, Square, Pencil, Eye, EyeOff, LayoutGrid, List } from "lucide-react";
 import { toast } from "sonner";
 import ImageCropModal from "@/components/ImageCropModal";
 import MediaPickerModal from "@/components/MediaPickerModal";
@@ -33,12 +33,15 @@ const AdminTeam = () => {
   const [uploading, setUploading] = useState(false);
   const [filter, setFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">(() => (localStorage.getItem("admin-team-view") as "grid" | "list") || "grid");
   const [selected, setSelected] = useState<string[]>([]);
   const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState("");
   const [cropModal, setCropModal] = useState<{ src: string; memberId?: string } | null>(null);
   const [mediaPickerOpen, setMediaPickerOpen] = useState<{ memberId?: string } | null>(null);
+
+  useEffect(() => { localStorage.setItem("admin-team-view", viewMode); }, [viewMode]);
 
   const { data: agencies } = useQuery({
     queryKey: ["admin-agencies-list"],
