@@ -215,7 +215,7 @@ const AdminAgencies = () => {
                   <textarea value={form.description_it} onChange={(e) => setForm({ ...form, description_it: e.target.value })} placeholder="Beschreibung (IT)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
                   <textarea value={form.description_en} onChange={(e) => setForm({ ...form, description_en: e.target.value })} placeholder="Beschreibung (EN)" rows={2} className="w-full border rounded-lg px-3 py-2 text-sm" />
                   <div className="flex gap-2">
-                    <button onClick={() => saveMutation.mutate({ id: agency.id, ...form })} className="text-green-600"><Check size={18} /></button>
+                    <button onClick={() => saveMutation.mutate({ id: agency.id, ...form })} className="text-primary"><Check size={18} /></button>
                     <button onClick={() => setEditing(null)} className="text-muted-foreground"><X size={18} /></button>
                   </div>
                 </div>
