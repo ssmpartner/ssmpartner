@@ -167,6 +167,33 @@ const AdminUsers = () => {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const saveUserMutation = useMutation({
+    mutationFn: async () => {
+      if (!editingUser) return;
+      const tasks: Promise<any>[] = [];
+      if (editForm.display_name !== (editingUser.display_name || "")) {
+        tasks.push(callAction("update_display_name", { user_id: editingUser.id, display_name: editForm.display_name }));
+      }
+      if (editForm.email && editForm.email !== editingUser.email) {
+        tasks.push(callAction("update_email", { user_id: editingUser.id, new_email: editForm.email }));
+      }
+      if (editForm.new_password) {
+        if (editForm.new_password.length < 8) throw new Error("Passwort muss mindestens 8 Zeichen lang sein");
+        tasks.push(callAction("reset_password", { user_id: editingUser.id, new_password: editForm.new_password }));
+      }
+      if (editAvatarUrl !== editingUser.avatar_url) {
+        tasks.push(callAction("update_avatar", { user_id: editingUser.id, avatar_url: editAvatarUrl }));
+      }
+      await Promise.all(tasks);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      toast.success("Benutzer aktualisiert");
+      setEditingUser(null);
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
       for (const id of ids) await callAction("delete", { user_id: id });
