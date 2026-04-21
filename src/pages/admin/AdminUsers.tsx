@@ -642,6 +642,29 @@ const AdminUsers = () => {
                 />
               </div>
 
+              {/* Agency */}
+              <div>
+                <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-1.5">
+                  <Shield size={12} /> Agentur
+                </label>
+                <div className="flex items-center gap-2">
+                  {userAgencyMap?.[editingUser.id] ? (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="font-body text-sm text-foreground">{userAgencyMap[editingUser.id]}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="w-2 h-2 rounded-full bg-muted" />
+                      <span className="font-body text-sm text-muted-foreground">Keiner Agentur zugeordnet</span>
+                    </>
+                  )}
+                </div>
+                <p className="font-body text-xs text-muted-foreground mt-1">
+                  Die Agentur-Zuordnung erfolgt im <a href="/admin/team" className="text-primary hover:underline">Team-Management</a> über das Teammitglied.
+                </p>
+              </div>
+
               {/* New Password */}
               <div>
                 <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-1.5">
