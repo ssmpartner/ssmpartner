@@ -269,29 +269,28 @@ const AdminTeam = () => {
         </button>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-4">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input
-          type="text"
-          placeholder="Suche nach Name, Rolle, E-Mail oder Telefon..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-background border border-border pl-9 pr-9 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
-        />
-        {search && (
-          <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-            <X size={14} />
-          </button>
-        )}
-      </div>
+      {/* Toolbar: search + filter + view toggle on one line */}
+      <div className="flex items-center gap-2 mb-4">
+        <div className="relative flex-1 max-w-sm">
+          <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Suchen..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full h-9 bg-background border border-border pl-8 pr-7 font-body text-xs rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+              <X size={12} />
+            </button>
+          )}
+        </div>
 
-      {/* Filter dropdown + view toggle */}
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="bg-card border border-border font-body text-sm px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          className="h-9 bg-background border border-border font-body text-xs px-2.5 pr-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring min-w-[160px]"
         >
           {categories.map((c) => {
             const count =
@@ -320,24 +319,24 @@ const AdminTeam = () => {
           )}
         </select>
 
-        <div className="ml-auto inline-flex items-center bg-card border border-border rounded-lg p-0.5">
+        <div className="inline-flex items-center h-9 bg-background border border-border rounded-lg p-0.5">
           <button
             onClick={() => setViewMode("grid")}
-            className={`inline-flex items-center gap-1.5 font-body text-xs px-2.5 py-1.5 rounded-md transition-colors ${
+            className={`inline-flex items-center justify-center w-8 h-full rounded-md transition-colors ${
               viewMode === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             }`}
             title="Kachelansicht"
           >
-            <LayoutGrid size={14} /> Kacheln
+            <LayoutGrid size={14} />
           </button>
           <button
             onClick={() => setViewMode("list")}
-            className={`inline-flex items-center gap-1.5 font-body text-xs px-2.5 py-1.5 rounded-md transition-colors ${
+            className={`inline-flex items-center justify-center w-8 h-full rounded-md transition-colors ${
               viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
             }`}
             title="Listenansicht"
           >
-            <List size={14} /> Liste
+            <List size={14} />
           </button>
         </div>
       </div>
