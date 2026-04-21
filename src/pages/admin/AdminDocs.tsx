@@ -1,6 +1,6 @@
-import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift } from "lucide-react";
+import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2 } from "lucide-react";
 
-const CMS_VERSION = "2.4.0";
+const CMS_VERSION = "2.5.0";
 
 const sections = [
   {
@@ -21,7 +21,22 @@ const sections = [
   {
     icon: Users,
     title: "Team-Verwaltung",
-    content: "Unter «Team» fügen Sie Mitglieder hinzu und weisen sie einer Kategorie zu: Geschäftsleitung, Fachführung, Erweitertes Team oder einer Agentur. Pro Agentur kann ein Mitglied als Agenturleiter/in markiert werden (★). Badges wie Verkaufsleiter, Teamleiter, Finanzexperte, Finanzcoach, Finanzcoach VBV oder Trainee können individuell vergeben werden und erscheinen auf dem Profilbild. Beim Hochladen von Teamfotos kann der Zuschnitt (3:4) angepasst werden — auch nachträglich über die Mediathek oder den «Zuschnitt»-Button.",
+    content: "Unter «Team» fügen Sie Mitglieder hinzu und weisen sie einer Kategorie zu: Geschäftsleitung, Fachführung, Erweitertes Team oder einer Agentur. Pro Agentur kann ein Mitglied als Agenturleiter/in markiert werden (★). Badges wie Verkaufsleiter, Teamleiter, Finanzexperte, Finanzcoach, Finanzcoach VBV oder Trainee können individuell vergeben werden. Über das Feld «Benutzer verknüpfen» wird ein Teammitglied 1:1 mit einem CMS-Benutzer verbunden — diese Verknüpfung liefert die Agentur-Zuordnung an die Benutzerverwaltung und an alle SSO-Projekte (z.B. SSM Recruit). Komfortfunktionen: Suchfeld, Filter-Dropdown (inkl. einzelner Agenturen), Kacheln-/Listenansicht und Mehrfachauswahl mit Bulk-Aktionen (Aktivieren, Deaktivieren, Löschen mit Bestätigung «LÖSCHEN»).",
+  },
+  {
+    icon: Shield,
+    title: "Benutzerverwaltung",
+    content: "Unter «Benutzer» verwalten Superadmins alle CMS-Konten. Pro Benutzer können Sie Anzeigename, E-Mail, Passwort, Rolle (superadmin, admin, backoffice, analyst, teamleiter, controlling, geschaeftsleitung, hr, agency_manager, vertriebsleiter, agenturleiter, finanzcoach, trainee, verkaufsleiter) und SSO-Projekt-Zugriffe setzen. Die Agentur-Zuordnung wird automatisch aus der Team-Verknüpfung übernommen und im Bearbeiten-Modal zwischen E-Mail und Passwort angezeigt. Die Einstellungen sind im Dropdown des Benutzerprofils oben rechts erreichbar.",
+  },
+  {
+    icon: KeyRound,
+    title: "SSO & Zugriffsverwaltung",
+    content: "Unter «SSO» legen Superadmins angebundene Projekte (z.B. SSM Recruit) an: project_key, Name, optionale API-URL und API-Secret. Pro Projekt wird gesteuert, welche Benutzer Zugriff haben. Die zentrale Edge Function «sso-auth» liefert beim Login (Action verify) und beim Pull-Sync (Action list_project_users) für jeden Benutzer einheitlich: id, email, display_name, avatar_url, role und agency_id/agency_name (aus der Team-Verknüpfung). Auth-Audit-Logs werden in der Tabelle auth_audit_log geführt.",
+  },
+  {
+    icon: Link2,
+    title: "Agentur-Verknüpfung",
+    content: "Die Agentur-Zugehörigkeit eines Benutzers wird zentral über das Team-Mitglied gepflegt: team_members.user_id verknüpft 1:1 mit auth.users.id, das Feld team_members.agency_id zeigt auf die jeweilige Agentur. Diese Verknüpfung ist die einzige Quelle der Wahrheit — sowohl die Benutzerverwaltung im CMS als auch alle angebundenen Projekte über SSO erhalten dieselbe Agentur-Information.",
   },
   {
     icon: Building2,
