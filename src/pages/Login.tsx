@@ -14,6 +14,7 @@ const Login = () => {
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("ssm_remember_me") === "true");
+  const [authError, setAuthError] = useState<string | null>(null);
 
   // SSO redirect params
   const ssoRedirect = searchParams.get("redirect_uri");
@@ -28,6 +29,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password) return;
+    setAuthError(null);
     setSubmitting(true);
 
     // SSO redirect flow: verify via SSO API, then redirect back
@@ -58,7 +60,9 @@ const Login = () => {
         return;
       } catch (err: any) {
         setSubmitting(false);
-        toast.error(err.message || "SSO-Authentifizierung fehlgeschlagen");
+        const msg = err.message || "SSO-Authentifizierung fehlgeschlagen";
+        setAuthError(msg);
+        toast.error(msg);
         return;
       }
     }
@@ -76,11 +80,12 @@ const Login = () => {
       }
       navigate("/portal");
     } else {
-      toast.error(
+      const msg =
         error.message === "Invalid login credentials"
-          ? "Ungültige Anmeldedaten. Bitte prüfen Sie E-Mail und Passwort."
-          : error.message
-      );
+          ? "Passwort oder E-Mail ist nicht korrekt."
+          : error.message;
+      setAuthError(msg);
+      toast.error(msg);
     }
   };
 
