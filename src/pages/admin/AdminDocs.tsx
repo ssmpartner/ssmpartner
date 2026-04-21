@@ -1,6 +1,7 @@
-import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2 } from "lucide-react";
+import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, MessageSquare, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2, Code, History } from "lucide-react";
 
 const CMS_VERSION = "2.5.0";
+const RELEASE_DATE = "22. April 2026";
 
 const sections = [
   {
