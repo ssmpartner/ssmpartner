@@ -434,6 +434,7 @@ const AdminUsers = () => {
                 </th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Benutzer</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Rolle</th>
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Agentur</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Projekte</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Erstellt</th>
                 <th className="font-heading text-xs font-medium text-muted-foreground text-right px-4 py-3">Aktionen</th>
@@ -441,7 +442,7 @@ const AdminUsers = () => {
             </thead>
             <tbody>
               {filteredUsers.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">Keine Benutzer gefunden</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">Keine Benutzer gefunden</td></tr>
               )}
               {filteredUsers.map((u) => {
                 const userProjects = getUserProjects(u.id);
