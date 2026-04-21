@@ -59,6 +59,7 @@ const AdminUsers = () => {
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [bulkRole, setBulkRole] = useState<string>("");
+  const [avatarPickerFor, setAvatarPickerFor] = useState<string | null>(null);
 
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -138,6 +139,17 @@ const AdminUsers = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       toast.success("Benutzer gelöscht");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const updateAvatarMutation = useMutation({
+    mutationFn: ({ user_id, avatar_url }: { user_id: string; avatar_url: string | null }) =>
+      callAction("update_avatar", { user_id, avatar_url }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setAvatarPickerFor(null);
+      toast.success("Profilbild aktualisiert");
     },
     onError: (err: any) => toast.error(err.message),
   });
