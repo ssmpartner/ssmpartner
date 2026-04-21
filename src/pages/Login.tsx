@@ -14,6 +14,7 @@ const Login = () => {
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("ssm_remember_me") === "true");
+  const [authError, setAuthError] = useState<string | null>(null);
 
   // SSO redirect params
   const ssoRedirect = searchParams.get("redirect_uri");
@@ -28,6 +29,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password) return;
+    setAuthError(null);
     setSubmitting(true);
 
     // SSO redirect flow: verify via SSO API, then redirect back
@@ -58,7 +60,9 @@ const Login = () => {
         return;
       } catch (err: any) {
         setSubmitting(false);
-        toast.error(err.message || "SSO-Authentifizierung fehlgeschlagen");
+        const msg = err.message || "SSO-Authentifizierung fehlgeschlagen";
+        setAuthError(msg);
+        toast.error(msg);
         return;
       }
     }
@@ -76,11 +80,12 @@ const Login = () => {
       }
       navigate("/portal");
     } else {
-      toast.error(
+      const msg =
         error.message === "Invalid login credentials"
-          ? "Ungültige Anmeldedaten. Bitte prüfen Sie E-Mail und Passwort."
-          : error.message
-      );
+          ? "Passwort oder E-Mail ist nicht korrekt."
+          : error.message;
+      setAuthError(msg);
+      toast.error(msg);
     }
   };
 
@@ -131,8 +136,8 @@ const Login = () => {
                 required
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-11 w-full rounded-xl border border-white/20 bg-white/10 px-4 pr-10 text-sm text-white font-body outline-none focus:ring-2 focus:ring-white/30 transition-shadow placeholder:text-white/40"
+                onChange={(e) => { setPassword(e.target.value); if (authError) setAuthError(null); }}
+                className={`h-11 w-full rounded-xl border bg-white/10 px-4 pr-10 text-sm text-white font-body outline-none focus:ring-2 transition-shadow placeholder:text-white/40 ${authError ? "border-red-400 focus:ring-red-400/50" : "border-white/20 focus:ring-white/30"}`}
                 placeholder="••••••••"
               />
               <button
@@ -143,6 +148,9 @@ const Login = () => {
                 {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {authError && (
+              <p className="mt-2 text-xs font-body text-red-300">{authError}</p>
+            )}
           </div>
 
           {!ssoProjectKey && (
@@ -169,6 +177,9 @@ const Login = () => {
             {submitting ? "Wird angemeldet..." : "Anmelden"}
           </button>
         </form>
+        <p className="text-center text-xs text-white/50 font-body">
+          SSM Partner AG. Eine Tochtergesellschaft der Visana-Gruppe. Gebundener Vermittler gemäss VAG.
+        </p>
       </div>
     </div>
   );
