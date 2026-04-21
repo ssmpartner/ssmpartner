@@ -266,8 +266,13 @@ Deno.serve(async (req) => {
     }
 
     if (action === "list") {
-      const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers();
-      if (error) throw error;
+      const users: any[] = [];
+      for (let page = 1; page <= 50; page++) {
+        const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 200 });
+        if (error) throw error;
+        users.push(...data.users);
+        if (data.users.length < 200) break;
+      }
 
       const [{ data: roles }, { data: profiles }] = await Promise.all([
         supabaseAdmin.from("user_roles").select("*"),
