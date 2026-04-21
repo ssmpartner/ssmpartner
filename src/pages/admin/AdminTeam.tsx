@@ -391,7 +391,7 @@ const AdminTeam = () => {
 
       {isLoading ? (
         <p className="font-body text-sm text-muted-foreground">Laden...</p>
-      ) : (
+      ) : viewMode === "grid" ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {filteredMembers?.length === 0 && (
             <div className="col-span-full text-center py-12 font-body text-sm text-muted-foreground">
@@ -528,6 +528,82 @@ const AdminTeam = () => {
                       <Trash2 size={13} />
                     </button>
                   </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="bg-card border border-border rounded-lg overflow-hidden divide-y divide-border">
+          {filteredMembers?.length === 0 && (
+            <div className="text-center py-12 font-body text-sm text-muted-foreground">
+              Keine Teammitglieder gefunden.
+            </div>
+          )}
+          {filteredMembers?.map((m) => {
+            const isSel = selected.includes(m.id);
+            return (
+              <div
+                key={m.id}
+                className={`flex items-center gap-3 px-3 py-2.5 hover:bg-muted/40 transition-colors ${
+                  isSel ? "bg-primary/5" : ""
+                } ${m.active === false ? "opacity-60" : ""}`}
+              >
+                <button
+                  onClick={() => toggleSelect(m.id)}
+                  className={`w-5 h-5 rounded flex items-center justify-center shrink-0 ${
+                    isSel ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {isSel ? <CheckSquare size={16} /> : <Square size={16} />}
+                </button>
+                <div className="w-10 h-10 rounded-full bg-muted overflow-hidden shrink-0">
+                  {m.image_url ? (
+                    <img src={m.image_url} alt={m.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground font-heading text-sm">
+                      {m.name.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div onClick={() => startEdit(m)} role="button" className="cursor-pointer min-w-0 flex-1 grid grid-cols-12 gap-3 items-center">
+                  <div className="col-span-4 min-w-0">
+                    <h3 className="font-heading text-sm font-semibold text-foreground truncate">{m.name}</h3>
+                    <p className="font-body text-xs text-muted-foreground truncate">{m.role_de}</p>
+                  </div>
+                  <div className="col-span-3 min-w-0">
+                    <span className="font-body text-[10px] bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                      {m.category === "fachfuehrung"
+                        ? "Fachführung"
+                        : m.category === "erweitertes_team"
+                        ? "Erw. Team"
+                        : m.category === "agentur"
+                        ? `${agencies?.find((a) => a.id === (m as any).agency_id)?.name || "Agentur"}${(m as any).is_agency_leader ? " ★" : ""}`
+                        : "GL"}
+                    </span>
+                    {(m as any).badge && (
+                      <span className="font-body text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1">
+                        {badgeOptions.find(b => b.value === (m as any).badge)?.label || (m as any).badge}
+                      </span>
+                    )}
+                  </div>
+                  <div className="col-span-3 min-w-0 hidden md:block">
+                    <p className="font-body text-xs text-muted-foreground truncate">{m.email || "—"}</p>
+                    <p className="font-body text-xs text-muted-foreground truncate">{m.phone || "—"}</p>
+                  </div>
+                  <div className="col-span-2 text-right">
+                    {m.active === false && (
+                      <span className="font-body text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">Inaktiv</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button onClick={() => startEdit(m)} className="p-1.5 text-muted-foreground hover:text-primary" title="Bearbeiten">
+                    <Pencil size={14} />
+                  </button>
+                  <button onClick={() => { setDeleteTarget(m); setDeleteConfirm(""); }} className="p-1.5 text-muted-foreground hover:text-destructive" title="Löschen">
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               </div>
             );
