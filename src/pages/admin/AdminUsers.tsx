@@ -104,6 +104,22 @@ const AdminUsers = () => {
     },
   });
 
+  const { data: userAgencyMap } = useQuery({
+    queryKey: ["user-agency-map"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("user_id, agency_id, agencies(name)")
+        .not("user_id", "is", null);
+      if (error) throw error;
+      const map: Record<string, string> = {};
+      (data as any[])?.forEach((row) => {
+        if (row.user_id && row.agencies?.name) map[row.user_id] = row.agencies.name;
+      });
+      return map;
+    },
+  });
+
   const callAction = async (action: string, payload: Record<string, any>) => {
     const { data, error } = await supabase.functions.invoke("manage-users", {
       body: { action, ...payload },
