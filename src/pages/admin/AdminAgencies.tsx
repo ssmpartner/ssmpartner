@@ -236,8 +236,17 @@ const AdminAgencies = () => {
                     <p className="font-body text-xs text-muted-foreground truncate">{agency.address || "Keine Adresse"}</p>
                   </div>
 
+                  {/* Member count */}
+                  <span
+                    title="Anzahl Mitarbeiter"
+                    className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-medium px-2 py-1 rounded"
+                  >
+                    <Users size={12} />
+                    {memberCounts?.[agency.id] ?? 0}
+                  </span>
+
                   {/* Status */}
-                  <span className={`font-body text-xs px-2 py-1 rounded ${agency.active ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"}`}>
+                  <span className={`font-body text-xs px-2 py-1 rounded ${agency.active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                     {agency.active ? "Aktiv" : "Inaktiv"}
                   </span>
 
