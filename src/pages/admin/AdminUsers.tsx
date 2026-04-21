@@ -141,6 +141,31 @@ const AdminUsers = () => {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      for (const id of ids) await callAction("delete", { user_id: id });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setSelectedUsers([]);
+      toast.success("Benutzer gelöscht");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const bulkRoleMutation = useMutation({
+    mutationFn: async ({ ids, role }: { ids: string[]; role: string }) => {
+      for (const id of ids) await callAction("update_role", { user_id: id, role });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setSelectedUsers([]);
+      setBulkRole("");
+      toast.success("Rollen aktualisiert");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const toggleProject = (projectId: string) => {
     setSelectedProjects((prev) =>
       prev.includes(projectId) ? prev.filter((id) => id !== projectId) : [...prev, projectId]
@@ -149,6 +174,31 @@ const AdminUsers = () => {
 
   const getUserProjects = (userId: string) => {
     return accessList?.filter((a: any) => a.user_id === userId && a.active) || [];
+  };
+
+  const filteredUsers = (users || []).filter((u) => {
+    const q = search.trim().toLowerCase();
+    const matchesSearch =
+      !q ||
+      u.email.toLowerCase().includes(q) ||
+      (u.display_name || "").toLowerCase().includes(q);
+    const matchesRole = roleFilter === "all" || (u.role || "") === roleFilter;
+    return matchesSearch && matchesRole;
+  });
+
+  const allVisibleSelected =
+    filteredUsers.length > 0 && filteredUsers.every((u) => selectedUsers.includes(u.id));
+
+  const toggleSelectAll = () => {
+    if (allVisibleSelected) {
+      setSelectedUsers((prev) => prev.filter((id) => !filteredUsers.some((u) => u.id === id)));
+    } else {
+      setSelectedUsers((prev) => Array.from(new Set([...prev, ...filteredUsers.map((u) => u.id)])));
+    }
+  };
+
+  const toggleSelectUser = (id: string) => {
+    setSelectedUsers((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
