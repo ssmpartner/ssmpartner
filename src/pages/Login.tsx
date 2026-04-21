@@ -136,8 +136,8 @@ const Login = () => {
                 required
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="h-11 w-full rounded-xl border border-white/20 bg-white/10 px-4 pr-10 text-sm text-white font-body outline-none focus:ring-2 focus:ring-white/30 transition-shadow placeholder:text-white/40"
+                onChange={(e) => { setPassword(e.target.value); if (authError) setAuthError(null); }}
+                className={`h-11 w-full rounded-xl border bg-white/10 px-4 pr-10 text-sm text-white font-body outline-none focus:ring-2 transition-shadow placeholder:text-white/40 ${authError ? "border-red-400 focus:ring-red-400/50" : "border-white/20 focus:ring-white/30"}`}
                 placeholder="••••••••"
               />
               <button
@@ -148,6 +148,9 @@ const Login = () => {
                 {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {authError && (
+              <p className="mt-2 text-xs font-body text-red-300">{authError}</p>
+            )}
           </div>
 
           {!ssoProjectKey && (
@@ -174,6 +177,9 @@ const Login = () => {
             {submitting ? "Wird angemeldet..." : "Anmelden"}
           </button>
         </form>
+        <p className="text-center text-xs text-white/50 font-body">
+          SSM Partner AG. Eine Tochtergesellschaft der Visana-Gruppe. Gebundener Vermittler gemäss VAG.
+        </p>
       </div>
     </div>
   );
