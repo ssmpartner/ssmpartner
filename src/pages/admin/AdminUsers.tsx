@@ -215,6 +215,83 @@ const AdminUsers = () => {
         </button>
       </div>
 
+      {/* Search & Filter */}
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Suche nach Name oder E-Mail..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-background border border-border pl-9 pr-9 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          className="bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring sm:w-56"
+        >
+          <option value="all">Alle Rollen</option>
+          {Object.entries(roleLabels).map(([val, label]) => (
+            <option key={val} value={val}>{label}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Action toolbar */}
+      {selectedUsers.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-4 px-4 py-3 bg-primary/5 border border-primary/20 rounded-lg">
+          <span className="font-body text-sm font-medium text-foreground">
+            {selectedUsers.length} ausgewählt
+          </span>
+          <div className="flex items-center gap-2 ml-auto">
+            <select
+              value={bulkRole}
+              onChange={(e) => setBulkRole(e.target.value)}
+              className="bg-background border border-border px-3 py-1.5 font-body text-xs rounded-lg"
+            >
+              <option value="">Rolle ändern...</option>
+              {Object.entries(roleLabels).map(([val, label]) => (
+                <option key={val} value={val}>{label}</option>
+              ))}
+            </select>
+            <button
+              disabled={!bulkRole || bulkRoleMutation.isPending}
+              onClick={() => bulkRoleMutation.mutate({ ids: selectedUsers, role: bulkRole })}
+              className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground font-body text-xs px-3 py-1.5 rounded-lg hover:opacity-90 disabled:opacity-50"
+            >
+              Anwenden
+            </button>
+            <button
+              onClick={() => {
+                if (confirm(`${selectedUsers.length} Benutzer wirklich löschen?`)) {
+                  bulkDeleteMutation.mutate(selectedUsers.filter((id) => id !== user?.id));
+                }
+              }}
+              disabled={bulkDeleteMutation.isPending}
+              className="inline-flex items-center gap-1.5 bg-destructive text-destructive-foreground font-body text-xs px-3 py-1.5 rounded-lg hover:opacity-90 disabled:opacity-50"
+            >
+              <Trash2 size={12} /> Löschen
+            </button>
+            <button
+              onClick={() => setSelectedUsers([])}
+              className="font-body text-xs text-muted-foreground hover:text-foreground px-2"
+            >
+              Aufheben
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Create form */}
       {showCreate && (
         <div className="bg-card border rounded-xl p-6 mb-6 space-y-4">
