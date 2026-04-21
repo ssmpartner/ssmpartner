@@ -5,9 +5,17 @@ import {
   Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2,
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
   MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
+  User, ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const adminLinks = [
   { to: "/admin", label: "Übersicht", icon: LayoutDashboard, end: true },
@@ -182,31 +190,63 @@ const AdminLayout = () => {
             </Link>
 
             <div className="flex items-center gap-2">
-              <Link
-                to="/admin/settings"
-                className="inline-flex items-center justify-center h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                title="Einstellungen"
-              >
-                <Settings className="h-[18px] w-[18px]" />
-              </Link>
-
-              <div className="h-6 w-px bg-border mx-1" />
-
-              <Link to="/admin/users" className="flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors" title="Profil bearbeiten">
-                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary overflow-hidden ring-1 ring-border">
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    initials
-                  )}
+            {/* User dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary/50">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary overflow-hidden ring-1 ring-border">
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      initials
+                    )}
+                  </div>
+                  <div className="text-sm hidden sm:block text-left">
+                    <p className="font-medium leading-none font-body">{displayName}</p>
+                    <p className="text-xs text-muted-foreground font-body mt-0.5 truncate max-w-[140px]">{user?.email}</p>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground hidden sm:block" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="flex items-center gap-3 px-2 py-2 mb-1">
+                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary overflow-hidden ring-1 ring-border shrink-0">
+                    {profile?.avatar_url ? (
+                      <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      initials
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{displayName}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                  </div>
                 </div>
-                <div className="text-sm hidden sm:block">
-                  <p className="font-medium leading-none font-body">{displayName}</p>
-                  <p className="text-xs text-muted-foreground font-body mt-0.5">{user?.email}</p>
-                </div>
-              </Link>
-            </div>
-          </header>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/admin/settings" className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Einstellungen
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="cursor-pointer">
+                  <Link to="/admin/users" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Profil bearbeiten
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={signOut}
+                  className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Abmelden
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
 
           <main className="p-8">
             <Outlet />
