@@ -98,30 +98,88 @@ Deno.serve(async (req) => {
         throw new Error("Admins dürfen nur Controlling, Geschäftsleitung und HR Rollen zuweisen");
       }
 
+      let userId: string;
+      let reused = false;
+
       const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
         email_confirm: true,
         user_metadata: { display_name },
       });
-      if (createError) throw createError;
 
-      const { error: roleError } = await supabaseAdmin
-        .from("user_roles")
-        .insert({ user_id: userData.user.id, role });
-      if (roleError) throw roleError;
+      if (createError) {
+        const msg = (createError as any)?.message || "";
+        const isDuplicate =
+          msg.toLowerCase().includes("already been registered") ||
+          (createError as any)?.code === "email_exists" ||
+          (createError as any)?.status === 422;
 
-      if (Array.isArray(project_ids) && project_ids.length > 0) {
-        const accessRows = project_ids.map((pid: string) => ({
-          user_id: userData.user.id,
-          project_id: pid,
-          granted_by: caller.id,
-          active: true,
-        }));
-        await supabaseAdmin.from("project_access").insert(accessRows);
+        if (!isDuplicate) throw createError;
+
+        // Find existing user by email
+        let existing: any = null;
+        for (let page = 1; page <= 20 && !existing; page++) {
+          const { data, error: listErr } = await supabaseAdmin.auth.admin.listUsers({
+            page,
+            perPage: 200,
+          });
+          if (listErr) throw listErr;
+          existing = data.users.find(
+            (u: any) => (u.email || "").toLowerCase() === email.toLowerCase(),
+          );
+          if (data.users.length < 200) break;
+        }
+        if (!existing) throw new Error("Benutzer existiert, konnte aber nicht gefunden werden");
+
+        userId = existing.id;
+        reused = true;
+
+        // Update password + display_name
+        await supabaseAdmin.auth.admin.updateUserById(userId, {
+          password,
+          user_metadata: { display_name },
+        });
+        await supabaseAdmin
+          .from("profiles")
+          .update({ display_name })
+          .eq("id", userId);
+      } else {
+        userId = userData.user.id;
       }
 
-      return json({ success: true, user_id: userData.user.id });
+      // Upsert role
+      const { error: roleDelErr } = await supabaseAdmin
+        .from("user_roles")
+        .delete()
+        .eq("user_id", userId);
+      if (roleDelErr) throw roleDelErr;
+      const { error: roleError } = await supabaseAdmin
+        .from("user_roles")
+        .insert({ user_id: userId, role });
+      if (roleError) throw roleError;
+
+      // Add missing project access
+      if (Array.isArray(project_ids) && project_ids.length > 0) {
+        const { data: existingAccess } = await supabaseAdmin
+          .from("project_access")
+          .select("project_id")
+          .eq("user_id", userId);
+        const existingIds = new Set((existingAccess || []).map((r: any) => r.project_id));
+        const newRows = project_ids
+          .filter((pid: string) => !existingIds.has(pid))
+          .map((pid: string) => ({
+            user_id: userId,
+            project_id: pid,
+            granted_by: caller.id,
+            active: true,
+          }));
+        if (newRows.length > 0) {
+          await supabaseAdmin.from("project_access").insert(newRows);
+        }
+      }
+
+      return json({ success: true, user_id: userId, reused });
     }
 
     if (action === "update_role") {
