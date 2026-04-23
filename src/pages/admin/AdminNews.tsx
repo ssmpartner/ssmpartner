@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, forwardRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, X, AlertTriangle, Pin, Megaphone, BarChart3, Eye, Heart, MessageSquare, CheckCircle2, Loader2, Tag, Image as ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, X, AlertTriangle, Pin, Megaphone, BarChart3, Eye, Heart, MessageSquare, CheckCircle2, Loader2, Tag, Image as ImageIcon, Video, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import MediaPickerModal from "@/components/MediaPickerModal";
 
 const APP_ROLES = ["superadmin","admin","backoffice","analyst","teamleiter","controlling","geschaeftsleitung","hr","agency_manager","vertriebsleiter","agenturleiter","finanzcoach","trainee","verkaufsleiter"] as const;
 
@@ -18,6 +19,8 @@ const empty = {
   excerpt: "",
   content: "",
   cover_image_url: "",
+  cover_video_url: "",
+  media_urls: [] as string[],
   category_id: "",
   tags: "",
   visibility: "all" as "all" | "roles" | "agencies" | "mixed",
@@ -37,6 +40,10 @@ const AdminNews = () => {
   const [editing, setEditing] = useState<typeof empty | null>(null);
   const [statsPostId, setStatsPostId] = useState<string | null>(null);
   const [newCat, setNewCat] = useState({ id: "", name: "", color: "#243e3a" });
+  const [step, setStep] = useState(0);
+  const [picker, setPicker] = useState<null | "cover_image" | "cover_video" | "media">(null);
+
+  useEffect(() => { if (editing) setStep(0); }, [editing?.id]);
 
   const { data: posts } = useQuery({
     queryKey: ["admin-news-posts"],
