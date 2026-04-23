@@ -1,1 +1,4 @@
 project_id = "nopqgykpyaieyizvhuma"
+
+[functions.cockpit-data]
+verify_jwt = false
