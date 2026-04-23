@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, X, AlertTriangle, Pin, Megaphone, BarChart3, Eye,
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import MediaPickerModal from "@/components/MediaPickerModal";
+import RichTextEditor from "@/components/RichTextEditor";
 
 const APP_ROLES = ["superadmin","admin","backoffice","analyst","teamleiter","controlling","geschaeftsleitung","hr","agency_manager","vertriebsleiter","agenturleiter","finanzcoach","trainee","verkaufsleiter"] as const;
 
@@ -23,6 +24,7 @@ const empty = {
   media_urls: [] as string[],
   category_id: "",
   tags: "",
+  contact_person_id: "",
   visibility: "all" as "all" | "roles" | "agencies" | "mixed",
   is_important: false,
   is_urgent_banner: false,
