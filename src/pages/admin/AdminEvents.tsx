@@ -144,6 +144,7 @@ const AdminEvents = () => {
       capacity: e.capacity || "",
       contact_person_id: e.contact_person_id || "",
       confirmation_text: e.confirmation_text || "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
+      confirmation_questions: Array.isArray(e.confirmation_questions) ? e.confirmation_questions : [],
       published: false,
     });
     toast.info("Event als Vorlage geladen — passe Titel & Datum an");
