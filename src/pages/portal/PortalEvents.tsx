@@ -243,11 +243,76 @@ const PortalEvents = () => {
                   </div>
                 )}
               </div>
+              {Array.isArray(confirmEvent.confirmation_questions) && confirmEvent.confirmation_questions.length > 0 && (
+                <div className="space-y-3 pt-2 border-t">
+                  <p className="text-sm font-semibold text-foreground">Bitte beantworten Sie folgende Fragen:</p>
+                  {confirmEvent.confirmation_questions.map((q: any, qi: number) => {
+                    const val = answers[q.id];
+                    return (
+                      <div key={q.id} className="space-y-1.5">
+                        <label className="text-sm text-foreground">
+                          {qi + 1}. {q.question}
+                          {q.required && <span className="text-destructive ml-1">*</span>}
+                        </label>
+                        {q.type === "text" && (
+                          <textarea
+                            value={val || ""}
+                            onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
+                            rows={2}
+                            className="w-full px-3 py-2 rounded-lg border bg-background text-sm"
+                          />
+                        )}
+                        {q.type === "single" && (
+                          <div className="space-y-1">
+                            {(q.options || []).map((opt: string, oi: number) => (
+                              <label key={oi} className="flex items-center gap-2 text-sm cursor-pointer p-2 rounded-md hover:bg-muted/50">
+                                <input type="radio" name={q.id} checked={val === opt} onChange={() => setAnswers({ ...answers, [q.id]: opt })} className="h-4 w-4" />
+                                {opt}
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                        {q.type === "multi" && (
+                          <div className="space-y-1">
+                            {(q.options || []).map((opt: string, oi: number) => {
+                              const arr: string[] = Array.isArray(val) ? val : [];
+                              const checked = arr.includes(opt);
+                              return (
+                                <label key={oi} className="flex items-center gap-2 text-sm cursor-pointer p-2 rounded-md hover:bg-muted/50">
+                                  <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => {
+                                      const next = checked ? arr.filter((x) => x !== opt) : [...arr, opt];
+                                      setAnswers({ ...answers, [q.id]: next });
+                                    }}
+                                    className="h-4 w-4"
+                                  />
+                                  {opt}
+                                </label>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmEvent(null)}>Abbrechen</Button>
-            <Button onClick={() => confirmEvent && register.mutate(confirmEvent.id)} disabled={register.isPending}>
+            <Button
+              onClick={() => {
+                if (!confirmEvent) return;
+                const qs: any[] = confirmEvent.confirmation_questions || [];
+                const missing = qs.find((q) => q.required && (answers[q.id] === undefined || answers[q.id] === "" || (Array.isArray(answers[q.id]) && answers[q.id].length === 0)));
+                if (missing) { toast.error(`Bitte beantworten: "${missing.question}"`); return; }
+                register.mutate({ eventId: confirmEvent.id, answers });
+              }}
+              disabled={register.isPending}
+            >
               {register.isPending ? <Loader2 size={14} className="animate-spin mr-1.5" /> : <Check size={14} className="mr-1.5" />}
               Ja, ich bestätige die Teilnahme
             </Button>
