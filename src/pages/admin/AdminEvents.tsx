@@ -217,6 +217,7 @@ const AdminEvents = () => {
                       registration_enabled: e.registration_enabled, registration_deadline: toLocalInput(e.registration_deadline),
                       capacity: e.capacity || "", contact_person_id: e.contact_person_id || "", published: e.published,
                       confirmation_text: e.confirmation_text || "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
+                      confirmation_questions: Array.isArray(e.confirmation_questions) ? e.confirmation_questions : [],
                     })} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"><Pencil size={16} /></button>
                     <button onClick={() => { if (confirm("Event wirklich löschen?")) del.mutate(e.id); }} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive"><Trash2 size={16} /></button>
                   </div>
