@@ -7,6 +7,7 @@ export interface NewsCardData {
   slug: string;
   excerpt: string | null;
   cover_image_url: string | null;
+  cover_video_url?: string | null;
   tags: string[];
   published_at: string | null;
   created_at: string;
@@ -32,7 +33,9 @@ export const NewsCard = ({ news, variant = "default" }: { news: NewsCardData; va
       >
         <div className="grid md:grid-cols-2 gap-0">
           <div className="aspect-[16/10] md:aspect-auto md:min-h-[320px] bg-muted overflow-hidden relative">
-            {news.cover_image_url ? (
+            {news.cover_video_url ? (
+              <video src={news.cover_video_url} muted loop playsInline autoPlay className="w-full h-full object-cover" />
+            ) : news.cover_image_url ? (
               <img src={news.cover_image_url} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary/5" />
@@ -100,7 +103,9 @@ export const NewsCard = ({ news, variant = "default" }: { news: NewsCardData; va
   return (
     <Link to={`/portal/news/${news.slug}`} className="group block overflow-hidden rounded-2xl border bg-card shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
       <div className="aspect-[16/10] bg-muted overflow-hidden relative">
-        {news.cover_image_url ? (
+        {news.cover_video_url ? (
+          <video src={news.cover_video_url} muted loop playsInline autoPlay className="w-full h-full object-cover" />
+        ) : news.cover_image_url ? (
           <img src={news.cover_image_url} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5" />

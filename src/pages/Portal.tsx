@@ -225,8 +225,8 @@ const Portal = () => {
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-4xl">
+      <main className="flex-1 px-6 py-12">
+        <div className="w-full max-w-6xl mx-auto">
           <div className="text-center mb-10 flex flex-col items-center">
             <img src={myssmLogo} alt="MySSM" className="h-14 mb-4" loading="lazy" />
             <h2 className="text-2xl font-semibold text-foreground font-heading">
