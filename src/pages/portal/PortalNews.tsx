@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { Navigate, Link } from "react-router-dom";
-import { Search, ArrowLeft, Filter, Calendar } from "lucide-react";
+import { Search, ArrowLeft, Filter, Calendar, MapPin, ArrowRight } from "lucide-react";
 import { NewsCard, NewsCardData } from "@/components/news/NewsCard";
 import { UrgentNewsBanner } from "@/components/news/UrgentNewsBanner";
 import { ImportantNewsModal } from "@/components/news/ImportantNewsModal";
