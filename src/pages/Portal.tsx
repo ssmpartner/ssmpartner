@@ -3,9 +3,13 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle } from "lucide-react";
+import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle, Newspaper, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import myssmLogo from "@/assets/myssm-logo.png";
+import { Link } from "react-router-dom";
+import { UrgentNewsBanner } from "@/components/news/UrgentNewsBanner";
+import { ImportantNewsModal } from "@/components/news/ImportantNewsModal";
+import { NewsCard, NewsCardData } from "@/components/news/NewsCard";
 
 const projectMeta: Record<string, { icon: React.ReactNode; description: string; color: string }> = {
   "ssm-partner": {
