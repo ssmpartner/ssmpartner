@@ -5,7 +5,7 @@ import {
   Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2,
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
   MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
-  User, ChevronDown, Newspaper,
+  User, ChevronDown, Newspaper, Calendar,
 } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -33,6 +33,7 @@ const adminLinks = [
   { to: "/admin/chat-logs", label: "Chat-Verläufe", icon: MessagesSquare },
   { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/news", label: "News & Kommunikation", icon: Newspaper },
+  { to: "/admin/events", label: "Events", icon: Calendar },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
 ];

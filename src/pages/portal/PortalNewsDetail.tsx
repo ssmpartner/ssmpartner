@@ -22,7 +22,7 @@ const PortalNewsDetail = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("news_posts" as any)
-        .select("*, news_categories(name, color)")
+        .select("*, news_categories(name, color), team_members:contact_person_id(id, name, image_url, role_de, email, phone)")
         .eq("slug", slug)
         .maybeSingle() as any;
       return data;
@@ -141,9 +141,22 @@ const PortalNewsDetail = () => {
             <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover" />
           </div>
         ) : null}
-        <div className="prose prose-lg max-w-none text-foreground whitespace-pre-wrap leading-relaxed mb-8">
-          {post.content}
-        </div>
+        <div className="prose prose-lg max-w-none text-foreground leading-relaxed mb-8" dangerouslySetInnerHTML={{ __html: post.content || "" }} />
+
+        {post.team_members && (
+          <div className="mb-8 p-5 rounded-2xl border bg-muted/30 flex items-center gap-4">
+            {post.team_members.image_url && <img src={post.team_members.image_url} alt="" className="h-14 w-14 rounded-full object-cover" />}
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-muted-foreground">Ansprechperson</p>
+              <p className="font-semibold text-foreground">{post.team_members.name}</p>
+              {post.team_members.role_de && <p className="text-xs text-muted-foreground">{post.team_members.role_de}</p>}
+              <div className="flex gap-3 mt-1 text-xs">
+                {post.team_members.email && <a href={`mailto:${post.team_members.email}`} className="text-primary hover:underline">{post.team_members.email}</a>}
+                {post.team_members.phone && <a href={`tel:${post.team_members.phone}`} className="text-primary hover:underline">{post.team_members.phone}</a>}
+              </div>
+            </div>
+          </div>
+        )}
 
         {post.media_urls?.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">

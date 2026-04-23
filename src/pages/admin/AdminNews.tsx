@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, X, AlertTriangle, Pin, Megaphone, BarChart3, Eye,
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import MediaPickerModal from "@/components/MediaPickerModal";
+import RichTextEditor from "@/components/RichTextEditor";
 
 const APP_ROLES = ["superadmin","admin","backoffice","analyst","teamleiter","controlling","geschaeftsleitung","hr","agency_manager","vertriebsleiter","agenturleiter","finanzcoach","trainee","verkaufsleiter"] as const;
 
@@ -23,6 +24,7 @@ const empty = {
   media_urls: [] as string[],
   category_id: "",
   tags: "",
+  contact_person_id: "",
   visibility: "all" as "all" | "roles" | "agencies" | "mixed",
   is_important: false,
   is_urgent_banner: false,
@@ -69,6 +71,11 @@ const AdminNews = () => {
     },
   });
 
+  const { data: teamMembers } = useQuery({
+    queryKey: ["team-members-min"],
+    queryFn: async () => (await supabase.from("team_members").select("id, name, image_url, role_de").eq("active", true).order("name")).data || [],
+  });
+
   const { data: editingVisibility } = useQuery({
     queryKey: ["news-edit-visibility", editing?.id],
     enabled: !!editing?.id,
@@ -103,6 +110,7 @@ const AdminNews = () => {
         media_urls: form.media_urls || [],
         category_id: form.category_id || null,
         tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+        contact_person_id: form.contact_person_id || null,
         visibility: form.visibility,
         is_important: form.is_important,
         is_urgent_banner: form.is_urgent_banner,
@@ -256,6 +264,7 @@ const AdminNews = () => {
                     tags: (p.tags || []).join(", "), visibility: p.visibility, is_important: p.is_important,
                     is_urgent_banner: p.is_urgent_banner, is_highlight: p.is_highlight,
                     comments_enabled: p.comments_enabled, published: p.published,
+                    contact_person_id: p.contact_person_id || "",
                     selected_roles: [], selected_agencies: [],
                   })}
                   className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
@@ -416,11 +425,20 @@ const AdminNews = () => {
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Inhalt *</label>
-                    <textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} placeholder="Schreibe hier den vollständigen News-Inhalt…" rows={12} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background leading-relaxed" />
+                    <div className="mt-1">
+                      <RichTextEditor value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} placeholder="Schreibe hier den vollständigen News-Inhalt…" />
+                    </div>
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1"><Tag size={12}/> Tags (Komma-getrennt)</label>
                     <input value={editing.tags} onChange={(e) => setEditing({ ...editing, tags: e.target.value })} placeholder="produkt, schulung, q1-2026" className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Ansprechperson (aus Team)</label>
+                    <select value={editing.contact_person_id} onChange={(e) => setEditing({ ...editing, contact_person_id: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm">
+                      <option value="">— Keine —</option>
+                      {teamMembers?.map((m: any) => <option key={m.id} value={m.id}>{m.name}{m.role_de ? ` — ${m.role_de}` : ""}</option>)}
+                    </select>
                   </div>
                 </div>
               )}

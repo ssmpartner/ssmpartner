@@ -3,7 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle, Newspaper, ArrowRight } from "lucide-react";
+import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle, Newspaper, ArrowRight, Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import myssmLogo from "@/assets/myssm-logo.png";
 import { Link } from "react-router-dom";
@@ -136,6 +136,15 @@ const Portal = () => {
         ...p, category: p.news_categories,
         _count: { likes: lc[p.id] || 0, comments: cc[p.id] || 0, views: vc[p.id] || 0 },
       }));
+    },
+  });
+
+  const { data: upcomingEvents } = useQuery({
+    queryKey: ["portal-upcoming-events"],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("events" as any).select("id, title, slug, start_at, end_at, location, cover_image_url, news_categories(name, color)").eq("published", true).gte("start_at", new Date().toISOString()).order("start_at").limit(3) as any;
+      return data || [];
     },
   });
 
@@ -337,6 +346,52 @@ const Portal = () => {
               <div className="rounded-2xl border border-dashed bg-card/50 p-10 text-center">
                 <Newspaper className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground font-body">Noch keine News veröffentlicht.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Upcoming Events */}
+          <div className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                  <Calendar className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground font-heading">Bevorstehende Events</h3>
+                  <p className="text-xs text-muted-foreground font-body">Termine, Schulungen & Anmeldungen</p>
+                </div>
+              </div>
+              <Link to="/portal/events" className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline font-body">
+                Alle anzeigen <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            {upcomingEvents && upcomingEvents.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {upcomingEvents.map((e: any) => {
+                  const start = new Date(e.start_at);
+                  return (
+                    <Link key={e.id} to="/portal/events" className="group rounded-2xl border bg-card overflow-hidden hover:shadow-md transition-all hover:-translate-y-0.5">
+                      {e.cover_image_url && <div className="aspect-[16/9] bg-muted overflow-hidden"><img src={e.cover_image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" /></div>}
+                      <div className="p-4 flex gap-3">
+                        <div className="text-center bg-primary/10 text-primary rounded-xl px-3 py-2 shrink-0">
+                          <div className="text-[10px] font-semibold uppercase">{start.toLocaleDateString("de-CH", { month: "short" })}</div>
+                          <div className="text-lg font-bold leading-none">{start.getDate()}</div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-foreground text-sm truncate">{e.title}</h4>
+                          <p className="text-xs text-muted-foreground mt-0.5">{start.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })} Uhr</p>
+                          {e.location && <p className="text-xs text-muted-foreground inline-flex items-center gap-1 mt-0.5"><MapPin size={10} /> {e.location}</p>}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed bg-card/50 p-10 text-center">
+                <Calendar className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground font-body">Keine bevorstehenden Events.</p>
               </div>
             )}
           </div>
