@@ -251,6 +251,20 @@ const AdminEvents = () => {
                     <p className="text-sm font-medium text-foreground truncate">{r.profile?.display_name || r.user_id}</p>
                     <p className="text-xs text-muted-foreground">Angemeldet: {new Date(r.created_at).toLocaleString("de-CH")}</p>
                     {r.note && <p className="text-xs text-muted-foreground italic mt-0.5">„{r.note}“</p>}
+                    {r.answers && Object.keys(r.answers).length > 0 && (
+                      <div className="mt-2 space-y-1 border-t pt-2">
+                        {(regsEvent.confirmation_questions || []).map((q: any) => {
+                          const a = r.answers?.[q.id];
+                          if (a === undefined || a === null || a === "") return null;
+                          return (
+                            <div key={q.id} className="text-xs">
+                              <span className="text-muted-foreground">{q.question}: </span>
+                              <span className="text-foreground font-medium">{Array.isArray(a) ? a.join(", ") : String(a)}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                   <button onClick={() => removeReg.mutate(r.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive" title="Anmeldung entfernen"><Trash2 size={14} /></button>
                 </div>
