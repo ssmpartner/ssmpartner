@@ -115,7 +115,7 @@ const Portal = () => {
     queryFn: async () => {
       const { data: posts } = await supabase
         .from("news_posts" as any)
-        .select("id, title, slug, excerpt, cover_image_url, tags, published_at, created_at, is_important, is_highlight, news_categories(name, color)")
+        .select("id, title, slug, excerpt, cover_image_url, cover_video_url, tags, published_at, created_at, is_important, is_highlight, news_categories(name, color)")
         .eq("published", true)
         .order("published_at", { ascending: false })
         .limit(10) as any;
