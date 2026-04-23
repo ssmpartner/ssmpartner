@@ -365,6 +365,119 @@ export type Database = {
         }
         Relationships: []
       }
+      event_registrations: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          note: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          note?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          note?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          author_id: string | null
+          capacity: number | null
+          category_id: string | null
+          contact_person_id: string | null
+          cover_image_url: string | null
+          created_at: string
+          description: string
+          end_at: string | null
+          id: string
+          location: string | null
+          location_url: string | null
+          published: boolean
+          registration_deadline: string | null
+          registration_enabled: boolean
+          slug: string
+          start_at: string
+          title: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id?: string | null
+          capacity?: number | null
+          category_id?: string | null
+          contact_person_id?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string
+          end_at?: string | null
+          id?: string
+          location?: string | null
+          location_url?: string | null
+          published?: boolean
+          registration_deadline?: string | null
+          registration_enabled?: boolean
+          slug: string
+          start_at: string
+          title: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string | null
+          capacity?: number | null
+          category_id?: string | null
+          contact_person_id?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          description?: string
+          end_at?: string | null
+          id?: string
+          location?: string | null
+          location_url?: string | null
+          published?: boolean
+          registration_deadline?: string | null
+          registration_enabled?: boolean
+          slug?: string
+          start_at?: string
+          title?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_contact_person_id_fkey"
+            columns: ["contact_person_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inquiries: {
         Row: {
           agency_id: string | null
@@ -639,6 +752,7 @@ export type Database = {
           author_id: string | null
           category_id: string | null
           comments_enabled: boolean
+          contact_person_id: string | null
           content: string
           cover_image_url: string | null
           cover_video_url: string | null
@@ -661,6 +775,7 @@ export type Database = {
           author_id?: string | null
           category_id?: string | null
           comments_enabled?: boolean
+          contact_person_id?: string | null
           content?: string
           cover_image_url?: string | null
           cover_video_url?: string | null
@@ -683,6 +798,7 @@ export type Database = {
           author_id?: string | null
           category_id?: string | null
           comments_enabled?: boolean
+          contact_person_id?: string | null
           content?: string
           cover_image_url?: string | null
           cover_video_url?: string | null
@@ -707,6 +823,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_posts_contact_person_id_fkey"
+            columns: ["contact_person_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
             referencedColumns: ["id"]
           },
         ]
