@@ -399,6 +399,81 @@ const AdminEvents = () => {
                       <p className="text-[11px] text-muted-foreground mt-1">Dieser Text erscheint im Pop-up, bevor Mitarbeitende ihre Teilnahme bestätigen.</p>
                     </div>
                   )}
+                  {editing.registration_enabled && (
+                    <div className="rounded-xl border bg-muted/20 p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">Quiz-Fragen (optional)</p>
+                          <p className="text-[11px] text-muted-foreground">Werden im Bestätigungs-Popup gestellt. Antworten werden gespeichert.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setEditing({ ...editing, confirmation_questions: [...(editing.confirmation_questions || []), { id: crypto.randomUUID(), type: "text", question: "", required: true, options: [] }] })}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90"
+                        >
+                          <Plus size={13} /> Frage
+                        </button>
+                      </div>
+                      {(editing.confirmation_questions || []).length === 0 && (
+                        <p className="text-xs text-muted-foreground italic text-center py-2">Noch keine Fragen — füge optional ein kleines Quiz hinzu.</p>
+                      )}
+                      {(editing.confirmation_questions || []).map((q: any, qi: number) => {
+                        const update = (patch: any) => {
+                          const next = [...editing.confirmation_questions];
+                          next[qi] = { ...next[qi], ...patch };
+                          setEditing({ ...editing, confirmation_questions: next });
+                        };
+                        const remove = () => setEditing({ ...editing, confirmation_questions: editing.confirmation_questions.filter((_: any, i: number) => i !== qi) });
+                        return (
+                          <div key={q.id || qi} className="rounded-lg border bg-background p-3 space-y-2">
+                            <div className="flex items-start gap-2">
+                              <span className="text-xs font-semibold text-muted-foreground mt-2 w-6 shrink-0">#{qi + 1}</span>
+                              <input
+                                value={q.question || ""}
+                                onChange={(e) => update({ question: e.target.value })}
+                                placeholder="Frage eingeben…"
+                                className="flex-1 px-2.5 py-1.5 rounded-md border bg-background text-sm"
+                              />
+                              <select
+                                value={q.type || "text"}
+                                onChange={(e) => update({ type: e.target.value, options: e.target.value === "text" ? [] : (q.options?.length ? q.options : ["", ""]) })}
+                                className="px-2 py-1.5 rounded-md border bg-background text-xs"
+                              >
+                                <option value="text">Freitext</option>
+                                <option value="single">Single Choice</option>
+                                <option value="multi">Multi Choice</option>
+                              </select>
+                              <button type="button" onClick={remove} className="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive"><Trash2 size={13} /></button>
+                            </div>
+                            {(q.type === "single" || q.type === "multi") && (
+                              <div className="pl-8 space-y-1.5">
+                                {(q.options || []).map((opt: string, oi: number) => (
+                                  <div key={oi} className="flex items-center gap-2">
+                                    <span className="text-xs text-muted-foreground w-4">{oi + 1}.</span>
+                                    <input
+                                      value={opt}
+                                      onChange={(e) => {
+                                        const next = [...q.options]; next[oi] = e.target.value;
+                                        update({ options: next });
+                                      }}
+                                      placeholder={`Option ${oi + 1}`}
+                                      className="flex-1 px-2 py-1 rounded-md border bg-background text-xs"
+                                    />
+                                    <button type="button" onClick={() => update({ options: q.options.filter((_: any, i: number) => i !== oi) })} className="p-1 rounded hover:bg-muted text-muted-foreground"><X size={11} /></button>
+                                  </div>
+                                ))}
+                                <button type="button" onClick={() => update({ options: [...(q.options || []), ""] })} className="text-xs text-primary hover:underline inline-flex items-center gap-1"><Plus size={11} /> Option</button>
+                              </div>
+                            )}
+                            <label className="pl-8 inline-flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                              <input type="checkbox" checked={!!q.required} onChange={(e) => update({ required: e.target.checked })} className="h-3 w-3 rounded" />
+                              Pflichtfeld
+                            </label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 
