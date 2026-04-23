@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, X, Calendar, MapPin, Users, Loader2, ImageIcon, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Calendar, MapPin, Users, Loader2, ImageIcon, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import MediaPickerModal from "@/components/MediaPickerModal";
@@ -124,6 +124,27 @@ const AdminEvents = () => {
     onSuccess: () => { toast.success("Gelöscht"); qc.invalidateQueries({ queryKey: ["admin-events"] }); },
   });
 
+  const duplicate = (e: any) => {
+    setEditing({
+      id: null,
+      title: `${e.title} (Kopie)`,
+      slug: slugify(`${e.title}-kopie-${Date.now().toString(36)}`),
+      description: e.description || "",
+      cover_image_url: e.cover_image_url || "",
+      category_id: e.category_id || "",
+      location: e.location || "",
+      location_url: e.location_url || "",
+      start_at: toLocalInput(e.start_at),
+      end_at: toLocalInput(e.end_at),
+      registration_enabled: e.registration_enabled,
+      registration_deadline: toLocalInput(e.registration_deadline),
+      capacity: e.capacity || "",
+      contact_person_id: e.contact_person_id || "",
+      published: false,
+    });
+    toast.info("Event als Vorlage geladen — passe Titel & Datum an");
+  };
+
   const removeReg = useMutation({
     mutationFn: async (id: string) => { await supabase.from("event_registrations" as any).delete().eq("id", id); },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["event-registrations"] }); qc.invalidateQueries({ queryKey: ["event-reg-counts"] }); },
@@ -182,6 +203,7 @@ const AdminEvents = () => {
                         <Users size={16} />
                       </button>
                     )}
+                    <button onClick={() => duplicate(e)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" title="Als Vorlage duplizieren"><Copy size={16} /></button>
                     <button onClick={() => setEditing({
                       id: e.id, title: e.title, slug: e.slug, description: e.description || "",
                       cover_image_url: e.cover_image_url || "", category_id: e.category_id || "",
