@@ -71,6 +71,11 @@ const AdminNews = () => {
     },
   });
 
+  const { data: teamMembers } = useQuery({
+    queryKey: ["team-members-min"],
+    queryFn: async () => (await supabase.from("team_members").select("id, name, image_url, role_de").eq("active", true).order("name")).data || [],
+  });
+
   const { data: editingVisibility } = useQuery({
     queryKey: ["news-edit-visibility", editing?.id],
     enabled: !!editing?.id,
@@ -420,11 +425,20 @@ const AdminNews = () => {
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground">Inhalt *</label>
-                    <textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} placeholder="Schreibe hier den vollständigen News-Inhalt…" rows={12} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background leading-relaxed" />
+                    <div className="mt-1">
+                      <RichTextEditor value={editing.content} onChange={(v) => setEditing({ ...editing, content: v })} placeholder="Schreibe hier den vollständigen News-Inhalt…" />
+                    </div>
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1"><Tag size={12}/> Tags (Komma-getrennt)</label>
                     <input value={editing.tags} onChange={(e) => setEditing({ ...editing, tags: e.target.value })} placeholder="produkt, schulung, q1-2026" className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Ansprechperson (aus Team)</label>
+                    <select value={editing.contact_person_id} onChange={(e) => setEditing({ ...editing, contact_person_id: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm">
+                      <option value="">— Keine —</option>
+                      {teamMembers?.map((m: any) => <option key={m.id} value={m.id}>{m.name}{m.role_de ? ` — ${m.role_de}` : ""}</option>)}
+                    </select>
                   </div>
                 </div>
               )}

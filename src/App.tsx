@@ -38,8 +38,10 @@ import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSSO from "./pages/admin/AdminSSO";
 import AdminNews from "./pages/admin/AdminNews";
+import AdminEvents from "./pages/admin/AdminEvents";
 import PortalNews from "./pages/portal/PortalNews";
 import PortalNewsDetail from "./pages/portal/PortalNewsDetail";
+import PortalEvents from "./pages/portal/PortalEvents";
 import ChatWidget from "@/components/ChatWidget";
 import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
@@ -87,6 +89,7 @@ const App = () => (
             <Route path="/portal" element={<Portal />} />
             <Route path="/portal/news" element={<PortalNews />} />
             <Route path="/portal/news/:slug" element={<PortalNewsDetail />} />
+            <Route path="/portal/events" element={<PortalEvents />} />
 
             {/* Admin CMS */}
             <Route element={<ProtectedRoute />}>
@@ -113,6 +116,7 @@ const App = () => (
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/sso" element={<AdminSSO />} />
                 <Route path="/admin/news" element={<AdminNews />} />
+                <Route path="/admin/events" element={<AdminEvents />} />
               </Route>
             </Route>
 
