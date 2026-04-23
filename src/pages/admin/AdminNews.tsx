@@ -105,6 +105,7 @@ const AdminNews = () => {
         media_urls: form.media_urls || [],
         category_id: form.category_id || null,
         tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+        contact_person_id: form.contact_person_id || null,
         visibility: form.visibility,
         is_important: form.is_important,
         is_urgent_banner: form.is_urgent_banner,
@@ -258,6 +259,7 @@ const AdminNews = () => {
                     tags: (p.tags || []).join(", "), visibility: p.visibility, is_important: p.is_important,
                     is_urgent_banner: p.is_urgent_banner, is_highlight: p.is_highlight,
                     comments_enabled: p.comments_enabled, published: p.published,
+                    contact_person_id: p.contact_person_id || "",
                     selected_roles: [], selected_agencies: [],
                   })}
                   className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
