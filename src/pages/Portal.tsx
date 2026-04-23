@@ -3,9 +3,13 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle } from "lucide-react";
+import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle, Newspaper, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import myssmLogo from "@/assets/myssm-logo.png";
+import { Link } from "react-router-dom";
+import { UrgentNewsBanner } from "@/components/news/UrgentNewsBanner";
+import { ImportantNewsModal } from "@/components/news/ImportantNewsModal";
+import { NewsCard, NewsCardData } from "@/components/news/NewsCard";
 
 const projectMeta: Record<string, { icon: React.ReactNode; description: string; color: string }> = {
   "ssm-partner": {
@@ -105,6 +109,36 @@ const Portal = () => {
     },
   });
 
+  const { data: latestNews } = useQuery({
+    queryKey: ["portal-latest-news", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data: posts } = await supabase
+        .from("news_posts" as any)
+        .select("id, title, slug, excerpt, cover_image_url, tags, published_at, created_at, is_important, is_highlight, news_categories(name, color)")
+        .eq("published", true)
+        .order("published_at", { ascending: false })
+        .limit(10) as any;
+      const ids = (posts || []).map((p: any) => p.id);
+      if (!ids.length) return [];
+      const [{ data: likes }, { data: comments }, { data: views }] = await Promise.all([
+        supabase.from("news_likes" as any).select("post_id").in("post_id", ids) as any,
+        supabase.from("news_comments" as any).select("post_id").in("post_id", ids).eq("hidden", false) as any,
+        supabase.from("news_views" as any).select("post_id").in("post_id", ids) as any,
+      ]);
+      const tally = (rows: any[]) => {
+        const m: Record<string, number> = {};
+        (rows || []).forEach((r: any) => { m[r.post_id] = (m[r.post_id] || 0) + 1; });
+        return m;
+      };
+      const lc = tally(likes), cc = tally(comments), vc = tally(views);
+      return (posts || []).map((p: any): NewsCardData => ({
+        ...p, category: p.news_categories,
+        _count: { likes: lc[p.id] || 0, comments: cc[p.id] || 0, views: vc[p.id] || 0 },
+      }));
+    },
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -160,6 +194,8 @@ const Portal = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <ImportantNewsModal />
+      <UrgentNewsBanner />
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -302,6 +338,35 @@ const Portal = () => {
               ))}
             </div>
           </div>
+
+          {/* News & Communication */}
+          {latestNews && latestNews.length > 0 && (
+            <div className="mt-12">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <Newspaper className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground font-heading">Aktuelle News</h3>
+                    <p className="text-xs text-muted-foreground font-body">Interne Mitteilungen & Updates</p>
+                  </div>
+                </div>
+                <Link
+                  to="/portal/news"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline font-body"
+                >
+                  Alle anzeigen
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {latestNews.slice(0, 6).map((n) => (
+                  <NewsCard key={n.id} news={n} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

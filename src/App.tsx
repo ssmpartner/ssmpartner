@@ -37,6 +37,9 @@ import AdminVag45 from "./pages/admin/AdminVag45";
 import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSSO from "./pages/admin/AdminSSO";
+import AdminNews from "./pages/admin/AdminNews";
+import PortalNews from "./pages/portal/PortalNews";
+import PortalNewsDetail from "./pages/portal/PortalNewsDetail";
 import ChatWidget from "@/components/ChatWidget";
 import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
@@ -82,6 +85,8 @@ const App = () => (
             {/* Auth */}
             <Route path="/login" element={<Login />} />
             <Route path="/portal" element={<Portal />} />
+            <Route path="/portal/news" element={<PortalNews />} />
+            <Route path="/portal/news/:slug" element={<PortalNewsDetail />} />
 
             {/* Admin CMS */}
             <Route element={<ProtectedRoute />}>
@@ -107,6 +112,7 @@ const App = () => (
                 <Route path="/admin/onlinecheck" element={<AdminOnlineCheck />} />
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/sso" element={<AdminSSO />} />
+                <Route path="/admin/news" element={<AdminNews />} />
               </Route>
             </Route>
 
