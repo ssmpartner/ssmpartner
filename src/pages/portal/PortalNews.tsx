@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import { Navigate, Link } from "react-router-dom";
-import { Search, ArrowLeft, Filter } from "lucide-react";
+import { Search, ArrowLeft, Filter, Calendar } from "lucide-react";
 import { NewsCard, NewsCardData } from "@/components/news/NewsCard";
 import { UrgentNewsBanner } from "@/components/news/UrgentNewsBanner";
 import { ImportantNewsModal } from "@/components/news/ImportantNewsModal";
@@ -13,6 +13,7 @@ const PortalNews = () => {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [monthFilter, setMonthFilter] = useState<string>("");
 
   const { data: categories } = useQuery({
     queryKey: ["news-categories"],
@@ -62,17 +63,35 @@ const PortalNews = () => {
     return Array.from(s).sort();
   }, [news]);
 
+  const months = useMemo(() => {
+    const set = new Set<string>();
+    (news || []).forEach((n: any) => {
+      const iso = n.published_at || n.created_at;
+      if (!iso) return;
+      const d = new Date(iso);
+      set.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+    });
+    return Array.from(set).sort().reverse();
+  }, [news]);
+
   const filtered = useMemo(() => {
     return (news || []).filter((n) => {
       if (activeCategory && (n as any).category_id !== activeCategory) return false;
       if (activeTag && !n.tags?.includes(activeTag)) return false;
+      if (monthFilter) {
+        const iso = (n as any).published_at || (n as any).created_at;
+        if (!iso) return false;
+        const d = new Date(iso);
+        const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        if (ym !== monthFilter) return false;
+      }
       if (search) {
         const q = search.toLowerCase();
         return n.title.toLowerCase().includes(q) || n.excerpt?.toLowerCase().includes(q);
       }
       return true;
     });
-  }, [news, activeCategory, activeTag, search]);
+  }, [news, activeCategory, activeTag, search, monthFilter]);
 
   const highlight = filtered.find((n) => n.is_highlight) || filtered[0];
   const rest = filtered.filter((n) => n.id !== highlight?.id);
@@ -129,6 +148,17 @@ const PortalNews = () => {
                 {cat.name}
               </button>
             ))}
+            <div className="ml-auto inline-flex items-center gap-2">
+              <Calendar size={14} className="text-muted-foreground" />
+              <select value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)} className="px-3 py-1.5 rounded-full text-sm border bg-card">
+                <option value="">Alle Monate</option>
+                {months.map((m) => {
+                  const [y, mm] = m.split("-");
+                  const label = new Date(Number(y), Number(mm) - 1, 1).toLocaleDateString("de-CH", { month: "long", year: "numeric" });
+                  return <option key={m} value={m}>{label}</option>;
+                })}
+              </select>
+            </div>
           </div>
           {allTags.length > 0 && (
             <div className="flex flex-wrap gap-2 items-center">
