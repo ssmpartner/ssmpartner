@@ -109,6 +109,36 @@ const Portal = () => {
     },
   });
 
+  const { data: latestNews } = useQuery({
+    queryKey: ["portal-latest-news", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data: posts } = await supabase
+        .from("news_posts" as any)
+        .select("id, title, slug, excerpt, cover_image_url, tags, published_at, created_at, is_important, is_highlight, news_categories(name, color)")
+        .eq("published", true)
+        .order("published_at", { ascending: false })
+        .limit(10) as any;
+      const ids = (posts || []).map((p: any) => p.id);
+      if (!ids.length) return [];
+      const [{ data: likes }, { data: comments }, { data: views }] = await Promise.all([
+        supabase.from("news_likes" as any).select("post_id").in("post_id", ids) as any,
+        supabase.from("news_comments" as any).select("post_id").in("post_id", ids).eq("hidden", false) as any,
+        supabase.from("news_views" as any).select("post_id").in("post_id", ids) as any,
+      ]);
+      const tally = (rows: any[]) => {
+        const m: Record<string, number> = {};
+        (rows || []).forEach((r: any) => { m[r.post_id] = (m[r.post_id] || 0) + 1; });
+        return m;
+      };
+      const lc = tally(likes), cc = tally(comments), vc = tally(views);
+      return (posts || []).map((p: any): NewsCardData => ({
+        ...p, category: p.news_categories,
+        _count: { likes: lc[p.id] || 0, comments: cc[p.id] || 0, views: vc[p.id] || 0 },
+      }));
+    },
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
