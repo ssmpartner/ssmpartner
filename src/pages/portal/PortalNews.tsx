@@ -57,6 +57,21 @@ const PortalNews = () => {
     },
   });
 
+  const { data: upcomingEvents } = useQuery({
+    queryKey: ["portal-news-upcoming-events"],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("events" as any)
+        .select("id, title, slug, start_at, location, cover_image_url, news_categories(name, color)")
+        .eq("published", true)
+        .gte("start_at", new Date().toISOString())
+        .order("start_at", { ascending: true })
+        .limit(5) as any;
+      return data || [];
+    },
+  });
+
   const allTags = useMemo(() => {
     const s = new Set<string>();
     news?.forEach((n) => n.tags?.forEach((t) => s.add(t)));
