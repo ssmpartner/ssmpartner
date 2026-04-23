@@ -162,6 +162,54 @@ const AdminEvents = () => {
 
   const regsEvent = events?.find((e: any) => e.id === registrationsFor);
 
+  const csvEscape = (v: any) => {
+    const s = v === null || v === undefined ? "" : String(v);
+    return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  const exportCSV = () => {
+    if (!registrations || !regsEvent) return;
+    const questions = (regsEvent.confirmation_questions || []) as any[];
+    const headers = ["Name", "Angemeldet am", "Notiz", ...questions.map((q) => q.question)];
+    const rows = registrations.map((r: any) => [
+      r.profile?.display_name || r.user_id,
+      new Date(r.created_at).toLocaleString("de-CH"),
+      r.note || "",
+      ...questions.map((q) => {
+        const a = r.answers?.[q.id];
+        if (a === undefined || a === null) return "";
+        return Array.isArray(a) ? a.join(" | ") : String(a);
+      }),
+    ]);
+    const csv = [headers, ...rows].map((row) => row.map(csvEscape).join(";")).join("\n");
+    const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `anmeldungen-${regsEvent.slug || "event"}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV exportiert");
+  };
+
+  const quizStats = useMemo(() => {
+    if (!registrations || !regsEvent) return [];
+    const questions = (regsEvent.confirmation_questions || []) as any[];
+    return questions.map((q) => {
+      const answers = registrations.map((r: any) => r.answers?.[q.id]).filter((a: any) => a !== undefined && a !== null && a !== "");
+      if (q.type === "single" || q.type === "multi") {
+        const counts: Record<string, number> = {};
+        answers.forEach((a: any) => {
+          (Array.isArray(a) ? a : [a]).forEach((v: any) => { counts[v] = (counts[v] || 0) + 1; });
+        });
+        const options = (q.options || []) as string[];
+        const total = answers.length;
+        return { question: q, type: q.type, total, options: options.map((opt) => ({ label: opt, count: counts[opt] || 0, pct: total ? Math.round(((counts[opt] || 0) / total) * 100) : 0 })) };
+      }
+      return { question: q, type: "text", total: answers.length, textAnswers: answers as string[] };
+    });
+  }, [registrations, regsEvent]);
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
