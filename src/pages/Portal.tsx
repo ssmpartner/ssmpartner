@@ -115,7 +115,7 @@ const Portal = () => {
     queryFn: async () => {
       const { data: posts } = await supabase
         .from("news_posts" as any)
-        .select("id, title, slug, excerpt, cover_image_url, tags, published_at, created_at, is_important, is_highlight, news_categories(name, color)")
+        .select("id, title, slug, excerpt, cover_image_url, cover_video_url, tags, published_at, created_at, is_important, is_highlight, news_categories(name, color)")
         .eq("published", true)
         .order("published_at", { ascending: false })
         .limit(10) as any;
@@ -225,8 +225,8 @@ const Portal = () => {
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-4xl">
+      <main className="flex-1 px-6 py-12">
+        <div className="w-full max-w-6xl mx-auto">
           <div className="text-center mb-10 flex flex-col items-center">
             <img src={myssmLogo} alt="MySSM" className="h-14 mb-4" loading="lazy" />
             <h2 className="text-2xl font-semibold text-foreground font-heading">
@@ -307,6 +307,40 @@ const Portal = () => {
             </div>
           )}
 
+          {/* News & Communication */}
+          <div className="mt-12">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                  <Newspaper className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground font-heading">Aktuelle News</h3>
+                  <p className="text-xs text-muted-foreground font-body">Interne Mitteilungen & Updates</p>
+                </div>
+              </div>
+              <Link
+                to="/portal/news"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline font-body"
+              >
+                Alle anzeigen
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+            {latestNews && latestNews.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {latestNews.slice(0, 6).map((n) => (
+                  <NewsCard key={n.id} news={n} />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed bg-card/50 p-10 text-center">
+                <Newspaper className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground font-body">Noch keine News veröffentlicht.</p>
+              </div>
+            )}
+          </div>
+
           {/* External Apps */}
           <div className="mt-12">
             <h3 className="text-lg font-semibold text-foreground font-heading mb-6">Weitere Tools</h3>
@@ -338,35 +372,6 @@ const Portal = () => {
               ))}
             </div>
           </div>
-
-          {/* News & Communication */}
-          {latestNews && latestNews.length > 0 && (
-            <div className="mt-12">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                    <Newspaper className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground font-heading">Aktuelle News</h3>
-                    <p className="text-xs text-muted-foreground font-body">Interne Mitteilungen & Updates</p>
-                  </div>
-                </div>
-                <Link
-                  to="/portal/news"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline font-body"
-                >
-                  Alle anzeigen
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {latestNews.slice(0, 6).map((n) => (
-                  <NewsCard key={n.id} news={n} />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </main>
 

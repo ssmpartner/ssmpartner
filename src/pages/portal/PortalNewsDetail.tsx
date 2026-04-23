@@ -132,14 +132,35 @@ const PortalNewsDetail = () => {
           )}
         </div>
         <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-6 leading-tight">{post.title}</h1>
-        {post.cover_image_url && (
+        {post.cover_video_url ? (
+          <div className="aspect-video bg-black rounded-2xl overflow-hidden mb-8">
+            <video src={post.cover_video_url} controls className="w-full h-full object-cover" />
+          </div>
+        ) : post.cover_image_url ? (
           <div className="aspect-[16/9] bg-muted rounded-2xl overflow-hidden mb-8">
             <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover" />
           </div>
-        )}
+        ) : null}
         <div className="prose prose-lg max-w-none text-foreground whitespace-pre-wrap leading-relaxed mb-8">
           {post.content}
         </div>
+
+        {post.media_urls?.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+            {post.media_urls.map((url: string, idx: number) => {
+              const isVideo = /\.(mp4|webm|mov)$/i.test(url);
+              return (
+                <div key={idx} className="aspect-square rounded-2xl overflow-hidden bg-muted">
+                  {isVideo ? (
+                    <video src={url} controls className="w-full h-full object-cover" />
+                  ) : (
+                    <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {post.tags?.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-8">

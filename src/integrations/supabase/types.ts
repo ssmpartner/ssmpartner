@@ -641,12 +641,14 @@ export type Database = {
           comments_enabled: boolean
           content: string
           cover_image_url: string | null
+          cover_video_url: string | null
           created_at: string
           excerpt: string | null
           id: string
           is_highlight: boolean
           is_important: boolean
           is_urgent_banner: boolean
+          media_urls: string[]
           published: boolean
           published_at: string | null
           slug: string
@@ -661,12 +663,14 @@ export type Database = {
           comments_enabled?: boolean
           content?: string
           cover_image_url?: string | null
+          cover_video_url?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
           is_highlight?: boolean
           is_important?: boolean
           is_urgent_banner?: boolean
+          media_urls?: string[]
           published?: boolean
           published_at?: string | null
           slug: string
@@ -681,12 +685,14 @@ export type Database = {
           comments_enabled?: boolean
           content?: string
           cover_image_url?: string | null
+          cover_video_url?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
           is_highlight?: boolean
           is_important?: boolean
           is_urgent_banner?: boolean
+          media_urls?: string[]
           published?: boolean
           published_at?: string | null
           slug?: string

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, forwardRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, X, AlertTriangle, Pin, Megaphone, BarChart3, Eye, Heart, MessageSquare, CheckCircle2, Loader2, Tag, Image as ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, X, AlertTriangle, Pin, Megaphone, BarChart3, Eye, Heart, MessageSquare, CheckCircle2, Loader2, Tag, Image as ImageIcon, Video, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import MediaPickerModal from "@/components/MediaPickerModal";
 
 const APP_ROLES = ["superadmin","admin","backoffice","analyst","teamleiter","controlling","geschaeftsleitung","hr","agency_manager","vertriebsleiter","agenturleiter","finanzcoach","trainee","verkaufsleiter"] as const;
 
@@ -18,6 +19,8 @@ const empty = {
   excerpt: "",
   content: "",
   cover_image_url: "",
+  cover_video_url: "",
+  media_urls: [] as string[],
   category_id: "",
   tags: "",
   visibility: "all" as "all" | "roles" | "agencies" | "mixed",
@@ -37,6 +40,10 @@ const AdminNews = () => {
   const [editing, setEditing] = useState<typeof empty | null>(null);
   const [statsPostId, setStatsPostId] = useState<string | null>(null);
   const [newCat, setNewCat] = useState({ id: "", name: "", color: "#243e3a" });
+  const [step, setStep] = useState(0);
+  const [picker, setPicker] = useState<null | "cover_image" | "cover_video" | "media">(null);
+
+  useEffect(() => { if (editing) setStep(0); }, [editing?.id]);
 
   const { data: posts } = useQuery({
     queryKey: ["admin-news-posts"],
@@ -92,6 +99,8 @@ const AdminNews = () => {
         excerpt: form.excerpt || null,
         content: form.content,
         cover_image_url: form.cover_image_url || null,
+        cover_video_url: form.cover_video_url || null,
+        media_urls: form.media_urls || [],
         category_id: form.category_id || null,
         tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
         visibility: form.visibility,
@@ -242,7 +251,8 @@ const AdminNews = () => {
                 <button
                   onClick={() => setEditing({
                     id: p.id, title: p.title, slug: p.slug, excerpt: p.excerpt || "", content: p.content || "",
-                    cover_image_url: p.cover_image_url || "", category_id: p.category_id || "",
+                    cover_image_url: p.cover_image_url || "", cover_video_url: p.cover_video_url || "",
+                    media_urls: p.media_urls || [], category_id: p.category_id || "",
                     tags: (p.tags || []).join(", "), visibility: p.visibility, is_important: p.is_important,
                     is_urgent_banner: p.is_urgent_banner, is_highlight: p.is_highlight,
                     comments_enabled: p.comments_enabled, published: p.published,
@@ -343,92 +353,244 @@ const AdminNews = () => {
 
       {/* Edit Modal */}
       {editing && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
-          <div className="bg-card border rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b">
-              <h2 className="text-lg font-semibold text-foreground">{editing.id ? "News bearbeiten" : "Neue News"}</h2>
-              <button onClick={() => setEditing(null)} className="p-1.5 hover:bg-muted rounded-lg"><X size={18}/></button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              <input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value, slug: editing.id ? editing.slug : slugify(e.target.value) })} placeholder="Titel" className="w-full px-3 py-2 rounded-lg border bg-background text-lg font-medium" />
-              <input value={editing.slug} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} placeholder="slug-url" className="w-full px-3 py-2 rounded-lg border bg-background font-mono text-sm" />
-              <textarea value={editing.excerpt} onChange={(e) => setEditing({ ...editing, excerpt: e.target.value })} placeholder="Kurzbeschreibung (Auszug)" rows={2} className="w-full px-3 py-2 rounded-lg border bg-background" />
-              <textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} placeholder="Inhalt der News…" rows={10} className="w-full px-3 py-2 rounded-lg border bg-background" />
-              <div className="grid md:grid-cols-2 gap-3">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
+          <div className="bg-card border rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-hidden flex flex-col">
+            {/* Header with Stepper */}
+            <div className="px-6 py-4 border-b">
+              <div className="flex items-center justify-between mb-4">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1"><ImageIcon size={12}/> Cover-Bild URL</label>
-                  <input value={editing.cover_image_url} onChange={(e) => setEditing({ ...editing, cover_image_url: e.target.value })} placeholder="https://…" className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm" />
+                  <h2 className="text-lg font-semibold text-foreground">{editing.id ? "News bearbeiten" : "Neue News erstellen"}</h2>
+                  <p className="text-xs text-muted-foreground">Schritt {step + 1} von 4 — {["Inhalt","Medien","Sichtbarkeit","Veröffentlichung"][step]}</p>
                 </div>
-                <div>
-                  <label className="text-xs font-medium text-muted-foreground">Kategorie</label>
-                  <select value={editing.category_id} onChange={(e) => setEditing({ ...editing, category_id: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm">
-                    <option value="">— Keine —</option>
-                    {categories?.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
-                </div>
+                <button onClick={() => setEditing(null)} className="p-1.5 hover:bg-muted rounded-lg"><X size={18}/></button>
               </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1"><Tag size={12}/> Tags (Komma-getrennt)</label>
-                <input value={editing.tags} onChange={(e) => setEditing({ ...editing, tags: e.target.value })} placeholder="produkt, schulung, q1-2026" className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm" />
-              </div>
-
-              <div className="border-t pt-4">
-                <label className="text-sm font-semibold text-foreground">Sichtbarkeit</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
-                  {(["all","roles","agencies","mixed"] as const).map((v) => (
-                    <button key={v} type="button" onClick={() => setEditing({ ...editing, visibility: v })} className={`px-3 py-2 rounded-lg border text-sm ${editing.visibility===v?"bg-primary text-primary-foreground border-primary":"bg-background hover:bg-muted"}`}>
-                      {v === "all" ? "Alle" : v === "roles" ? "Pro Rolle" : v === "agencies" ? "Pro Agentur" : "Kombiniert"}
-                    </button>
-                  ))}
-                </div>
-
-                {(editing.visibility === "roles" || editing.visibility === "mixed") && (
-                  <div className="mt-3">
-                    <p className="text-xs text-muted-foreground mb-2">Rollen auswählen:</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {APP_ROLES.map((r) => {
-                        const on = editing.selected_roles.includes(r);
-                        return (
-                          <button key={r} type="button" onClick={() => setEditing({ ...editing, selected_roles: on ? editing.selected_roles.filter((x) => x !== r) : [...editing.selected_roles, r] })} className={`text-xs px-2.5 py-1 rounded-full ${on?"bg-primary text-primary-foreground":"bg-muted text-muted-foreground"}`}>
-                            {r}
-                          </button>
-                        );
-                      })}
+              <div className="flex items-center gap-2">
+                {[
+                  { i: 0, label: "Inhalt", icon: FileText },
+                  { i: 1, label: "Medien", icon: ImageIcon },
+                  { i: 2, label: "Sichtbarkeit", icon: EyeIcon },
+                  { i: 3, label: "Optionen", icon: Settings2 },
+                ].map((s, idx, arr) => {
+                  const Icon = s.icon;
+                  const done = step > s.i;
+                  const active = step === s.i;
+                  return (
+                    <div key={s.i} className="flex items-center flex-1">
+                      <button type="button" onClick={() => setStep(s.i)} className="flex items-center gap-2 group">
+                        <span className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${active ? "bg-primary text-primary-foreground" : done ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
+                          {done ? <Check size={14}/> : <Icon size={14}/>}
+                        </span>
+                        <span className={`text-xs font-medium ${active ? "text-foreground" : "text-muted-foreground"} hidden sm:inline`}>{s.label}</span>
+                      </button>
+                      {idx < arr.length - 1 && <div className={`flex-1 h-0.5 mx-2 ${done ? "bg-primary/40" : "bg-muted"}`} />}
                     </div>
-                  </div>
-                )}
-                {(editing.visibility === "agencies" || editing.visibility === "mixed") && (
-                  <div className="mt-3">
-                    <p className="text-xs text-muted-foreground mb-2">Agenturen auswählen:</p>
-                    <div className="flex flex-wrap gap-1.5 max-h-40 overflow-y-auto">
-                      {agencies?.map((a: any) => {
-                        const on = editing.selected_agencies.includes(a.id);
-                        return (
-                          <button key={a.id} type="button" onClick={() => setEditing({ ...editing, selected_agencies: on ? editing.selected_agencies.filter((x) => x !== a.id) : [...editing.selected_agencies, a.id] })} className={`text-xs px-2.5 py-1 rounded-full ${on?"bg-primary text-primary-foreground":"bg-muted text-muted-foreground"}`}>
-                            {a.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="border-t pt-4 space-y-2">
-                <Toggle label="Veröffentlichen" checked={editing.published} onChange={(v) => setEditing({ ...editing, published: v })} />
-                <Toggle label="Highlight (Top-Beitrag)" checked={editing.is_highlight} onChange={(v) => setEditing({ ...editing, is_highlight: v })} />
-                <Toggle label="Wichtig (Pflicht-Lesebestätigung als Popup)" checked={editing.is_important} onChange={(v) => setEditing({ ...editing, is_important: v })} />
-                <Toggle label="Dringend-Banner im Portal anzeigen" checked={editing.is_urgent_banner} onChange={(v) => setEditing({ ...editing, is_urgent_banner: v })} />
-                <Toggle label="Kommentare erlauben" checked={editing.comments_enabled} onChange={(v) => setEditing({ ...editing, comments_enabled: v })} />
+                  );
+                })}
               </div>
             </div>
-            <div className="border-t px-6 py-4 flex justify-end gap-2">
-              <button onClick={() => setEditing(null)} className="px-4 py-2 rounded-lg border">Abbrechen</button>
-              <button onClick={() => savePost.mutate(editing)} disabled={!editing.title || savePost.isPending} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
-                {savePost.isPending && <Loader2 size={14} className="animate-spin"/>} Speichern
-              </button>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              {/* Step 1: Content */}
+              {step === 0 && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Titel *</label>
+                    <input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value, slug: editing.id ? editing.slug : slugify(e.target.value) })} placeholder="Aussagekräftiger Titel der News" className="mt-1 w-full px-3 py-2.5 rounded-lg border bg-background text-base font-medium" />
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">URL-Slug</label>
+                      <input value={editing.slug} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} placeholder="slug-url" className="mt-1 w-full px-3 py-2 rounded-lg border bg-background font-mono text-sm" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Kategorie</label>
+                      <select value={editing.category_id} onChange={(e) => setEditing({ ...editing, category_id: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm">
+                        <option value="">— Keine —</option>
+                        {categories?.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Kurzbeschreibung (Auszug)</label>
+                    <textarea value={editing.excerpt} onChange={(e) => setEditing({ ...editing, excerpt: e.target.value })} placeholder="Kurze Zusammenfassung für die Übersicht…" rows={2} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Inhalt *</label>
+                    <textarea value={editing.content} onChange={(e) => setEditing({ ...editing, content: e.target.value })} placeholder="Schreibe hier den vollständigen News-Inhalt…" rows={12} className="mt-1 w-full px-3 py-2 rounded-lg border bg-background leading-relaxed" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground inline-flex items-center gap-1"><Tag size={12}/> Tags (Komma-getrennt)</label>
+                    <input value={editing.tags} onChange={(e) => setEditing({ ...editing, tags: e.target.value })} placeholder="produkt, schulung, q1-2026" className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm" />
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Media */}
+              {step === 1 && (
+                <div className="space-y-6">
+                  {/* Cover Image */}
+                  <div>
+                    <label className="text-sm font-semibold text-foreground inline-flex items-center gap-2 mb-2"><ImageIcon size={16}/> Cover-Bild</label>
+                    {editing.cover_image_url ? (
+                      <div className="relative rounded-2xl overflow-hidden border aspect-[16/9] bg-muted">
+                        <img src={editing.cover_image_url} alt="Cover" className="w-full h-full object-cover" />
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          <button type="button" onClick={() => setPicker("cover_image")} className="px-3 py-1.5 rounded-lg bg-background/90 backdrop-blur text-xs font-medium border hover:bg-background">Ersetzen</button>
+                          <button type="button" onClick={() => setEditing({ ...editing, cover_image_url: "" })} className="p-1.5 rounded-lg bg-background/90 backdrop-blur text-destructive border hover:bg-background"><Trash2 size={14}/></button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => setPicker("cover_image")} className="w-full aspect-[16/9] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors">
+                        <ImageIcon size={32}/>
+                        <span className="text-sm font-medium">Cover-Bild auswählen oder hochladen</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Cover Video */}
+                  <div>
+                    <label className="text-sm font-semibold text-foreground inline-flex items-center gap-2 mb-2"><Video size={16}/> Cover-Video (optional)</label>
+                    <p className="text-xs text-muted-foreground mb-2">Wird statt des Bildes als Kopf des Beitrags angezeigt.</p>
+                    {editing.cover_video_url ? (
+                      <div className="relative rounded-2xl overflow-hidden border aspect-video bg-black">
+                        <video src={editing.cover_video_url} controls className="w-full h-full object-cover" />
+                        <div className="absolute top-3 right-3 flex gap-2">
+                          <button type="button" onClick={() => setPicker("cover_video")} className="px-3 py-1.5 rounded-lg bg-background/90 backdrop-blur text-xs font-medium border hover:bg-background">Ersetzen</button>
+                          <button type="button" onClick={() => setEditing({ ...editing, cover_video_url: "" })} className="p-1.5 rounded-lg bg-background/90 backdrop-blur text-destructive border hover:bg-background"><Trash2 size={14}/></button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => setPicker("cover_video")} className="w-full aspect-video rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors">
+                        <Video size={32}/>
+                        <span className="text-sm font-medium">Cover-Video auswählen oder hochladen</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Additional media gallery */}
+                  <div>
+                    <label className="text-sm font-semibold text-foreground inline-flex items-center gap-2 mb-2"><Plus size={16}/> Zusätzliche Medien (Galerie)</label>
+                    <p className="text-xs text-muted-foreground mb-2">Bilder oder Videos, die unter dem Beitrag angezeigt werden.</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {editing.media_urls.map((url, idx) => {
+                        const isVideo = /\.(mp4|webm|mov)$/i.test(url);
+                        return (
+                          <div key={url + idx} className="relative aspect-square rounded-xl overflow-hidden border bg-muted group">
+                            {isVideo ? (
+                              <video src={url} className="w-full h-full object-cover" />
+                            ) : (
+                              <img src={url} alt="" className="w-full h-full object-cover" />
+                            )}
+                            <button type="button" onClick={() => setEditing({ ...editing, media_urls: editing.media_urls.filter((_, i) => i !== idx) })} className="absolute top-2 right-2 p-1.5 rounded-lg bg-background/90 backdrop-blur text-destructive opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 size={12}/></button>
+                          </div>
+                        );
+                      })}
+                      <button type="button" onClick={() => setPicker("media")} className="aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-1 text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors">
+                        <Plus size={20}/>
+                        <span className="text-xs">Hinzufügen</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Visibility */}
+              {step === 2 && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-semibold text-foreground">Wer darf diese News sehen?</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                      {(["all","roles","agencies","mixed"] as const).map((v) => (
+                        <button key={v} type="button" onClick={() => setEditing({ ...editing, visibility: v })} className={`px-3 py-3 rounded-xl border text-sm font-medium transition-colors ${editing.visibility===v?"bg-primary text-primary-foreground border-primary":"bg-background hover:bg-muted"}`}>
+                          {v === "all" ? "Alle" : v === "roles" ? "Pro Rolle" : v === "agencies" ? "Pro Agentur" : "Kombiniert"}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {(editing.visibility === "roles" || editing.visibility === "mixed") && (
+                    <div className="p-4 rounded-xl border bg-muted/30">
+                      <p className="text-xs font-semibold text-foreground mb-2">Rollen auswählen:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {APP_ROLES.map((r) => {
+                          const on = editing.selected_roles.includes(r);
+                          return (
+                            <button key={r} type="button" onClick={() => setEditing({ ...editing, selected_roles: on ? editing.selected_roles.filter((x) => x !== r) : [...editing.selected_roles, r] })} className={`text-xs px-2.5 py-1.5 rounded-full transition-colors ${on?"bg-primary text-primary-foreground":"bg-background border text-muted-foreground hover:text-foreground"}`}>
+                              {r}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                  {(editing.visibility === "agencies" || editing.visibility === "mixed") && (
+                    <div className="p-4 rounded-xl border bg-muted/30">
+                      <p className="text-xs font-semibold text-foreground mb-2">Agenturen auswählen:</p>
+                      <div className="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto">
+                        {agencies?.map((a: any) => {
+                          const on = editing.selected_agencies.includes(a.id);
+                          return (
+                            <button key={a.id} type="button" onClick={() => setEditing({ ...editing, selected_agencies: on ? editing.selected_agencies.filter((x) => x !== a.id) : [...editing.selected_agencies, a.id] })} className={`text-xs px-2.5 py-1.5 rounded-full transition-colors ${on?"bg-primary text-primary-foreground":"bg-background border text-muted-foreground hover:text-foreground"}`}>
+                              {a.name}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Step 4: Options */}
+              {step === 3 && (
+                <div className="space-y-3">
+                  <div className="p-4 rounded-xl border bg-muted/30 space-y-1">
+                    <Toggle label="Veröffentlichen" hint="News ist sofort im Portal sichtbar" checked={editing.published} onChange={(v) => setEditing({ ...editing, published: v })} />
+                    <Toggle label="Highlight" hint="Als Top-Beitrag prominent angezeigt" checked={editing.is_highlight} onChange={(v) => setEditing({ ...editing, is_highlight: v })} />
+                    <Toggle label="Wichtig — Pflicht-Lesebestätigung" hint="Erscheint als Popup beim Portal-Login" checked={editing.is_important} onChange={(v) => setEditing({ ...editing, is_important: v })} />
+                    <Toggle label="Dringend-Banner" hint="Wird oben im Portal als Banner eingeblendet" checked={editing.is_urgent_banner} onChange={(v) => setEditing({ ...editing, is_urgent_banner: v })} />
+                    <Toggle label="Kommentare erlauben" hint="Mitarbeitende können diskutieren" checked={editing.comments_enabled} onChange={(v) => setEditing({ ...editing, comments_enabled: v })} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="border-t px-6 py-4 flex items-center justify-between gap-2">
+              <button onClick={() => setEditing(null)} className="px-4 py-2 rounded-lg border text-muted-foreground hover:text-foreground hover:bg-muted">Abbrechen</button>
+              <div className="flex gap-2">
+                {step > 0 && (
+                  <button onClick={() => setStep(step - 1)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border hover:bg-muted">
+                    <ChevronLeft size={14}/> Zurück
+                  </button>
+                )}
+                {step < 3 ? (
+                  <button onClick={() => setStep(step + 1)} disabled={step === 0 && !editing.title} className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
+                    Weiter <ChevronRight size={14}/>
+                  </button>
+                ) : (
+                  <button onClick={() => savePost.mutate(editing)} disabled={!editing.title || savePost.isPending} className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50">
+                    {savePost.isPending ? <Loader2 size={14} className="animate-spin"/> : <Send size={14}/>}
+                    {editing.published ? "Veröffentlichen" : "Speichern"}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Media Picker */}
+          <MediaPickerModal
+            open={picker !== null}
+            onClose={() => setPicker(null)}
+            accept={picker === "cover_video" ? "video" : picker === "media" ? "all" : "image"}
+            title={picker === "cover_video" ? "Cover-Video wählen" : picker === "media" ? "Medien hinzufügen" : "Cover-Bild wählen"}
+            onSelect={(url) => {
+              if (picker === "cover_image") setEditing({ ...editing, cover_image_url: url });
+              else if (picker === "cover_video") setEditing({ ...editing, cover_video_url: url });
+              else if (picker === "media") setEditing({ ...editing, media_urls: [...editing.media_urls, url] });
+              setPicker(null);
+            }}
+          />
         </div>
       )}
     </div>
@@ -445,13 +607,24 @@ const StatCard = ({ icon: Icon, label, value, highlight }: { icon: any; label: s
   </div>
 );
 
-const Toggle = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) => (
-  <label className="flex items-center justify-between py-1 cursor-pointer">
-    <span className="text-sm text-foreground">{label}</span>
-    <button type="button" onClick={() => onChange(!checked)} className={`relative h-6 w-11 rounded-full transition-colors ${checked ? "bg-primary" : "bg-muted"}`}>
-      <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${checked ? "translate-x-5" : "translate-x-0.5"}`} />
+const Toggle = forwardRef<HTMLButtonElement, { label: string; hint?: string; checked: boolean; onChange: (v: boolean) => void }>(({ label, hint, checked, onChange }, ref) => (
+  <div className="flex items-center justify-between py-2.5 gap-4">
+    <div className="flex-1 min-w-0">
+      <p className="text-sm font-medium text-foreground">{label}</p>
+      {hint && <p className="text-xs text-muted-foreground mt-0.5">{hint}</p>}
+    </div>
+    <button
+      ref={ref}
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 ${checked ? "bg-primary" : "bg-muted-foreground/30"}`}
+    >
+      <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${checked ? "translate-x-[22px]" : "translate-x-0.5"}`} />
     </button>
-  </label>
-);
+  </div>
+));
+Toggle.displayName = "Toggle";
 
 export default AdminNews;
