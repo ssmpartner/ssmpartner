@@ -31,6 +31,7 @@ const empty = {
   registration_deadline: "",
   capacity: "" as number | "",
   contact_person_id: "",
+  confirmation_text: "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
   published: false,
 };
 
@@ -100,6 +101,7 @@ const AdminEvents = () => {
         registration_deadline: form.registration_deadline ? new Date(form.registration_deadline).toISOString() : null,
         capacity: form.capacity ? Number(form.capacity) : null,
         contact_person_id: form.contact_person_id || null,
+        confirmation_text: form.confirmation_text || null,
         published: form.published,
         author_id: user?.id,
       };
@@ -140,6 +142,7 @@ const AdminEvents = () => {
       registration_deadline: toLocalInput(e.registration_deadline),
       capacity: e.capacity || "",
       contact_person_id: e.contact_person_id || "",
+      confirmation_text: e.confirmation_text || "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
       published: false,
     });
     toast.info("Event als Vorlage geladen — passe Titel & Datum an");
