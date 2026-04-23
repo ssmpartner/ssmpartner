@@ -16,6 +16,12 @@ const PortalEvents = () => {
   const [filter, setFilter] = useState<"upcoming" | "past" | "all">("upcoming");
   const [monthFilter, setMonthFilter] = useState<string>("");
   const [confirmEvent, setConfirmEvent] = useState<any | null>(null);
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+
+  const openConfirm = (e: any) => {
+    setAnswers({});
+    setConfirmEvent(e);
+  };
 
   const { data: events } = useQuery({
     queryKey: ["portal-events"],
@@ -46,8 +52,8 @@ const PortalEvents = () => {
   });
 
   const register = useMutation({
-    mutationFn: async (eventId: string) => {
-      const { error } = await supabase.from("event_registrations" as any).insert({ event_id: eventId, user_id: user!.id }) as any;
+    mutationFn: async ({ eventId, answers }: { eventId: string; answers: Record<string, any> }) => {
+      const { error } = await supabase.from("event_registrations" as any).insert({ event_id: eventId, user_id: user!.id, answers }) as any;
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Teilnahme bestätigt"); setConfirmEvent(null); qc.invalidateQueries({ queryKey: ["my-event-regs"] }); qc.invalidateQueries({ queryKey: ["events-reg-counts"] }); },
