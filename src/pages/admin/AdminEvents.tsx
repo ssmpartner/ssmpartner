@@ -103,6 +103,7 @@ const AdminEvents = () => {
         capacity: form.capacity ? Number(form.capacity) : null,
         contact_person_id: form.contact_person_id || null,
         confirmation_text: form.confirmation_text || null,
+        confirmation_questions: form.confirmation_questions || [],
         published: form.published,
         author_id: user?.id,
       };
