@@ -5,6 +5,8 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Calendar, MapPin, Users, Search, Check, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const PortalEvents = () => {
   const { user, loading } = useAuth();
@@ -13,6 +15,7 @@ const PortalEvents = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"upcoming" | "past" | "all">("upcoming");
   const [monthFilter, setMonthFilter] = useState<string>("");
+  const [confirmEvent, setConfirmEvent] = useState<any | null>(null);
 
   const { data: events } = useQuery({
     queryKey: ["portal-events"],
@@ -47,7 +50,7 @@ const PortalEvents = () => {
       const { error } = await supabase.from("event_registrations" as any).insert({ event_id: eventId, user_id: user!.id }) as any;
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Angemeldet"); qc.invalidateQueries({ queryKey: ["my-event-regs"] }); qc.invalidateQueries({ queryKey: ["events-reg-counts"] }); },
+    onSuccess: () => { toast.success("Teilnahme bestätigt"); setConfirmEvent(null); qc.invalidateQueries({ queryKey: ["my-event-regs"] }); qc.invalidateQueries({ queryKey: ["events-reg-counts"] }); },
     onError: (e: any) => toast.error(e.message),
   });
 

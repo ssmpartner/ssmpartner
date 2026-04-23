@@ -388,6 +388,13 @@ const AdminEvents = () => {
                       {teamMembers?.map((m: any) => <option key={m.id} value={m.id}>{m.name}{m.role_de ? ` — ${m.role_de}` : ""}</option>)}
                     </select>
                   </div>
+                  {editing.registration_enabled && (
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Bestätigungstext im Teilnahme-Popup</label>
+                      <textarea value={editing.confirmation_text} onChange={(e) => setEditing({ ...editing, confirmation_text: e.target.value })} rows={4} placeholder="Wird im Bestätigungs-Popup vor der Anmeldung angezeigt." className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm" />
+                      <p className="text-[11px] text-muted-foreground mt-1">Dieser Text erscheint im Pop-up, bevor Mitarbeitende ihre Teilnahme bestätigen.</p>
+                    </div>
+                  )}
                 </div>
               )}
 
