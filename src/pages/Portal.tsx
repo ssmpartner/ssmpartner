@@ -194,6 +194,8 @@ const Portal = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <ImportantNewsModal />
+      <UrgentNewsBanner />
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
