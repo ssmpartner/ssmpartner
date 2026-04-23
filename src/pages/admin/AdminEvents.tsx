@@ -31,6 +31,7 @@ const empty = {
   registration_deadline: "",
   capacity: "" as number | "",
   contact_person_id: "",
+  confirmation_text: "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
   published: false,
 };
 
@@ -100,6 +101,7 @@ const AdminEvents = () => {
         registration_deadline: form.registration_deadline ? new Date(form.registration_deadline).toISOString() : null,
         capacity: form.capacity ? Number(form.capacity) : null,
         contact_person_id: form.contact_person_id || null,
+        confirmation_text: form.confirmation_text || null,
         published: form.published,
         author_id: user?.id,
       };
@@ -140,6 +142,7 @@ const AdminEvents = () => {
       registration_deadline: toLocalInput(e.registration_deadline),
       capacity: e.capacity || "",
       contact_person_id: e.contact_person_id || "",
+      confirmation_text: e.confirmation_text || "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
       published: false,
     });
     toast.info("Event als Vorlage geladen — passe Titel & Datum an");
@@ -211,6 +214,7 @@ const AdminEvents = () => {
                       start_at: toLocalInput(e.start_at), end_at: toLocalInput(e.end_at),
                       registration_enabled: e.registration_enabled, registration_deadline: toLocalInput(e.registration_deadline),
                       capacity: e.capacity || "", contact_person_id: e.contact_person_id || "", published: e.published,
+                      confirmation_text: e.confirmation_text || "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
                     })} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"><Pencil size={16} /></button>
                     <button onClick={() => { if (confirm("Event wirklich löschen?")) del.mutate(e.id); }} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive"><Trash2 size={16} /></button>
                   </div>
@@ -384,6 +388,13 @@ const AdminEvents = () => {
                       {teamMembers?.map((m: any) => <option key={m.id} value={m.id}>{m.name}{m.role_de ? ` — ${m.role_de}` : ""}</option>)}
                     </select>
                   </div>
+                  {editing.registration_enabled && (
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Bestätigungstext im Teilnahme-Popup</label>
+                      <textarea value={editing.confirmation_text} onChange={(e) => setEditing({ ...editing, confirmation_text: e.target.value })} rows={4} placeholder="Wird im Bestätigungs-Popup vor der Anmeldung angezeigt." className="mt-1 w-full px-3 py-2 rounded-lg border bg-background text-sm" />
+                      <p className="text-[11px] text-muted-foreground mt-1">Dieser Text erscheint im Pop-up, bevor Mitarbeitende ihre Teilnahme bestätigen.</p>
+                    </div>
+                  )}
                 </div>
               )}
 

@@ -402,6 +402,7 @@ export type Database = {
           author_id: string | null
           capacity: number | null
           category_id: string | null
+          confirmation_text: string | null
           contact_person_id: string | null
           cover_image_url: string | null
           created_at: string
@@ -423,6 +424,7 @@ export type Database = {
           author_id?: string | null
           capacity?: number | null
           category_id?: string | null
+          confirmation_text?: string | null
           contact_person_id?: string | null
           cover_image_url?: string | null
           created_at?: string
@@ -444,6 +446,7 @@ export type Database = {
           author_id?: string | null
           capacity?: number | null
           category_id?: string | null
+          confirmation_text?: string | null
           contact_person_id?: string | null
           cover_image_url?: string | null
           created_at?: string

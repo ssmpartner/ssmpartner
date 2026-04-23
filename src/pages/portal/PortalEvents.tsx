@@ -5,6 +5,8 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Calendar, MapPin, Users, Search, Check, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const PortalEvents = () => {
   const { user, loading } = useAuth();
@@ -13,6 +15,7 @@ const PortalEvents = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"upcoming" | "past" | "all">("upcoming");
   const [monthFilter, setMonthFilter] = useState<string>("");
+  const [confirmEvent, setConfirmEvent] = useState<any | null>(null);
 
   const { data: events } = useQuery({
     queryKey: ["portal-events"],
@@ -47,7 +50,7 @@ const PortalEvents = () => {
       const { error } = await supabase.from("event_registrations" as any).insert({ event_id: eventId, user_id: user!.id }) as any;
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Angemeldet"); qc.invalidateQueries({ queryKey: ["my-event-regs"] }); qc.invalidateQueries({ queryKey: ["events-reg-counts"] }); },
+    onSuccess: () => { toast.success("Teilnahme bestätigt"); setConfirmEvent(null); qc.invalidateQueries({ queryKey: ["my-event-regs"] }); qc.invalidateQueries({ queryKey: ["events-reg-counts"] }); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -184,16 +187,15 @@ const PortalEvents = () => {
                           </div>
                         )}
                       </div>
-                      <div className="shrink-0 flex md:flex-col gap-2 md:w-44">
+                      <div className="shrink-0 flex md:flex-col gap-2 md:items-end">
                         {e.registration_enabled && !past && (
                           myRegId ? (
-                            <button onClick={() => unregister.mutate(myRegId)} disabled={unregister.isPending} className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 font-medium text-sm">
-                              <Check size={16} /> Angemeldet
+                            <button onClick={() => unregister.mutate(myRegId)} disabled={unregister.isPending} className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 font-medium text-xs">
+                              <Check size={13} /> Angemeldet
                             </button>
                           ) : (
-                            <button onClick={() => register.mutate(e.id)} disabled={register.isPending || isFull || deadlinePassed} className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                              {register.isPending ? <Loader2 size={14} className="animate-spin" /> : null}
-                              {isFull ? "Ausgebucht" : deadlinePassed ? "Anmeldeschluss" : "Anmelden"}
+                            <button onClick={() => setConfirmEvent(e)} disabled={isFull || deadlinePassed} className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-xs disabled:opacity-50 disabled:cursor-not-allowed">
+                              {isFull ? "Ausgebucht" : deadlinePassed ? "Anmeldeschluss" : "Teilnehmen"}
                             </button>
                           )
                         )}
@@ -206,6 +208,46 @@ const PortalEvents = () => {
           </div>
         )}
       </main>
+
+      <Dialog open={!!confirmEvent} onOpenChange={(o) => !o && setConfirmEvent(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Teilnahme bestätigen</DialogTitle>
+          </DialogHeader>
+          {confirmEvent && (
+            <div className="space-y-4">
+              <p className="text-sm text-foreground/80 whitespace-pre-line">
+                {confirmEvent.confirmation_text || "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich."}
+              </p>
+              <div className="rounded-xl border bg-muted/40 p-4 space-y-2 text-sm">
+                <div className="font-semibold text-foreground">{confirmEvent.title}</div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar size={14} />
+                  {new Date(confirmEvent.start_at).toLocaleString("de-CH", { weekday: "long", day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  {confirmEvent.end_at ? ` – ${new Date(confirmEvent.end_at).toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}` : ""}
+                </div>
+                {confirmEvent.location && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin size={14} /> {confirmEvent.location}
+                  </div>
+                )}
+                {confirmEvent.capacity && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Users size={14} /> Max. {confirmEvent.capacity} Teilnehmer
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmEvent(null)}>Abbrechen</Button>
+            <Button onClick={() => confirmEvent && register.mutate(confirmEvent.id)} disabled={register.isPending}>
+              {register.isPending ? <Loader2 size={14} className="animate-spin mr-1.5" /> : <Check size={14} className="mr-1.5" />}
+              Ja, ich bestätige die Teilnahme
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
