@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, X, Calendar, MapPin, Users, Loader2, ImageIcon, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Calendar, MapPin, Users, Loader2, ImageIcon, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import MediaPickerModal from "@/components/MediaPickerModal";
