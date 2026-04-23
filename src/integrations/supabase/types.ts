@@ -508,6 +508,297 @@ export type Database = {
         }
         Relationships: []
       }
+      news_acknowledgements: {
+        Row: {
+          acknowledged_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          acknowledged_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_acknowledgements_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "news_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_categories: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      news_comments: {
+        Row: {
+          content: string
+          created_at: string
+          hidden: boolean
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "news_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "news_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_posts: {
+        Row: {
+          author_id: string | null
+          category_id: string | null
+          comments_enabled: boolean
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_highlight: boolean
+          is_important: boolean
+          is_urgent_banner: boolean
+          published: boolean
+          published_at: string | null
+          slug: string
+          tags: string[]
+          title: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          author_id?: string | null
+          category_id?: string | null
+          comments_enabled?: boolean
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_highlight?: boolean
+          is_important?: boolean
+          is_urgent_banner?: boolean
+          published?: boolean
+          published_at?: string | null
+          slug: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          author_id?: string | null
+          category_id?: string | null
+          comments_enabled?: boolean
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_highlight?: boolean
+          is_important?: boolean
+          is_urgent_banner?: boolean
+          published?: boolean
+          published_at?: string | null
+          slug?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "news_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_views: {
+        Row: {
+          id: string
+          post_id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_views_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "news_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_visibility_agencies: {
+        Row: {
+          agency_id: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          agency_id: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          agency_id?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_visibility_agencies_agency_id_fkey"
+            columns: ["agency_id"]
+            isOneToOne: false
+            referencedRelation: "agencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_visibility_agencies_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "news_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_visibility_roles: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_visibility_roles_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "news_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_heroes: {
         Row: {
           alt_text: string | null
@@ -964,6 +1255,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_view_news: {
+        Args: { _post_id: string; _user_id: string }
+        Returns: boolean
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
