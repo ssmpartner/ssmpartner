@@ -187,16 +187,15 @@ const PortalEvents = () => {
                           </div>
                         )}
                       </div>
-                      <div className="shrink-0 flex md:flex-col gap-2 md:w-44">
+                      <div className="shrink-0 flex md:flex-col gap-2 md:items-end">
                         {e.registration_enabled && !past && (
                           myRegId ? (
-                            <button onClick={() => unregister.mutate(myRegId)} disabled={unregister.isPending} className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 font-medium text-sm">
-                              <Check size={16} /> Angemeldet
+                            <button onClick={() => unregister.mutate(myRegId)} disabled={unregister.isPending} className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/30 text-primary bg-primary/5 hover:bg-primary/10 font-medium text-xs">
+                              <Check size={13} /> Angemeldet
                             </button>
                           ) : (
-                            <button onClick={() => register.mutate(e.id)} disabled={register.isPending || isFull || deadlinePassed} className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                              {register.isPending ? <Loader2 size={14} className="animate-spin" /> : null}
-                              {isFull ? "Ausgebucht" : deadlinePassed ? "Anmeldeschluss" : "Anmelden"}
+                            <button onClick={() => setConfirmEvent(e)} disabled={isFull || deadlinePassed} className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-xs disabled:opacity-50 disabled:cursor-not-allowed">
+                              {isFull ? "Ausgebucht" : deadlinePassed ? "Anmeldeschluss" : "Teilnehmen"}
                             </button>
                           )
                         )}
