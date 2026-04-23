@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, X, Calendar, MapPin, Users, Loader2, ImageIcon, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send, Copy } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Calendar, MapPin, Users, Loader2, ImageIcon, ChevronLeft, ChevronRight, Check, FileText, Settings2, Eye as EyeIcon, Send, Copy, Download, BarChart3, List } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import MediaPickerModal from "@/components/MediaPickerModal";
@@ -43,6 +43,7 @@ const AdminEvents = () => {
   const [step, setStep] = useState(0);
   const [picker, setPicker] = useState(false);
   const [registrationsFor, setRegistrationsFor] = useState<string | null>(null);
+  const [regsTab, setRegsTab] = useState<"list" | "stats">("list");
 
   useEffect(() => { if (editing) setStep(0); }, [editing?.id]);
 
@@ -161,6 +162,54 @@ const AdminEvents = () => {
 
   const regsEvent = events?.find((e: any) => e.id === registrationsFor);
 
+  const csvEscape = (v: any) => {
+    const s = v === null || v === undefined ? "" : String(v);
+    return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  const exportCSV = () => {
+    if (!registrations || !regsEvent) return;
+    const questions = (regsEvent.confirmation_questions || []) as any[];
+    const headers = ["Name", "Angemeldet am", "Notiz", ...questions.map((q) => q.question)];
+    const rows = registrations.map((r: any) => [
+      r.profile?.display_name || r.user_id,
+      new Date(r.created_at).toLocaleString("de-CH"),
+      r.note || "",
+      ...questions.map((q) => {
+        const a = r.answers?.[q.id];
+        if (a === undefined || a === null) return "";
+        return Array.isArray(a) ? a.join(" | ") : String(a);
+      }),
+    ]);
+    const csv = [headers, ...rows].map((row) => row.map(csvEscape).join(";")).join("\n");
+    const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `anmeldungen-${regsEvent.slug || "event"}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV exportiert");
+  };
+
+  const quizStats = useMemo(() => {
+    if (!registrations || !regsEvent) return [];
+    const questions = (regsEvent.confirmation_questions || []) as any[];
+    return questions.map((q) => {
+      const answers = registrations.map((r: any) => r.answers?.[q.id]).filter((a: any) => a !== undefined && a !== null && a !== "");
+      if (q.type === "single" || q.type === "multi") {
+        const counts: Record<string, number> = {};
+        answers.forEach((a: any) => {
+          (Array.isArray(a) ? a : [a]).forEach((v: any) => { counts[v] = (counts[v] || 0) + 1; });
+        });
+        const options = (q.options || []) as string[];
+        const total = answers.length;
+        return { question: q, type: q.type, total, options: options.map((opt) => ({ label: opt, count: counts[opt] || 0, pct: total ? Math.round(((counts[opt] || 0) / total) * 100) : 0 })) };
+      }
+      return { question: q, type: "text", total: answers.length, textAnswers: answers as string[] };
+    });
+  }, [registrations, regsEvent]);
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -232,15 +281,71 @@ const AdminEvents = () => {
       {/* Registrations Modal */}
       {registrationsFor && regsEvent && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) setRegistrationsFor(null); }}>
-          <div className="bg-card border rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col">
+          <div className="bg-card border rounded-3xl shadow-2xl max-w-3xl w-full max-h-[88vh] overflow-hidden flex flex-col">
             <div className="px-6 py-4 border-b flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold text-foreground">Anmeldungen</h2>
                 <p className="text-xs text-muted-foreground">{regsEvent.title} — {registrations?.length || 0}{regsEvent.capacity ? ` / ${regsEvent.capacity}` : ""} Teilnehmer</p>
               </div>
-              <button onClick={() => setRegistrationsFor(null)} className="p-1.5 hover:bg-muted rounded-lg"><X size={18} /></button>
+              <div className="flex items-center gap-2">
+                <button onClick={exportCSV} disabled={!registrations?.length} className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed">
+                  <Download size={13} /> CSV Export
+                </button>
+                <button onClick={() => setRegistrationsFor(null)} className="p-1.5 hover:bg-muted rounded-lg"><X size={18} /></button>
+              </div>
             </div>
+            {(regsEvent.confirmation_questions || []).length > 0 && (
+              <div className="px-6 pt-3 border-b">
+                <div className="flex gap-1">
+                  <button onClick={() => setRegsTab("list")} className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-t-lg border-b-2 ${regsTab === "list" ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                    <List size={13} /> Teilnehmerliste
+                  </button>
+                  <button onClick={() => setRegsTab("stats")} className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-t-lg border-b-2 ${regsTab === "stats" ? "border-primary text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                    <BarChart3 size={13} /> Quiz-Auswertung
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="flex-1 overflow-y-auto p-6 space-y-2">
+              {regsTab === "stats" && (regsEvent.confirmation_questions || []).length > 0 ? (
+                <div className="space-y-6">
+                  {registrations?.length === 0 && <p className="text-center text-muted-foreground py-8">Noch keine Antworten</p>}
+                  {quizStats.map((s: any, idx: number) => (
+                    <div key={s.question.id} className="rounded-2xl border bg-background p-5">
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <div>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Frage {idx + 1}</p>
+                          <h4 className="text-sm font-semibold text-foreground mt-0.5">{s.question.question}</h4>
+                        </div>
+                        <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">{s.total} Antworten</span>
+                      </div>
+                      {s.type === "text" ? (
+                        <div className="space-y-1.5">
+                          {s.textAnswers.length === 0 && <p className="text-xs text-muted-foreground italic">Keine Antworten</p>}
+                          {s.textAnswers.map((a: string, i: number) => (
+                            <div key={i} className="text-sm text-foreground bg-muted/50 rounded-lg px-3 py-2">„{a}“</div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          {s.options.map((opt: any) => (
+                            <div key={opt.label}>
+                              <div className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-foreground font-medium">{opt.label}</span>
+                                <span className="text-muted-foreground tabular-nums">{opt.count} ({opt.pct}%)</span>
+                              </div>
+                              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                                <div className="h-full bg-primary transition-all" style={{ width: `${opt.pct}%` }} />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <>
               {registrations?.length === 0 && <p className="text-center text-muted-foreground py-8">Noch keine Anmeldungen</p>}
               {registrations?.map((r: any) => (
                 <div key={r.id} className="flex items-center gap-3 p-3 rounded-xl border bg-background">
@@ -269,6 +374,8 @@ const AdminEvents = () => {
                   <button onClick={() => removeReg.mutate(r.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive" title="Anmeldung entfernen"><Trash2 size={14} /></button>
                 </div>
               ))}
+                </>
+              )}
             </div>
           </div>
         </div>
