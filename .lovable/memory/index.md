@@ -35,5 +35,6 @@
 - [Architecture & API](mem://admin/documentation-and-api) — CMS documentation, Supabase REST, and Edge Functions
 - [Brand Identity](mem://style/brand-identity) — Brand colors, pattern overlays, and typography rules
 - [Who We Are](mem://features/home-who-we-are) — 3:4 image grid with specific shadow and offset
+- [News System](mem://features/news-system) — Internes News/Blog auf Portal mit Pflicht-Lesebestätigung, Banner, Kommentaren und Statistik
 - [User Management](mem://features/user-management) — Profiles, roles (app_role enum), manage-users edge function
 - [SSO System](mem://features/sso-system) — Custom SSO with central auth, per-project access control, and audit logging
