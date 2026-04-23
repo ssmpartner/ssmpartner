@@ -43,6 +43,7 @@ const AdminEvents = () => {
   const [step, setStep] = useState(0);
   const [picker, setPicker] = useState(false);
   const [registrationsFor, setRegistrationsFor] = useState<string | null>(null);
+  const [regsTab, setRegsTab] = useState<"list" | "stats">("list");
 
   useEffect(() => { if (editing) setStep(0); }, [editing?.id]);
 
