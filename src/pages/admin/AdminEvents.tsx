@@ -203,6 +203,7 @@ const AdminEvents = () => {
                         <Users size={16} />
                       </button>
                     )}
+                    <button onClick={() => duplicate(e)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground" title="Als Vorlage duplizieren"><Copy size={16} /></button>
                     <button onClick={() => setEditing({
                       id: e.id, title: e.title, slug: e.slug, description: e.description || "",
                       cover_image_url: e.cover_image_url || "", category_id: e.category_id || "",
