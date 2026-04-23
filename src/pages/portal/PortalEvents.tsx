@@ -200,7 +200,7 @@ const PortalEvents = () => {
                               <Check size={13} /> Angemeldet
                             </button>
                           ) : (
-                            <button onClick={() => setConfirmEvent(e)} disabled={isFull || deadlinePassed} className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-xs disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button onClick={() => openConfirm(e)} disabled={isFull || deadlinePassed} className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium text-xs disabled:opacity-50 disabled:cursor-not-allowed">
                               {isFull ? "Ausgebucht" : deadlinePassed ? "Anmeldeschluss" : "Teilnehmen"}
                             </button>
                           )
