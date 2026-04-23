@@ -99,6 +99,8 @@ const AdminNews = () => {
         excerpt: form.excerpt || null,
         content: form.content,
         cover_image_url: form.cover_image_url || null,
+        cover_video_url: form.cover_video_url || null,
+        media_urls: form.media_urls || [],
         category_id: form.category_id || null,
         tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
         visibility: form.visibility,
@@ -249,7 +251,8 @@ const AdminNews = () => {
                 <button
                   onClick={() => setEditing({
                     id: p.id, title: p.title, slug: p.slug, excerpt: p.excerpt || "", content: p.content || "",
-                    cover_image_url: p.cover_image_url || "", category_id: p.category_id || "",
+                    cover_image_url: p.cover_image_url || "", cover_video_url: p.cover_video_url || "",
+                    media_urls: p.media_urls || [], category_id: p.category_id || "",
                     tags: (p.tags || []).join(", "), visibility: p.visibility, is_important: p.is_important,
                     is_urgent_banner: p.is_urgent_banner, is_highlight: p.is_highlight,
                     comments_enabled: p.comments_enabled, published: p.published,
