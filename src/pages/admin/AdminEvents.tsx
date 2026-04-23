@@ -32,6 +32,7 @@ const empty = {
   capacity: "" as number | "",
   contact_person_id: "",
   confirmation_text: "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich.",
+  confirmation_questions: [] as any[],
   published: false,
 };
 
