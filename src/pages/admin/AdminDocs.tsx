@@ -1,17 +1,18 @@
 import { useState, useMemo } from "react";
-import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2, Code, History, Search, Sparkles, Zap, Database, Palette, Map as MapIcon, Cloud, Cpu, Rocket, CheckCircle2 } from "lucide-react";
+import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2, Code, History, Search, Sparkles, Zap, Database, Palette, Map as MapIcon, Cloud, Cpu, Rocket, CheckCircle2, Newspaper, Calendar, BarChart3, ListChecks } from "lucide-react";
 
-const CMS_VERSION = "2.5.0";
-const RELEASE_DATE = "22. April 2026";
+const CMS_VERSION = "2.6.0";
+const RELEASE_DATE = "23. April 2026";
 
 type Section = {
   icon: any;
   title: string;
   content: string;
-  category: "Inhalte" | "Benutzer & SSO" | "Agenturen" | "Karriere" | "Tools";
+  category: "Inhalte" | "Benutzer & SSO" | "Agenturen" | "Karriere" | "Portal" | "Tools";
 };
 
 const sections: Section[] = [
+  { icon: BarChart3, title: "Dashboard", category: "Inhalte", content: "Das Dashboard liefert auf einen Blick alle wichtigen Kennzahlen: Website-Inhalte (Slider, Team, Stellen, Agenturen), Portal-Aktivität (News, Events, Anmeldungen), Engagement der letzten 7 Tage (Chat-Sessions, News-Views, Likes, Kommentare) sowie Übersichten zu bevorstehenden Events (mit Anmeldefortschritt), neuesten Anfragen und Top-News nach Reichweite." },
   { icon: Layers, title: "Slider-Bilder", category: "Inhalte", content: "Auf der Startseite befindet sich ein automatischer Bild-Slider. Unter «Slider-Bilder» können Sie Bilder hinzufügen, löschen und die Reihenfolge ändern. Jedes Slide kann eine Headline und Subline enthalten. Beim Hochladen oder nachträglich kann der Zuschnitt (16:9) angepasst werden. Empfohlenes Format: 1920 × 800 px, JPG oder WebP, max. 500 KB." },
   { icon: Image, title: "Hero-Bilder", category: "Inhalte", content: "Jede Unterseite und jede Agentur kann ein eigenes Hero-Bild erhalten. Unter «Hero-Bilder» wählen Sie die Seite aus und laden das gewünschte Bild hoch oder wählen es aus der Mediathek. Der Zuschnitt (21:9) kann jederzeit angepasst werden. Auch die Karriere-Hintergrundbilder (career_bg_1, career_bg_2) werden hier verwaltet." },
   { icon: FileText, title: "Seitentexte (CMS)", category: "Inhalte", content: "Unter «Seitentexte» verwalten Sie alle Texte der Website. Jeder Eintrag hat einen Seiten-Schlüssel und einen Abschnitts-Schlüssel. Texte können in mehreren Sprachen (DE, FR, IT, EN) gepflegt werden. Seiten: home, about, career, contact, agencies, team, legal." },
@@ -25,6 +26,9 @@ const sections: Section[] = [
   { icon: Briefcase, title: "Stellenangebote", category: "Karriere", content: "Unter «Stellen» verwalten Sie offene Positionen mit Titel, Standort, Pensum und mehrsprachiger Beschreibung. Aktive Stellen werden auf der Karriereseite angezeigt." },
   { icon: Video, title: "Karriere-Videos", category: "Karriere", content: "Unter «Karriere-Videos» können Sie Testimonial- oder Imagevideos hinzufügen, die auf der Karriereseite in einem Karussell angezeigt werden." },
   { icon: HelpCircle, title: "Karriere-FAQs", category: "Karriere", content: "Unter «Karriere-FAQs» verwalten Sie häufig gestellte Fragen rund um Bewerbung und Karriere. Diese werden als Akkordeon am Ende der Karriereseite dargestellt." },
+  { icon: Newspaper, title: "News & Kommunikation", category: "Portal", content: "Unter «News» verwalten Sie interne Beiträge für das Portal (/portal/news). Pro Beitrag: Titel, Slug, Auszug, Rich-Text-Inhalt, Cover-Bild/-Video, Kategorie, Tags, Kontaktperson und Sichtbarkeit (Alle / nach Rollen / nach Agenturen / gemischt). Spezial-Flags: «Wichtig» (blockierendes Pflicht-Lesebestätigungs-Popup), «Dringend-Banner» (roter Banner oben im Portal), «Highlight» (hervorgehobene Top-Card). Kommentare können pro Post aktiviert und von Superadmins moderiert (ausblenden/löschen) werden. Statistik-Tab zeigt Views, Lesebestätigungen, Likes und Kommentare pro Beitrag." },
+  { icon: Calendar, title: "Events & Anmeldungen", category: "Portal", content: "Unter «Events» erstellen Sie Veranstaltungen für das Portal (/portal/events) mit Titel, Beschreibung (Rich-Text), Cover, Start-/Endzeit, Ort (mit optionaler Karten-URL), Kategorie, Kontaktperson, Kapazität und Anmeldeschluss. Sichtbarkeit analog zu News (Alle / Rollen / Agenturen / gemischt). Bestehende Events können als Vorlage dupliziert werden. Anmeldungen sind aktivierbar; ein konfigurierbarer Bestätigungstext wird Teilnehmern beim Klick auf «Teilnehmen» angezeigt. Optionaler Quiz-/Fragebogen-Editor: Text-, Single- und Multi-Choice-Fragen mit «Pflichtfeld»-Schalter. Antworten der Teilnehmer werden in der Anmeldungsliste sichtbar." },
+  { icon: ListChecks, title: "Quiz / Fragebogen", category: "Portal", content: "Im Anmeldungs-Schritt eines Events lassen sich beliebig viele Fragen ergänzen. Drei Fragetypen: Freitext, Einfachauswahl, Mehrfachauswahl. Pro Frage steuerbar: Pflichtfeld ja/nein, Antwortoptionen (für Choice-Typen). Beim Klick auf «Teilnehmen» im Portal werden die Fragen dynamisch im Bestätigungs-Modal gerendert; Pflichtfragen werden vor dem Speichern validiert." },
   { icon: CreditCard, title: "Prämien & Wizard", category: "Tools", content: "Unter «Online-Check» verwalten Sie den 5-stufigen Wizard: Produkt, Persönliche Informationen, Deckung, Zusammenfassung mit Richtpreisen (PDF), Offertenanfrage. Die Preisstufen werden über «wizard_pricing» verwaltet." },
   { icon: Gift, title: "Cashback & Weiterempfehlung", category: "Tools", content: "Bei Online-Abschluss erhalten Kunden CHF 150.– Cashback. Zusätzlich CHF 50.– pro Empfehlung an Familie oder Freunde." },
   { icon: Inbox, title: "Anfragen", category: "Tools", content: "Alle Kontaktanfragen — von Kontaktseite, Agentur-Schnellanfrage, Chatbot oder Wizard — landen zentral unter «Anfragen». Status: Neu → In Bearbeitung → Erledigt → Archiviert." },
@@ -34,9 +38,22 @@ const sections: Section[] = [
   { icon: Book, title: "API-Zugang", category: "Tools", content: "Über die REST-API können Sie alle Inhalte programmatisch lesen und schreiben. Details unter «API-Docs» in der Seitenleiste." },
 ];
 
-const categories: Section["category"][] = ["Inhalte", "Benutzer & SSO", "Agenturen", "Karriere", "Tools"];
+const categories: Section["category"][] = ["Inhalte", "Benutzer & SSO", "Agenturen", "Karriere", "Portal", "Tools"];
 
 const changelog = [
+  {
+    version: "2.6.0",
+    date: "23. April 2026",
+    type: "Major",
+    changes: [
+      "Neues Events-Modul mit Anmeldungen & Teilnehmerlisten",
+      "Event-Duplizierung als Vorlage",
+      "Konfigurierbares Teilnahme-Bestätigungs-Modal",
+      "Optionaler Quiz-/Fragebogen-Editor pro Event (Text / Single / Multi Choice)",
+      "Bevorstehende Events oben in /portal/news verlinkt",
+      "Dashboard mit Live-Statistiken: Website, Portal, 7-Tage-Engagement, Top-News, Anfragen",
+    ],
+  },
   {
     version: "2.5.0",
     date: "22. April 2026",
