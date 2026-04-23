@@ -367,6 +367,7 @@ export type Database = {
       }
       event_registrations: {
         Row: {
+          answers: Json
           created_at: string
           event_id: string
           id: string
@@ -374,6 +375,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          answers?: Json
           created_at?: string
           event_id: string
           id?: string
@@ -381,6 +383,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          answers?: Json
           created_at?: string
           event_id?: string
           id?: string
@@ -402,6 +405,7 @@ export type Database = {
           author_id: string | null
           capacity: number | null
           category_id: string | null
+          confirmation_questions: Json
           confirmation_text: string | null
           contact_person_id: string | null
           cover_image_url: string | null
@@ -424,6 +428,7 @@ export type Database = {
           author_id?: string | null
           capacity?: number | null
           category_id?: string | null
+          confirmation_questions?: Json
           confirmation_text?: string | null
           contact_person_id?: string | null
           cover_image_url?: string | null
@@ -446,6 +451,7 @@ export type Database = {
           author_id?: string | null
           capacity?: number | null
           category_id?: string | null
+          confirmation_questions?: Json
           confirmation_text?: string | null
           contact_person_id?: string | null
           cover_image_url?: string | null
