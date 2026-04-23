@@ -209,6 +209,46 @@ const PortalEvents = () => {
           </div>
         )}
       </main>
+
+      <Dialog open={!!confirmEvent} onOpenChange={(o) => !o && setConfirmEvent(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Teilnahme bestätigen</DialogTitle>
+          </DialogHeader>
+          {confirmEvent && (
+            <div className="space-y-4">
+              <p className="text-sm text-foreground/80 whitespace-pre-line">
+                {confirmEvent.confirmation_text || "Mit Ihrer Anmeldung bestätigen Sie Ihre Teilnahme am Event. Bitte erscheinen Sie pünktlich."}
+              </p>
+              <div className="rounded-xl border bg-muted/40 p-4 space-y-2 text-sm">
+                <div className="font-semibold text-foreground">{confirmEvent.title}</div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar size={14} />
+                  {new Date(confirmEvent.start_at).toLocaleString("de-CH", { weekday: "long", day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                  {confirmEvent.end_at ? ` – ${new Date(confirmEvent.end_at).toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}` : ""}
+                </div>
+                {confirmEvent.location && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin size={14} /> {confirmEvent.location}
+                  </div>
+                )}
+                {confirmEvent.capacity && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Users size={14} /> Max. {confirmEvent.capacity} Teilnehmer
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmEvent(null)}>Abbrechen</Button>
+            <Button onClick={() => confirmEvent && register.mutate(confirmEvent.id)} disabled={register.isPending}>
+              {register.isPending ? <Loader2 size={14} className="animate-spin mr-1.5" /> : <Check size={14} className="mr-1.5" />}
+              Ja, ich bestätige die Teilnahme
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
