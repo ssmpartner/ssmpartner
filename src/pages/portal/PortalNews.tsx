@@ -130,6 +130,39 @@ const PortalNews = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-10">
+        {upcomingEvents && upcomingEvents.length > 0 && (
+          <section className="mb-10">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground inline-flex items-center gap-2">
+                <Calendar size={14} /> Bevorstehende Events
+              </h2>
+              <Link to="/portal/events" className="text-xs font-medium text-primary inline-flex items-center gap-1 hover:gap-2 transition-all">
+                Alle Events <ArrowRight size={12} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+              {upcomingEvents.map((e: any) => {
+                const start = new Date(e.start_at);
+                return (
+                  <Link key={e.id} to="/portal/events" className="group flex items-center gap-3 p-3 rounded-2xl border bg-card hover:shadow-md hover:border-primary/30 transition-all">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 shrink-0 flex flex-col items-center justify-center text-primary">
+                      <span className="text-[10px] font-semibold uppercase leading-none">{start.toLocaleDateString("de-CH", { month: "short" })}</span>
+                      <span className="text-lg font-bold leading-none mt-0.5">{start.getDate()}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">{e.title}</p>
+                      <p className="text-[11px] text-muted-foreground truncate inline-flex items-center gap-1">
+                        {start.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" })}
+                        {e.location && <><span>·</span><MapPin size={10} />{e.location}</>}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {/* Filter bar */}
         <div className="mb-8 space-y-4">
           <div className="relative">
