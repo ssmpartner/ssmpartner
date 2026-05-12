@@ -21,6 +21,10 @@ const badgeOptions = [
   { value: "finanzexperte", label: "Finanzexperte" },
   { value: "finanzcoach", label: "Finanzcoach" },
   { value: "finanzcoach_vbv", label: "Finanzcoach VBV" },
+  { value: "finanzcoach_ssm", label: "Finanzcoach SSM" },
+  { value: "vermoegensberater", label: "Vermögensberater" },
+  { value: "vermoegensberater_iaf", label: "Vermögensberater IAF" },
+  { value: "agenturleiter", label: "Agenturleiter" },
   { value: "trainee", label: "Trainee" },
 ];
 
