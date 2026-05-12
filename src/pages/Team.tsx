@@ -62,7 +62,7 @@ const Team = () => {
                     )}
                     {member.badge && (
                       <span className="absolute bottom-2 left-2 font-body text-[10px] font-medium px-2 py-0.5 rounded-full text-white shadow-sm" style={{ backgroundColor: "#6A9387" }}>
-                        {({ verkaufsleiter: "Verkaufsleiter", teamleiter: "Teamleiter", finanzexperte: "Finanzexperte", finanzcoach: "Finanzcoach", finanzcoach_vbv: "Finanzcoach VBV", finanzcoach_ssm: "Finanzcoach SSM", vermoegensberater: "Vermögensberater", vermoegensberater_iaf: "Vermögensberater IAF", agenturleiter: "Agenturleiter", trainee: "Trainee" } as Record<string, string>)[member.badge] || member.badge}
+                        {({ verkaufsleiter: "Verkaufsleiter", teamleiter: "Teamleiter", finanzexperte: "Finanzexperte", finanzcoach: "Finanzcoach", finanzcoach_vbv: "Finanzcoach VBV", finanzcoach_ssm: "Finanzcoach SSM", vermoegensberater: "Vermögensberater", vermoegensberater_iaf: "Vermögensberater IAF", dipl_finanzberater_iaf: "Dipl. Finanzberater IAF", agenturleiter: "Agenturleiter", trainee: "Trainee" } as Record<string, string>)[member.badge] || member.badge}
                       </span>
                     )}
                   </div>

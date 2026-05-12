@@ -24,6 +24,7 @@ const badgeOptions = [
   { value: "finanzcoach_ssm", label: "Finanzcoach SSM" },
   { value: "vermoegensberater", label: "Vermögensberater" },
   { value: "vermoegensberater_iaf", label: "Vermögensberater IAF" },
+  { value: "dipl_finanzberater_iaf", label: "Dipl. Finanzberater IAF" },
   { value: "agenturleiter", label: "Agenturleiter" },
   { value: "trainee", label: "Trainee" },
 ];
