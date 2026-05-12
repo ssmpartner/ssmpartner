@@ -393,7 +393,7 @@ const AgencyDetail = () => {
               })}
               {teamMembers?.filter((tm: any) => !tm.is_agency_leader).map((member, i) => {
                 const hasContact = (member as any).email || (member as any).phone;
-                const badgeMap: Record<string, string> = { verkaufsleiter: "Verkaufsleiter", teamleiter: "Teamleiter", finanzexperte: "Finanzexperte", finanzcoach: "Finanzcoach", finanzcoach_vbv: "Finanzcoach VBV", trainee: "Trainee" };
+                const badgeMap: Record<string, string> = { verkaufsleiter: "Verkaufsleiter", teamleiter: "Teamleiter", finanzexperte: "Finanzexperte", finanzcoach: "Finanzcoach", finanzcoach_vbv: "Finanzcoach VBV", finanzcoach_ssm: "Finanzcoach SSM", vermoegensberater: "Vermögensberater", vermoegensberater_iaf: "Vermögensberater IAF", dipl_finanzberater_iaf: "Dipl. Finanzberater IAF", agenturleiter: "Agenturleiter", trainee: "Trainee" };
                 const badgeLabel = badgeMap[(member as any).badge] || null;
                 return (
                 <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
