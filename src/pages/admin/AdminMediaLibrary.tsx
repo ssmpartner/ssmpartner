@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Trash2, Search, FileImage, FileVideo, File, Check, Download, Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Upload, Trash2, Search, FileImage, FileVideo, File, Check, Download, Eye, X, ChevronLeft, ChevronRight, Pencil, Archive, ArchiveRestore, Calendar, HardDrive, Folder, Copy } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 
@@ -30,8 +30,12 @@ const AdminMediaLibrary = () => {
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadFileInfo, setUploadFileInfo] = useState<{ size: number; type: string; width?: number; height?: number } | null>(null);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const [showArchive, setShowArchive] = useState(false);
+  const [renaming, setRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const folders = ["slider", "heroes", "team", "agencies", "career-thumbs", "career-videos", "media"];
+  const folders = ["slider", "heroes", "team", "agencies", "career-thumbs", "career-videos", "media", "archive"];
 
   useEffect(() => { loadFiles(); }, []);
 
@@ -126,9 +130,43 @@ const AdminMediaLibrary = () => {
     if (error) { toast.error(error.message); return; }
     toast.success("Gelöscht");
     setFiles((prev) => prev.filter((f) => f.path !== file.path));
+    setPreviewIndex(null);
+  };
+
+  const handleRename = async (file: MediaFile, newName: string) => {
+    const clean = newName.trim().replace(/[/\\]/g, "-");
+    if (!clean || clean === file.name) { setRenaming(false); return; }
+    setBusy(true);
+    const newPath = `${file.folder}/${clean}`;
+    const { error } = await supabase.storage.from("site-images").move(file.path, newPath);
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Umbenannt");
+    setRenaming(false);
+    await loadFiles();
+  };
+
+  const handleArchive = async (file: MediaFile) => {
+    setBusy(true);
+    const isArchived = file.folder === "archive";
+    const newPath = isArchived
+      ? `media/${file.name}`
+      : `archive/${file.folder}__${file.name}`;
+    const { error } = await supabase.storage.from("site-images").move(file.path, newPath);
+    setBusy(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(isArchived ? "Wiederhergestellt" : "Archiviert");
+    await loadFiles();
+    setPreviewIndex(null);
+  };
+
+  const copyUrl = (url: string) => {
+    navigator.clipboard.writeText(url).then(() => toast.success("URL kopiert"));
   };
 
   const filteredFiles = files.filter((f) => {
+    const isArchived = f.folder === "archive";
+    if (showArchive ? !isArchived : isArchived) return false;
     if (filter === "image" && !f.mimetype.startsWith("image")) return false;
     if (filter === "video" && !f.mimetype.startsWith("video")) return false;
     if (filter === "other" && (f.mimetype.startsWith("image") || f.mimetype.startsWith("video"))) return false;
@@ -148,18 +186,22 @@ const AdminMediaLibrary = () => {
 
   useEffect(() => {
     if (previewIndex === null) return;
+    setRenaming(false);
     const handler = (e: KeyboardEvent) => {
+      if (renaming) return;
       if (e.key === "ArrowLeft") showPrev();
       else if (e.key === "ArrowRight") showNext();
       else if (e.key === "Escape") setPreviewIndex(null);
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [previewIndex, filteredFiles.length]);
+  }, [previewIndex, filteredFiles.length, renaming]);
 
   const totalSize = files.reduce((s, f) => s + f.size, 0);
-  const imageCount = files.filter((f) => f.mimetype.startsWith("image")).length;
-  const videoCount = files.filter((f) => f.mimetype.startsWith("video")).length;
+  const activeFiles = files.filter((f) => f.folder !== "archive");
+  const imageCount = activeFiles.filter((f) => f.mimetype.startsWith("image")).length;
+  const videoCount = activeFiles.filter((f) => f.mimetype.startsWith("video")).length;
+  const archiveCount = files.filter((f) => f.folder === "archive").length;
 
   return (
     <div>
@@ -229,6 +271,14 @@ const AdminMediaLibrary = () => {
               {f === "all" ? "Alle" : f === "image" ? "Bilder" : f === "video" ? "Videos" : "Andere"}
             </button>
           ))}
+          <button
+            onClick={() => setShowArchive((v) => !v)}
+            className={`px-3 py-2 rounded-lg font-body text-xs font-medium transition-colors inline-flex items-center gap-1.5 ml-2 ${
+              showArchive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Archive size={12} /> Archiv {archiveCount > 0 && `(${archiveCount})`}
+          </button>
         </div>
       </div>
 
@@ -293,49 +343,149 @@ const AdminMediaLibrary = () => {
 
       {/* Preview modal */}
       {previewFile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/70 backdrop-blur-sm" onClick={() => setPreviewIndex(null)}>
-          <button
-            onClick={(e) => { e.stopPropagation(); setPreviewIndex(null); }}
-            className="absolute top-4 right-4 bg-card/90 hover:bg-card rounded-full p-2 z-10"
-            aria-label="Schliessen"
-          >
-            <X size={18} />
-          </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/70 backdrop-blur-sm p-6" onClick={() => setPreviewIndex(null)}>
           {filteredFiles.length > 1 && (
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); showPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10 shadow-lg"
                 aria-label="Vorheriges"
               >
                 <ChevronLeft size={20} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); showNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10 shadow-lg"
                 aria-label="Nächstes"
               >
                 <ChevronRight size={20} />
               </button>
             </>
           )}
-          <div className="relative max-w-4xl max-h-[85vh] flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
-            {previewFile.mimetype.startsWith("image") ? (
-              <img src={previewFile.url} alt={previewFile.name} className="max-w-full max-h-[78vh] rounded-lg object-contain" />
-            ) : previewFile.mimetype.startsWith("video") ? (
-              <video key={previewFile.path} src={previewFile.url} controls autoPlay className="max-w-full max-h-[78vh] rounded-lg" />
-            ) : (
-              <div className="bg-card rounded-lg p-12 text-center">
-                <File size={48} className="mx-auto text-muted-foreground mb-3" />
-                <p className="font-body text-sm text-muted-foreground">Vorschau nicht verfügbar</p>
-                <a href={previewFile.url} target="_blank" rel="noreferrer" className="font-body text-sm text-primary underline mt-2 block">Herunterladen</a>
+
+          {/* Window */}
+          <div
+            className="relative bg-card border border-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[88vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Window title bar */}
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-muted/50">
+              <div className="flex gap-1.5">
+                <button onClick={() => setPreviewIndex(null)} className="w-3 h-3 rounded-full bg-destructive hover:opacity-80" aria-label="Schliessen" />
+                <span className="w-3 h-3 rounded-full bg-muted-foreground/30" />
+                <span className="w-3 h-3 rounded-full bg-muted-foreground/30" />
               </div>
-            )}
-            <div className="bg-card/90 backdrop-blur rounded-lg px-4 py-2 flex items-center gap-4 font-body text-xs">
-              <span className="text-foreground font-medium truncate max-w-xs">{previewFile.name}</span>
-              <span className="text-muted-foreground">{formatBytes(previewFile.size)}</span>
-              <span className="text-muted-foreground">{previewFile.folder}</span>
-              <span className="text-muted-foreground">{(previewIndex ?? 0) + 1} / {filteredFiles.length}</span>
+              <div className="flex-1 text-center min-w-0">
+                {renaming ? (
+                  <input
+                    autoFocus
+                    value={renameValue}
+                    onChange={(e) => setRenameValue(e.target.value)}
+                    onBlur={() => handleRename(previewFile, renameValue)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleRename(previewFile, renameValue);
+                      if (e.key === "Escape") setRenaming(false);
+                    }}
+                    className="font-body text-xs text-foreground bg-background border border-border rounded px-2 py-0.5 w-2/3 text-center focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                ) : (
+                  <button
+                    onClick={() => { setRenameValue(previewFile.name); setRenaming(true); }}
+                    className="font-body text-xs text-foreground truncate inline-flex items-center gap-1.5 hover:text-primary group"
+                    title="Umbenennen"
+                  >
+                    {previewFile.name}
+                    <Pencil size={11} className="opacity-0 group-hover:opacity-60" />
+                  </button>
+                )}
+              </div>
+              <span className="font-body text-[10px] text-muted-foreground tabular-nums">
+                {(previewIndex ?? 0) + 1} / {filteredFiles.length}
+              </span>
+            </div>
+
+            {/* Body: preview + sidebar */}
+            <div className="flex flex-1 min-h-0">
+              <div className="flex-1 bg-muted/30 flex items-center justify-center p-6 min-h-0 overflow-auto">
+                {previewFile.mimetype.startsWith("image") ? (
+                  <img src={previewFile.url} alt={previewFile.name} className="max-w-full max-h-full object-contain rounded" />
+                ) : previewFile.mimetype.startsWith("video") ? (
+                  <video key={previewFile.path} src={previewFile.url} controls autoPlay className="max-w-full max-h-full rounded" />
+                ) : (
+                  <div className="text-center">
+                    <File size={48} className="mx-auto text-muted-foreground mb-3" />
+                    <p className="font-body text-sm text-muted-foreground">Vorschau nicht verfügbar</p>
+                  </div>
+                )}
+              </div>
+
+              <aside className="w-64 border-l border-border bg-card flex flex-col">
+                <div className="p-4 space-y-3 flex-1 overflow-auto">
+                  <div>
+                    <p className="font-body text-[10px] uppercase tracking-wide text-muted-foreground mb-1">Details</p>
+                    <div className="space-y-2 font-body text-xs">
+                      <div className="flex items-center gap-2 text-foreground">
+                        <Folder size={12} className="text-muted-foreground" />
+                        <span className="capitalize">{previewFile.folder}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-foreground">
+                        <HardDrive size={12} className="text-muted-foreground" />
+                        <span>{formatBytes(previewFile.size)}</span>
+                      </div>
+                      {previewFile.created_at && (
+                        <div className="flex items-center gap-2 text-foreground">
+                          <Calendar size={12} className="text-muted-foreground" />
+                          <span>{new Date(previewFile.created_at).toLocaleDateString("de-CH")}</span>
+                        </div>
+                      )}
+                      <div className="text-muted-foreground text-[11px]">{previewFile.mimetype || "–"}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="font-body text-[10px] uppercase tracking-wide text-muted-foreground mb-1">URL</p>
+                    <button
+                      onClick={() => copyUrl(previewFile.url)}
+                      className="w-full flex items-center gap-2 bg-muted/60 hover:bg-muted text-foreground rounded-md px-2 py-1.5 font-body text-[11px] truncate"
+                    >
+                      <Copy size={12} className="shrink-0" />
+                      <span className="truncate">{previewFile.url}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="border-t border-border p-3 space-y-1.5">
+                  <button
+                    onClick={() => { setRenameValue(previewFile.name); setRenaming(true); }}
+                    disabled={busy}
+                    className="w-full inline-flex items-center gap-2 px-3 py-2 rounded-md bg-muted/60 hover:bg-muted font-body text-xs text-foreground disabled:opacity-50"
+                  >
+                    <Pencil size={13} /> Umbenennen
+                  </button>
+                  <a
+                    href={previewFile.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full inline-flex items-center gap-2 px-3 py-2 rounded-md bg-muted/60 hover:bg-muted font-body text-xs text-foreground"
+                  >
+                    <Download size={13} /> Herunterladen
+                  </a>
+                  <button
+                    onClick={() => handleArchive(previewFile)}
+                    disabled={busy}
+                    className="w-full inline-flex items-center gap-2 px-3 py-2 rounded-md bg-muted/60 hover:bg-muted font-body text-xs text-foreground disabled:opacity-50"
+                  >
+                    {previewFile.folder === "archive" ? <><ArchiveRestore size={13} /> Wiederherstellen</> : <><Archive size={13} /> Archivieren</>}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(previewFile)}
+                    disabled={busy}
+                    className="w-full inline-flex items-center gap-2 px-3 py-2 rounded-md bg-destructive/10 hover:bg-destructive hover:text-destructive-foreground text-destructive font-body text-xs disabled:opacity-50"
+                  >
+                    <Trash2 size={13} /> Löschen
+                  </button>
+                </div>
+              </aside>
             </div>
           </div>
         </div>
