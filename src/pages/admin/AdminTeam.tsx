@@ -7,11 +7,11 @@ import ImageCropModal from "@/components/ImageCropModal";
 import MediaPickerModal from "@/components/MediaPickerModal";
 
 const categories = [
-  { value: "", label: "Alle" },
+  { value: "", label: "Alle Kategorien" },
   { value: "geschaeftsleitung", label: "Geschäftsleitung" },
   { value: "fachfuehrung", label: "Fachführung" },
   { value: "erweitertes_team", label: "Erweitertes Team" },
-  { value: "agentur", label: "Alle Agenturen" },
+  { value: "agentur", label: "Agentur" },
 ];
 
 const badgeOptions = [
@@ -36,7 +36,9 @@ const AdminTeam = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [uploading, setUploading] = useState(false);
-  const [filter, setFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [agencyFilter, setAgencyFilter] = useState("");
+  const [badgeFilter, setBadgeFilter] = useState("");
   const [search, setSearch] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">(() => (localStorage.getItem("admin-team-view") as "grid" | "list") || "grid");
   const [selected, setSelected] = useState<string[]>([]);
@@ -220,18 +222,13 @@ const AdminTeam = () => {
   };
 
   const filteredMembers = members?.filter((m) => {
-    // Category filter
-    if (filter) {
-      if (filter === "agentur") {
-        if (m.category !== "agentur") return false;
-      } else if (filter.startsWith("agency-")) {
-        const agencyId = filter.replace("agency-", "");
-        if (!(m.category === "agentur" && (m as any).agency_id === agencyId)) return false;
-      } else if (m.category !== filter) {
-        return false;
-      }
+    if (categoryFilter && m.category !== categoryFilter) return false;
+    if (agencyFilter && (m as any).agency_id !== agencyFilter) return false;
+    if (badgeFilter) {
+      if (badgeFilter === "__none__") {
+        if ((m as any).badge) return false;
+      } else if ((m as any).badge !== badgeFilter) return false;
     }
-    // Search
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       const haystack = [m.name, m.role_de, m.email, m.phone].filter(Boolean).join(" ").toLowerCase();
@@ -239,6 +236,9 @@ const AdminTeam = () => {
     }
     return true;
   });
+
+  const activeFilterCount = [categoryFilter, agencyFilter, badgeFilter].filter(Boolean).length;
+  const clearFilters = () => { setCategoryFilter(""); setAgencyFilter(""); setBadgeFilter(""); };
 
   const allVisibleSelected = !!filteredMembers?.length && filteredMembers.every((m) => selected.includes(m.id));
   const toggleSelectAll = () => {
@@ -274,9 +274,9 @@ const AdminTeam = () => {
         </button>
       </div>
 
-      {/* Toolbar: search + filter + view toggle on one line */}
-      <div className="flex items-center gap-2 mb-4">
-        <div className="relative flex-1 max-w-sm">
+      {/* Toolbar: search + filters + view toggle */}
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <div className="relative flex-1 min-w-[180px] max-w-sm">
           <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
@@ -293,38 +293,63 @@ const AdminTeam = () => {
         </div>
 
         <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="h-9 bg-background border border-border font-body text-xs px-2.5 pr-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring min-w-[160px]"
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className={`h-9 bg-background border font-body text-xs px-2.5 pr-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring min-w-[150px] ${categoryFilter ? "border-primary text-foreground" : "border-border"}`}
+          title="Kategorie"
         >
           {categories.map((c) => {
-            const count =
-              c.value === ""
-                ? members?.length || 0
-                : c.value === "agentur"
-                ? members?.filter((m) => m.category === "agentur").length || 0
-                : members?.filter((m) => m.category === c.value).length || 0;
+            const count = c.value === ""
+              ? members?.length || 0
+              : members?.filter((m) => m.category === c.value).length || 0;
             return (
-              <option key={c.value} value={c.value}>
-                {c.label} ({count})
-              </option>
+              <option key={c.value} value={c.value}>{c.label} ({count})</option>
             );
           })}
-          {agencies && agencies.length > 0 && (
-            <optgroup label="Agenturen">
-              {agencies.map((a) => {
-                const count = members?.filter((m) => m.category === "agentur" && (m as any).agency_id === a.id).length || 0;
-                return (
-                  <option key={`agency-${a.id}`} value={`agency-${a.id}`}>
-                    {a.name} ({count})
-                  </option>
-                );
-              })}
-            </optgroup>
-          )}
         </select>
 
-        <div className="inline-flex items-center h-9 bg-background border border-border rounded-lg p-0.5">
+        <select
+          value={agencyFilter}
+          onChange={(e) => setAgencyFilter(e.target.value)}
+          className={`h-9 bg-background border font-body text-xs px-2.5 pr-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring min-w-[150px] ${agencyFilter ? "border-primary text-foreground" : "border-border"}`}
+          title="Agentur"
+        >
+          <option value="">Alle Agenturen ({members?.filter((m) => (m as any).agency_id).length || 0})</option>
+          {agencies?.map((a) => {
+            const count = members?.filter((m) => (m as any).agency_id === a.id).length || 0;
+            return (
+              <option key={a.id} value={a.id}>{a.name} ({count})</option>
+            );
+          })}
+        </select>
+
+        <select
+          value={badgeFilter}
+          onChange={(e) => setBadgeFilter(e.target.value)}
+          className={`h-9 bg-background border font-body text-xs px-2.5 pr-7 rounded-lg focus:outline-none focus:ring-2 focus:ring-ring min-w-[160px] ${badgeFilter ? "border-primary text-foreground" : "border-border"}`}
+          title="Position / Badge"
+        >
+          <option value="">Alle Positionen</option>
+          <option value="__none__">– Ohne Badge – ({members?.filter((m) => !(m as any).badge).length || 0})</option>
+          {badgeOptions.filter((b) => b.value).map((b) => {
+            const count = members?.filter((m) => (m as any).badge === b.value).length || 0;
+            return (
+              <option key={b.value} value={b.value}>{b.label} ({count})</option>
+            );
+          })}
+        </select>
+
+        {activeFilterCount > 0 && (
+          <button
+            onClick={clearFilters}
+            className="inline-flex items-center gap-1 h-9 px-2.5 font-body text-xs text-muted-foreground hover:text-foreground border border-dashed border-border rounded-lg"
+            title="Filter zurücksetzen"
+          >
+            <X size={12} /> Zurücksetzen
+          </button>
+        )}
+
+        <div className="inline-flex items-center h-9 bg-background border border-border rounded-lg p-0.5 ml-auto">
           <button
             onClick={() => setViewMode("grid")}
             className={`inline-flex items-center justify-center w-8 h-full rounded-md transition-colors ${
