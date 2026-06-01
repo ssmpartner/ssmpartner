@@ -7,20 +7,41 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const StatCard = ({ label, count, icon: Icon, to, color, sub }: any) => (
+/** Compact stat — inline icon + number, minimal chrome */
+const MiniStat = ({ label, count, icon: Icon, to, sub, accent }: any) => (
   <Link
     to={to}
-    className="bg-card border rounded-2xl p-5 hover:shadow-md transition-all hover:-translate-y-0.5 group"
+    className="group flex items-center gap-3 bg-card border rounded-xl px-3 py-2.5 hover:border-primary/40 hover:shadow-sm transition-all"
   >
-    <div className="flex items-start justify-between mb-3">
-      <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>
-        <Icon size={18} className="text-primary-foreground" />
-      </div>
-      <ArrowRight size={14} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${accent || "bg-muted text-foreground"}`}>
+      <Icon size={14} />
     </div>
-    <p className="font-heading text-2xl font-semibold text-foreground">{count ?? "—"}</p>
-    <p className="font-body text-xs text-muted-foreground mt-1">{label}</p>
-    {sub && <p className="font-body text-[11px] text-muted-foreground/80 mt-1">{sub}</p>}
+    <div className="flex-1 min-w-0">
+      <div className="flex items-baseline gap-1.5">
+        <span className="font-heading text-lg font-semibold text-foreground leading-none">{count ?? "—"}</span>
+        {sub && <span className="text-[10px] text-muted-foreground truncate">{sub}</span>}
+      </div>
+      <p className="font-body text-[11px] text-muted-foreground truncate mt-0.5">{label}</p>
+    </div>
+    <ArrowRight size={12} className="text-muted-foreground/40 opacity-0 group-hover:opacity-100 group-hover:text-primary transition-all shrink-0" />
+  </Link>
+);
+
+/** Featured highlight tile — for the 1-2 most important KPIs */
+const HighlightStat = ({ label, count, icon: Icon, to, sub }: any) => (
+  <Link
+    to={to}
+    className="group relative overflow-hidden bg-primary text-primary-foreground rounded-2xl p-4 hover:shadow-lg transition-all"
+  >
+    <div className="relative z-10 flex items-start justify-between">
+      <div>
+        <p className="font-heading text-3xl font-semibold leading-none">{count ?? "—"}</p>
+        <p className="font-body text-xs opacity-80 mt-2">{label}</p>
+        {sub && <p className="font-body text-[10px] opacity-60 mt-0.5">{sub}</p>}
+      </div>
+      <Icon size={18} className="opacity-60" />
+    </div>
+    <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-primary-foreground/10 blur-2xl" />
   </Link>
 );
 
@@ -130,25 +151,19 @@ const AdminDashboard = () => {
   });
 
   const websiteCards = [
-    { label: "Slider-Bilder", count: stats?.sliderCount, icon: Image, to: "/admin/slider", color: "bg-primary" },
-    { label: "Seitentexte", count: stats?.contentCount, icon: FileText, to: "/admin/content", color: "bg-info" },
-    { label: "Team-Mitglieder", count: stats?.teamCount, icon: Users, to: "/admin/team", color: "bg-success" },
-    { label: "Offene Stellen", count: stats?.jobCount, icon: Briefcase, to: "/admin/jobs", color: "bg-warning" },
-    { label: "Agenturen", count: stats?.agencyCount, icon: Building2, to: "/admin/agencies", color: "bg-primary" },
-  ];
-
-  const portalCards = [
-    { label: "News (veröffentlicht)", count: stats?.newsPublished, sub: `${stats?.newsCount ?? 0} gesamt`, icon: Newspaper, to: "/admin/news", color: "bg-primary" },
-    { label: "Bevorstehende Events", count: stats?.eventsUpcoming, sub: `${stats?.eventsCount ?? 0} gesamt`, icon: Calendar, to: "/admin/events", color: "bg-info" },
-    { label: "Event-Anmeldungen", count: stats?.registrationsTotal, icon: UserCheck, to: "/admin/events", color: "bg-success" },
-    { label: "Neue Anfragen", count: stats?.inquiriesNew, sub: `${stats?.inquiriesTotal ?? 0} gesamt`, icon: Mail, to: "/admin/inquiries", color: "bg-warning" },
+    { label: "Slider-Bilder", count: stats?.sliderCount, icon: Image, to: "/admin/slider", accent: "bg-primary/10 text-primary" },
+    { label: "Seitentexte", count: stats?.contentCount, icon: FileText, to: "/admin/content", accent: "bg-info/10 text-info" },
+    { label: "Team", count: stats?.teamCount, icon: Users, to: "/admin/team", accent: "bg-success/10 text-success" },
+    { label: "Offene Stellen", count: stats?.jobCount, icon: Briefcase, to: "/admin/jobs", accent: "bg-warning/10 text-warning" },
+    { label: "Agenturen", count: stats?.agencyCount, icon: Building2, to: "/admin/agencies", accent: "bg-accent/30 text-accent-foreground" },
   ];
 
   const engagementCards = [
-    { label: "News-Aufrufe (7T)", count: stats?.newsViewsWeek, icon: Eye, to: "/admin/news", color: "bg-primary" },
-    { label: "Likes gesamt", count: stats?.newsLikes, icon: Heart, to: "/admin/news", color: "bg-info" },
-    { label: "Kommentare", count: stats?.newsComments, icon: MessageCircle, to: "/admin/news", color: "bg-success" },
-    { label: "Chat-Sessions (7T)", count: stats?.chatSessionsWeek, icon: MessageSquare, to: "/admin/chat-logs", color: "bg-warning" },
+    { label: "News-Aufrufe (7T)", count: stats?.newsViewsWeek, icon: Eye, to: "/admin/news", accent: "bg-primary/10 text-primary" },
+    { label: "Likes", count: stats?.newsLikes, icon: Heart, to: "/admin/news", accent: "bg-destructive/10 text-destructive" },
+    { label: "Kommentare", count: stats?.newsComments, icon: MessageCircle, to: "/admin/news", accent: "bg-info/10 text-info" },
+    { label: "Chat-Sessions (7T)", count: stats?.chatSessionsWeek, icon: MessageSquare, to: "/admin/chat-logs", accent: "bg-success/10 text-success" },
+    { label: "Event-Anmeldungen", count: stats?.registrationsTotal, icon: UserCheck, to: "/admin/events", accent: "bg-warning/10 text-warning" },
   ];
 
   const statusStyle: Record<string, string> = {
@@ -159,44 +174,53 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="font-heading text-2xl font-semibold text-foreground">Dashboard</h1>
-        <p className="font-body text-sm text-muted-foreground mt-1">Überblick über Website, Portal und Engagement</p>
+    <div className="space-y-8">
+      <div className="flex items-end justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="font-heading text-2xl font-semibold text-foreground">Dashboard</h1>
+          <p className="font-body text-sm text-muted-foreground mt-1">Überblick über Website, Portal und Engagement</p>
+        </div>
+        <div className="text-xs text-muted-foreground">
+          {new Date().toLocaleDateString("de-CH", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+        </div>
       </div>
 
-      {/* Website */}
+      {/* Highlights — Portal & Kommunikation as featured tiles */}
       <section>
-        <div className="flex items-center gap-2 mb-4">
-          <TrendingUp size={16} className="text-muted-foreground" />
-          <h2 className="font-heading text-sm font-semibold text-foreground uppercase tracking-wide">Website-Inhalte</h2>
+        <div className="flex items-center gap-2 mb-3">
+          <Newspaper size={14} className="text-muted-foreground" />
+          <h2 className="font-heading text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Portal & Kommunikation</h2>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {websiteCards.map((c) => <StatCard key={c.label} {...c} />)}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <HighlightStat label="Neue Anfragen" count={stats?.inquiriesNew} sub={`${stats?.inquiriesTotal ?? 0} gesamt`} icon={Mail} to="/admin/inquiries" />
+          <HighlightStat label="Bevorstehende Events" count={stats?.eventsUpcoming} sub={`${stats?.eventsCount ?? 0} gesamt`} icon={Calendar} to="/admin/events" />
+          <HighlightStat label="News veröffentlicht" count={stats?.newsPublished} sub={`${stats?.newsCount ?? 0} gesamt`} icon={Newspaper} to="/admin/news" />
+          <HighlightStat label="Event-Anmeldungen" count={stats?.registrationsTotal} icon={UserCheck} to="/admin/events" />
         </div>
       </section>
 
-      {/* Portal */}
-      <section>
-        <div className="flex items-center gap-2 mb-4">
-          <Newspaper size={16} className="text-muted-foreground" />
-          <h2 className="font-heading text-sm font-semibold text-foreground uppercase tracking-wide">Portal & Kommunikation</h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {portalCards.map((c) => <StatCard key={c.label} {...c} />)}
-        </div>
-      </section>
+      {/* Website + Engagement side-by-side, compact */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <TrendingUp size={14} className="text-muted-foreground" />
+            <h2 className="font-heading text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Website-Inhalte</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {websiteCards.map((c) => <MiniStat key={c.label} {...c} />)}
+          </div>
+        </section>
 
-      {/* Engagement */}
-      <section>
-        <div className="flex items-center gap-2 mb-4">
-          <Heart size={16} className="text-muted-foreground" />
-          <h2 className="font-heading text-sm font-semibold text-foreground uppercase tracking-wide">Engagement (letzte 7 Tage)</h2>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {engagementCards.map((c) => <StatCard key={c.label} {...c} />)}
-        </div>
-      </section>
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <Heart size={14} className="text-muted-foreground" />
+            <h2 className="font-heading text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Engagement (7 Tage)</h2>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {engagementCards.map((c) => <MiniStat key={c.label} {...c} />)}
+          </div>
+        </section>
+      </div>
 
       {/* Two-column: Upcoming Events + Latest Inquiries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
