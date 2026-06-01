@@ -309,21 +309,21 @@ const AdminMediaLibrary = () => {
                       <File size={28} />
                     </div>
                   )}
-                  {/* Actions overlay */}
-                  <div
-                    className="absolute inset-0 bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      onClick={() => setPreviewIndex(filteredFiles.findIndex((f) => f.path === file.path))}
-                      className="bg-card/90 rounded-full p-2 hover:bg-card"
+                  {/* Actions overlay (bubbles click to parent for preview) */}
+                  <div className="absolute inset-0 bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none">
+                    <a
+                      href={file.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="bg-card/90 rounded-full p-2 hover:bg-card pointer-events-auto"
                     >
-                      <Eye size={14} className="text-foreground" />
-                    </button>
-                    <a href={file.url} target="_blank" rel="noreferrer" className="bg-card/90 rounded-full p-2 hover:bg-card">
                       <Download size={14} className="text-foreground" />
                     </a>
-                    <button onClick={() => handleDelete(file)} className="bg-card/90 rounded-full p-2 hover:bg-destructive hover:text-destructive-foreground">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(file); }}
+                      className="bg-card/90 rounded-full p-2 hover:bg-destructive hover:text-destructive-foreground pointer-events-auto"
+                    >
                       <Trash2 size={14} />
                     </button>
                   </div>
