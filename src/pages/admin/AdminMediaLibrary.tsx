@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Trash2, Search, FileImage, FileVideo, File, Check, Download, Eye, X } from "lucide-react";
+import { Upload, Trash2, Search, FileImage, FileVideo, File, Check, Download, Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 
@@ -29,8 +29,7 @@ const AdminMediaLibrary = () => {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadFileInfo, setUploadFileInfo] = useState<{ size: number; type: string; width?: number; height?: number } | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewMime, setPreviewMime] = useState("");
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   const folders = ["slider", "heroes", "team", "agencies", "career-thumbs", "career-videos", "media"];
 
@@ -136,6 +135,27 @@ const AdminMediaLibrary = () => {
     if (search && !f.name.toLowerCase().includes(search.toLowerCase())) return false;
     return true;
   });
+
+  const previewFile = previewIndex !== null ? filteredFiles[previewIndex] : null;
+  const showPrev = () => {
+    if (previewIndex === null || filteredFiles.length === 0) return;
+    setPreviewIndex((previewIndex - 1 + filteredFiles.length) % filteredFiles.length);
+  };
+  const showNext = () => {
+    if (previewIndex === null || filteredFiles.length === 0) return;
+    setPreviewIndex((previewIndex + 1) % filteredFiles.length);
+  };
+
+  useEffect(() => {
+    if (previewIndex === null) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") showPrev();
+      else if (e.key === "ArrowRight") showNext();
+      else if (e.key === "Escape") setPreviewIndex(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [previewIndex, filteredFiles.length]);
 
   const totalSize = files.reduce((s, f) => s + f.size, 0);
   const imageCount = files.filter((f) => f.mimetype.startsWith("image")).length;
