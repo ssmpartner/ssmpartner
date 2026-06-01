@@ -777,6 +777,39 @@ const AdminUsers = () => {
                 </p>
               </div>
 
+              {/* Project Access Toggles */}
+              {projects && projects.length > 0 && (
+                <div>
+                  <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-2">
+                    <FolderKey size={12} /> Projektzugriff
+                  </label>
+                  <div className="space-y-2">
+                    {projects.map((p: any) => {
+                      const granted = userHasAccess(editingUser.id, p.id);
+                      return (
+                        <div key={p.id} className="flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-border bg-muted/10">
+                          <div className="min-w-0">
+                            <p className="font-body text-sm font-medium text-foreground truncate">{p.name}</p>
+                            <p className="font-mono text-[10px] text-muted-foreground truncate">{p.project_key}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => toggleAccessMutation.mutate({ user_id: editingUser.id, project_id: p.id, grant: !granted })}
+                            disabled={toggleAccessMutation.isPending}
+                            role="switch"
+                            aria-checked={granted}
+                            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors ${granted ? "bg-primary" : "bg-input"}`}
+                            title={granted ? "Zugang entziehen" : "Zugang erteilen"}
+                          >
+                            <span className={`inline-block h-5 w-5 transform rounded-full bg-background shadow transition-transform ${granted ? "translate-x-5" : "translate-x-0.5"}`} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* New Password */}
               <div>
                 <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-1.5">
