@@ -41,7 +41,6 @@ const adminLinks = [
 const bottomLinks = [
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },
   { to: "/admin/users", label: "Benutzer", icon: UserCog },
-  { to: "/admin/sso", label: "SSO & Zugriff", icon: KeyRound },
   { to: "/admin/api-docs", label: "API-Docs", icon: Code2 },
   { to: "/admin/docs", label: "Dokumentation", icon: Book },
 ];

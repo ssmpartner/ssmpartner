@@ -36,7 +36,7 @@ import AdminChatLogs from "./pages/admin/AdminChatLogs";
 import AdminVag45 from "./pages/admin/AdminVag45";
 import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import AdminUsers from "./pages/admin/AdminUsers";
-import AdminSSO from "./pages/admin/AdminSSO";
+import { Navigate } from "react-router-dom";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminEvents from "./pages/admin/AdminEvents";
 import PortalNews from "./pages/portal/PortalNews";
@@ -114,7 +114,7 @@ const App = () => (
                 <Route path="/admin/vag45" element={<AdminVag45 />} />
                 <Route path="/admin/onlinecheck" element={<AdminOnlineCheck />} />
                 <Route path="/admin/users" element={<AdminUsers />} />
-                <Route path="/admin/sso" element={<AdminSSO />} />
+                <Route path="/admin/sso" element={<Navigate to="/admin/users" replace />} />
                 <Route path="/admin/news" element={<AdminNews />} />
                 <Route path="/admin/events" element={<AdminEvents />} />
               </Route>
