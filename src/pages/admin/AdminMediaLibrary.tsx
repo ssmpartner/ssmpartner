@@ -356,17 +356,31 @@ const AdminMediaLibrary = () => {
               </span>
               <div className="flex-1 text-center min-w-0">
                 {renaming ? (
-                  <input
-                    autoFocus
-                    value={renameValue}
-                    onChange={(e) => setRenameValue(e.target.value)}
-                    onBlur={() => handleRename(previewFile, renameValue)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleRename(previewFile, renameValue);
-                      if (e.key === "Escape") setRenaming(false);
-                    }}
-                    className="font-body text-xs text-foreground bg-background border border-border rounded px-2 py-0.5 w-2/3 text-center focus:outline-none focus:ring-1 focus:ring-ring"
-                  />
+                  <div className="flex items-center justify-center gap-1.5">
+                    <input
+                      autoFocus
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") { e.preventDefault(); handleRename(previewFile, renameValue); }
+                        if (e.key === "Escape") { e.preventDefault(); setRenaming(false); }
+                      }}
+                      className="font-body text-xs text-foreground bg-background border border-border rounded px-2 py-0.5 w-2/3 text-center focus:outline-none focus:ring-1 focus:ring-ring"
+                    />
+                    <button
+                      onClick={() => handleRename(previewFile, renameValue)}
+                      disabled={busy}
+                      className="font-body text-[10px] text-primary-foreground bg-primary hover:opacity-90 rounded px-2 py-0.5 disabled:opacity-50"
+                    >
+                      Speichern
+                    </button>
+                    <button
+                      onClick={() => setRenaming(false)}
+                      className="font-body text-[10px] text-muted-foreground hover:text-foreground rounded px-1 py-0.5"
+                    >
+                      Abbrechen
+                    </button>
+                  </div>
                 ) : (
                   <button
                     onClick={() => { setRenameValue(previewFile.name); setRenaming(true); }}
