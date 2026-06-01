@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
-import { Plus, Trash2, KeyRound, Shield, FolderKey, Search, X, CheckSquare, Square, Image as ImageIcon, Mail, User as UserIcon, RefreshCw, Pencil } from "lucide-react";
+import { Plus, Trash2, KeyRound, Shield, FolderKey, Search, X, CheckSquare, Square, Image as ImageIcon, Mail, User as UserIcon, RefreshCw, Pencil, Users as UsersIcon, Activity, Clock, ShieldCheck, ShieldX } from "lucide-react";
 import { toast } from "sonner";
 import MediaPickerModal from "@/components/MediaPickerModal";
 
@@ -20,6 +20,15 @@ const roleLabels: Record<string, string> = {
   analyst: "Analyst",
   agency_manager: "Agenturleiter",
   verkaufsleiter: "Verkaufsleiter",
+};
+
+const auditActionLabels: Record<string, string> = {
+  sso_login: "SSO Login",
+  sso_redirect_login: "SSO Redirect Login",
+  access_granted: "Zugang erteilt",
+  access_revoked: "Zugang entzogen",
+  secret_generated: "API-Secret generiert",
+  login: "Login",
 };
 
 const roleColors: Record<string, string> = {
@@ -50,6 +59,7 @@ interface UserData {
 const AdminUsers = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<"users" | "audit">("users");
   const [showCreate, setShowCreate] = useState(false);
   const [createForm, setCreateForm] = useState({ email: "", password: "", display_name: "", role: "admin" });
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
@@ -103,6 +113,39 @@ const AdminUsers = () => {
       return data as any[];
     },
   });
+
+  const { data: auditLogs } = useQuery({
+    queryKey: ["sso-audit"],
+    enabled: activeTab === "audit",
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke("sso-auth", {
+        body: { action: "audit_log", limit: 100 },
+      });
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+      return data.logs as any[];
+    },
+  });
+
+  const toggleAccessMutation = useMutation({
+    mutationFn: async ({ user_id, project_id, grant }: { user_id: string; project_id: string; grant: boolean }) => {
+      const { data, error } = await supabase.functions.invoke("sso-auth", {
+        body: { action: grant ? "grant_access" : "revoke_access", user_id, project_id },
+      });
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sso-access"] });
+      queryClient.invalidateQueries({ queryKey: ["sso-audit"] });
+      toast.success("Zugang aktualisiert");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const userHasAccess = (userId: string, projectId: string) => {
+    return !!accessList?.find((a: any) => a.user_id === userId && a.project_id === projectId && a.active);
+  };
 
   const { data: userAgencyMap } = useQuery({
     queryKey: ["user-agency-map"],
@@ -276,13 +319,81 @@ const AdminUsers = () => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-heading text-2xl font-semibold text-foreground">Benutzerverwaltung</h1>
-        <button
+        {activeTab === "users" && <button
           onClick={() => setShowCreate(true)}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90"
         >
           <Plus size={18} /> Benutzer erstellen
-        </button>
+        </button>}
       </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 mb-6 bg-muted/30 rounded-lg p-1 w-fit">
+        {([
+          { key: "users", label: "Benutzer", icon: UsersIcon },
+          { key: "audit", label: "Aktivitätslog", icon: Activity },
+        ] as const).map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`inline-flex items-center gap-2 font-body text-sm px-4 py-2 rounded-md transition-colors ${
+              activeTab === tab.key
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <tab.icon size={14} />
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === "audit" && (
+        <div className="bg-card border rounded-xl overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b bg-muted/30">
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Zeitpunkt</th>
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Benutzer</th>
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Aktion</th>
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">Projekt</th>
+                <th className="font-heading text-xs font-medium text-muted-foreground text-left px-4 py-3">IP</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(!auditLogs || auditLogs.length === 0) && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center font-body text-sm text-muted-foreground">
+                    Noch keine Aktivitäten aufgezeichnet
+                  </td>
+                </tr>
+              )}
+              {auditLogs?.map((log: any) => (
+                <tr key={log.id} className="border-b last:border-0 hover:bg-muted/10">
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={11} className="text-muted-foreground" />
+                      <span className="font-body text-xs text-muted-foreground">
+                        {new Date(log.created_at).toLocaleString("de-CH")}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2.5 font-body text-xs text-foreground">{log.user_email || "–"}</td>
+                  <td className="px-4 py-2.5">
+                    <span className="font-body text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+                      {auditActionLabels[log.action] || log.action}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2.5 font-body text-xs text-muted-foreground">{log.project_key || "–"}</td>
+                  <td className="px-4 py-2.5 font-mono text-[11px] text-muted-foreground">{log.ip_address || "–"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {activeTab === "users" && (<>
 
       {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
