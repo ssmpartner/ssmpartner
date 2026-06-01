@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Copy, Check, ExternalLink, Code2, Database, Lock, Zap } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Copy, Check, ExternalLink, Code2, Database, Lock, Zap, Key, RefreshCw, Eye, EyeOff, Users, Building2 } from "lucide-react";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -89,6 +92,64 @@ const CodeBlock = ({ label, code }: { label: string; code: string }) => (
 
 const AdminApiDocs = () => {
   const [expandedTable, setExpandedTable] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [visibleSecrets, setVisibleSecrets] = useState<Set<string>>(new Set());
+  const [generatedSecrets, setGeneratedSecrets] = useState<Record<string, string>>({});
+
+  const { data: projects } = useQuery({
+    queryKey: ["sso-projects"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("sso_projects" as any).select("*").order("created_at");
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const { data: accessList } = useQuery({
+    queryKey: ["sso-access"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("project_access" as any).select("*");
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const generateSecretMutation = useMutation({
+    mutationFn: async (project_id: string) => {
+      const { data, error } = await supabase.functions.invoke("sso-auth", {
+        body: { action: "generate_secret", project_id },
+      });
+      if (error) throw error;
+      if (data.error) throw new Error(data.error);
+      return { project_id, api_secret: data.api_secret };
+    },
+    onSuccess: ({ project_id, api_secret }) => {
+      setGeneratedSecrets((prev) => ({ ...prev, [project_id]: api_secret }));
+      setVisibleSecrets((prev) => new Set(prev).add(project_id));
+      queryClient.invalidateQueries({ queryKey: ["sso-projects"] });
+      toast.success("API-Secret generiert – bitte jetzt kopieren!");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const copyToClipboard = async (text: string, fieldId: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopiedField(fieldId);
+    toast.success("In Zwischenablage kopiert");
+    setTimeout(() => setCopiedField(null), 2000);
+  };
+
+  const toggleSecretVisibility = (projectId: string) => {
+    setVisibleSecrets((prev) => {
+      const next = new Set(prev);
+      if (next.has(projectId)) next.delete(projectId); else next.add(projectId);
+      return next;
+    });
+  };
+
+  const getDisplaySecret = (project: any) => generatedSecrets[project.id] || project.api_secret;
+  const SSO_API_URL_DISPLAY = `${SUPABASE_URL}/functions/v1/sso-auth`;
 
   return (
     <div className="max-w-4xl">
@@ -96,6 +157,81 @@ const AdminApiDocs = () => {
       <p className="font-body text-sm text-muted-foreground mb-8">
         Greifen Sie auf alle Inhalte über die REST-API zu — ideal für externe Tools, Automationen oder mobile Apps.
       </p>
+
+      {/* SSO Projects & API Keys */}
+      <div className="bg-card border rounded-xl p-6 mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Key size={20} className="text-primary" />
+          <h2 className="font-heading text-lg font-semibold text-foreground">SSO-Projekte & API-Keys</h2>
+        </div>
+        <div className="mb-4">
+          <label className="font-heading text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-1.5">
+            <Building2 size={12} /> SSO API Endpoint
+          </label>
+          <div className="flex items-center gap-2 bg-muted/30 rounded-lg px-4 py-2.5">
+            <code className="font-mono text-xs text-foreground flex-1 select-all break-all">{SSO_API_URL_DISPLAY}</code>
+            <button onClick={() => copyToClipboard(SSO_API_URL_DISPLAY, "endpoint")} className="text-muted-foreground hover:text-foreground transition-colors" title="Kopieren">
+              {copiedField === "endpoint" ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+            </button>
+          </div>
+        </div>
+        <div className="space-y-3">
+          {projects?.map((p: any) => {
+            const userCount = accessList?.filter((a: any) => a.project_id === p.id && a.active).length || 0;
+            const secret = getDisplaySecret(p);
+            const isVisible = visibleSecrets.has(p.id);
+            return (
+              <div key={p.id} className="border border-border rounded-lg p-4">
+                <div className="flex items-start justify-between mb-3 gap-3">
+                  <div className="min-w-0">
+                    <h3 className="font-heading text-sm font-semibold text-foreground">{p.name}</h3>
+                    <p className="font-body text-xs text-muted-foreground mt-0.5">
+                      Key: <code className="bg-muted px-1.5 py-0.5 rounded text-foreground">{p.project_key}</code>
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="inline-flex items-center gap-1 font-body text-xs text-muted-foreground">
+                      <Users size={12} /> {userCount}
+                    </span>
+                    <span className={`inline-flex items-center font-body text-[10px] px-2 py-0.5 rounded-full ${p.active ? "bg-emerald-500/10 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+                      {p.active ? "Aktiv" : "Inaktiv"}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="font-heading text-xs font-medium text-muted-foreground">API-Secret</label>
+                  <button
+                    onClick={() => generateSecretMutation.mutate(p.id)}
+                    disabled={generateSecretMutation.isPending}
+                    className="inline-flex items-center gap-1.5 font-body text-xs px-2.5 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+                  >
+                    <RefreshCw size={12} className={generateSecretMutation.isPending ? "animate-spin" : ""} />
+                    {secret ? "Neu generieren" : "Generieren"}
+                  </button>
+                </div>
+                {secret ? (
+                  <div className="flex items-center gap-2 bg-muted/30 rounded-lg px-3 py-2">
+                    <code className="font-mono text-xs text-foreground flex-1 select-all break-all">
+                      {isVisible ? secret : "••••••••••••••••••••••••••••••••"}
+                    </code>
+                    <button onClick={() => toggleSecretVisibility(p.id)} className="text-muted-foreground hover:text-foreground" title={isVisible ? "Verbergen" : "Anzeigen"}>
+                      {isVisible ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                    <button onClick={() => copyToClipboard(secret, `secret-${p.id}`)} className="text-muted-foreground hover:text-foreground" title="Kopieren">
+                      {copiedField === `secret-${p.id}` ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                    </button>
+                  </div>
+                ) : (
+                  <p className="font-body text-xs text-muted-foreground italic">Noch kein API-Secret generiert.</p>
+                )}
+              </div>
+            );
+          })}
+          {(!projects || projects.length === 0) && (
+            <p className="font-body text-sm text-muted-foreground italic">Keine SSO-Projekte vorhanden.</p>
+          )}
+        </div>
+      </div>
 
       {/* Base Info */}
       <div className="bg-card border rounded-xl p-6 mb-6">
