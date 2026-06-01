@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Trash2, Search, FileImage, FileVideo, File, Check, Download, Eye, X } from "lucide-react";
+import { Upload, Trash2, Search, FileImage, FileVideo, File, Check, Download, Eye, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 
@@ -29,8 +29,7 @@ const AdminMediaLibrary = () => {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [uploadFileName, setUploadFileName] = useState("");
   const [uploadFileInfo, setUploadFileInfo] = useState<{ size: number; type: string; width?: number; height?: number } | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [previewMime, setPreviewMime] = useState("");
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   const folders = ["slider", "heroes", "team", "agencies", "career-thumbs", "career-videos", "media"];
 
@@ -137,6 +136,27 @@ const AdminMediaLibrary = () => {
     return true;
   });
 
+  const previewFile = previewIndex !== null ? filteredFiles[previewIndex] : null;
+  const showPrev = () => {
+    if (previewIndex === null || filteredFiles.length === 0) return;
+    setPreviewIndex((previewIndex - 1 + filteredFiles.length) % filteredFiles.length);
+  };
+  const showNext = () => {
+    if (previewIndex === null || filteredFiles.length === 0) return;
+    setPreviewIndex((previewIndex + 1) % filteredFiles.length);
+  };
+
+  useEffect(() => {
+    if (previewIndex === null) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") showPrev();
+      else if (e.key === "ArrowRight") showNext();
+      else if (e.key === "Escape") setPreviewIndex(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [previewIndex, filteredFiles.length]);
+
   const totalSize = files.reduce((s, f) => s + f.size, 0);
   const imageCount = files.filter((f) => f.mimetype.startsWith("image")).length;
   const videoCount = files.filter((f) => f.mimetype.startsWith("video")).length;
@@ -224,7 +244,10 @@ const AdminMediaLibrary = () => {
             const isVideo = file.mimetype.startsWith("video");
             return (
               <div key={file.path} className="group bg-card border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                <div className="aspect-square bg-muted relative">
+                <div
+                  className="aspect-square bg-muted relative cursor-pointer"
+                  onClick={() => setPreviewIndex(filteredFiles.findIndex((f) => f.path === file.path))}
+                >
                   {isImage ? (
                     <img src={file.url} alt={file.name} className="w-full h-full object-cover" loading="lazy" />
                   ) : isVideo ? (
@@ -237,9 +260,12 @@ const AdminMediaLibrary = () => {
                     </div>
                   )}
                   {/* Actions overlay */}
-                  <div className="absolute inset-0 bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                  <div
+                    className="absolute inset-0 bg-foreground/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <button
-                      onClick={() => { setPreviewUrl(file.url); setPreviewMime(file.mimetype); }}
+                      onClick={() => setPreviewIndex(filteredFiles.findIndex((f) => f.path === file.path))}
                       className="bg-card/90 rounded-full p-2 hover:bg-card"
                     >
                       <Eye size={14} className="text-foreground" />
@@ -266,23 +292,51 @@ const AdminMediaLibrary = () => {
       )}
 
       {/* Preview modal */}
-      {previewUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/70 backdrop-blur-sm" onClick={() => setPreviewUrl(null)}>
-          <div className="relative max-w-4xl max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setPreviewUrl(null)} className="absolute -top-3 -right-3 bg-card border rounded-full p-1.5 hover:bg-muted z-10">
-              <X size={16} />
-            </button>
-            {previewMime.startsWith("image") ? (
-              <img src={previewUrl} alt="" className="max-w-full max-h-[80vh] rounded-lg" />
-            ) : previewMime.startsWith("video") ? (
-              <video src={previewUrl} controls autoPlay className="max-w-full max-h-[80vh] rounded-lg" />
+      {previewFile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/70 backdrop-blur-sm" onClick={() => setPreviewIndex(null)}>
+          <button
+            onClick={(e) => { e.stopPropagation(); setPreviewIndex(null); }}
+            className="absolute top-4 right-4 bg-card/90 hover:bg-card rounded-full p-2 z-10"
+            aria-label="Schliessen"
+          >
+            <X size={18} />
+          </button>
+          {filteredFiles.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); showPrev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10"
+                aria-label="Vorheriges"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); showNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10"
+                aria-label="Nächstes"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </>
+          )}
+          <div className="relative max-w-4xl max-h-[85vh] flex flex-col items-center gap-3" onClick={(e) => e.stopPropagation()}>
+            {previewFile.mimetype.startsWith("image") ? (
+              <img src={previewFile.url} alt={previewFile.name} className="max-w-full max-h-[78vh] rounded-lg object-contain" />
+            ) : previewFile.mimetype.startsWith("video") ? (
+              <video key={previewFile.path} src={previewFile.url} controls autoPlay className="max-w-full max-h-[78vh] rounded-lg" />
             ) : (
               <div className="bg-card rounded-lg p-12 text-center">
                 <File size={48} className="mx-auto text-muted-foreground mb-3" />
                 <p className="font-body text-sm text-muted-foreground">Vorschau nicht verfügbar</p>
-                <a href={previewUrl} target="_blank" rel="noreferrer" className="font-body text-sm text-primary underline mt-2 block">Herunterladen</a>
+                <a href={previewFile.url} target="_blank" rel="noreferrer" className="font-body text-sm text-primary underline mt-2 block">Herunterladen</a>
               </div>
             )}
+            <div className="bg-card/90 backdrop-blur rounded-lg px-4 py-2 flex items-center gap-4 font-body text-xs">
+              <span className="text-foreground font-medium truncate max-w-xs">{previewFile.name}</span>
+              <span className="text-muted-foreground">{formatBytes(previewFile.size)}</span>
+              <span className="text-muted-foreground">{previewFile.folder}</span>
+              <span className="text-muted-foreground">{(previewIndex ?? 0) + 1} / {filteredFiles.length}</span>
+            </div>
           </div>
         </div>
       )}
