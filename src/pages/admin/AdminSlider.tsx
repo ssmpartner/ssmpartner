@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon, ArrowUp, ArrowDown, Smartphone } from "lucide-react";
+import { Trash2, Plus, GripVertical, Pencil, X, Check, Crop, ImageIcon, ArrowUp, ArrowDown, Smartphone, LayoutGrid, List } from "lucide-react";
 import { toast } from "sonner";
 import ImageCropModal from "@/components/ImageCropModal";
 import MediaPickerModal from "@/components/MediaPickerModal";
@@ -13,6 +13,12 @@ const AdminSlider = () => {
   const [editForm, setEditForm] = useState({ headline: "", subline: "", alt_text: "" });
   const [cropModal, setCropModal] = useState<{ src: string; existingId?: string; mobile?: boolean } | null>(null);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
+  const [view, setView] = useState<"grid" | "list">(() => (localStorage.getItem("admin-slider-view") as "grid" | "list") || "grid");
+
+  const setViewMode = (v: "grid" | "list") => {
+    setView(v);
+    localStorage.setItem("admin-slider-view", v);
+  };
 
   const { data: images, isLoading } = useQuery({
     queryKey: ["admin-slider"],
@@ -133,6 +139,22 @@ const AdminSlider = () => {
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-heading text-2xl font-semibold text-foreground">Slider-Bilder</h1>
         <div className="flex items-center gap-2">
+          <div className="inline-flex items-center gap-0.5 bg-muted rounded-lg p-0.5 mr-2">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-1.5 rounded-md transition-colors ${view === "grid" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              title="Kachel-Ansicht"
+            >
+              <LayoutGrid size={14} />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`p-1.5 rounded-md transition-colors ${view === "list" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              title="Listen-Ansicht"
+            >
+              <List size={14} />
+            </button>
+          </div>
           <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
             <Plus size={18} />
             {uploading ? "Hochladen..." : "Hochladen"}
@@ -149,8 +171,8 @@ const AdminSlider = () => {
         <p className="font-body text-sm text-muted-foreground">Laden...</p>
       ) : !images?.length ? (
         <p className="font-body text-sm text-muted-foreground">Noch keine Slider-Bilder vorhanden.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      ) : view === "grid" ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {images.map((img, idx) => (
             <div key={img.id} className="bg-card border rounded-xl overflow-hidden">
               <div className="relative aspect-video">
@@ -163,18 +185,18 @@ const AdminSlider = () => {
               </div>
 
               {editingId === img.id ? (
-                <div className="p-4 space-y-3">
+                <div className="p-3 space-y-2">
                   <div>
                     <label className="font-body text-xs text-muted-foreground mb-1 block">Headline</label>
-                    <input value={editForm.headline} onChange={e => setEditForm({ ...editForm, headline: e.target.value })} className="w-full border rounded px-3 py-2 text-sm" placeholder="Slide-Überschrift" />
+                    <input value={editForm.headline} onChange={e => setEditForm({ ...editForm, headline: e.target.value })} className="w-full border rounded px-2 py-1.5 text-sm" placeholder="Slide-Überschrift" />
                   </div>
                   <div>
                     <label className="font-body text-xs text-muted-foreground mb-1 block">Subline</label>
-                    <input value={editForm.subline} onChange={e => setEditForm({ ...editForm, subline: e.target.value })} className="w-full border rounded px-3 py-2 text-sm" placeholder="Untertitel" />
+                    <input value={editForm.subline} onChange={e => setEditForm({ ...editForm, subline: e.target.value })} className="w-full border rounded px-2 py-1.5 text-sm" placeholder="Untertitel" />
                   </div>
                   <div>
                     <label className="font-body text-xs text-muted-foreground mb-1 block">Alt-Text</label>
-                    <input value={editForm.alt_text} onChange={e => setEditForm({ ...editForm, alt_text: e.target.value })} className="w-full border rounded px-3 py-2 text-sm" placeholder="Bildbeschreibung" />
+                    <input value={editForm.alt_text} onChange={e => setEditForm({ ...editForm, alt_text: e.target.value })} className="w-full border rounded px-2 py-1.5 text-sm" placeholder="Bildbeschreibung" />
                   </div>
                   <div className="flex gap-2">
                     <button onClick={() => updateMutation.mutate({ id: img.id, ...editForm })} className="flex items-center gap-1 bg-primary text-primary-foreground text-sm px-3 py-1.5 rounded-lg"><Check size={14} /> Speichern</button>
@@ -182,36 +204,87 @@ const AdminSlider = () => {
                   </div>
                 </div>
               ) : (
-                <div className="p-3">
+                <div className="p-2.5">
                   {(img.headline || img.subline) && (
                     <div className="mb-2">
-                      {img.headline && <p className="font-body text-sm font-medium">{img.headline}</p>}
-                      {img.subline && <p className="font-body text-xs text-muted-foreground">{img.subline}</p>}
+                      {img.headline && <p className="font-body text-xs font-medium truncate">{img.headline}</p>}
+                      {img.subline && <p className="font-body text-[11px] text-muted-foreground truncate">{img.subline}</p>}
                     </div>
                   )}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => handleMove(idx, "up")} disabled={idx === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Nach oben"><ArrowUp size={14} /></button>
-                      <button onClick={() => handleMove(idx, "down")} disabled={idx === images.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30" title="Nach unten"><ArrowDown size={14} /></button>
-                      <span className="font-body text-xs text-muted-foreground">#{idx + 1}</span>
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-0.5">
+                      <button onClick={() => handleMove(idx, "up")} disabled={idx === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1" title="Nach oben"><ArrowUp size={12} /></button>
+                      <button onClick={() => handleMove(idx, "down")} disabled={idx === images.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1" title="Nach unten"><ArrowDown size={12} /></button>
+                      <span className="font-body text-[10px] text-muted-foreground">#{idx + 1}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground" title="Desktop-Zuschnitt (16:9)"><Crop size={14} /></button>
-                      <button onClick={() => setCropModal({ src: (img as any).mobile_image_url || img.image_url, existingId: img.id, mobile: true })} className="text-muted-foreground hover:text-foreground" title="Mobile-Zuschnitt (9:16)">
-                        <Smartphone size={14} />
+                    <div className="flex items-center gap-0.5">
+                      <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground p-1" title="Desktop-Zuschnitt (16:9)"><Crop size={12} /></button>
+                      <button onClick={() => setCropModal({ src: (img as any).mobile_image_url || img.image_url, existingId: img.id, mobile: true })} className="text-muted-foreground hover:text-foreground p-1" title="Mobile-Zuschnitt (9:16)">
+                        <Smartphone size={12} />
                       </button>
-                      <button onClick={() => startEdit(img)} className="text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
+                      <button onClick={() => startEdit(img)} className="text-muted-foreground hover:text-foreground p-1"><Pencil size={12} /></button>
                       <button
                         onClick={() => toggleMutation.mutate({ id: img.id, active: !img.active })}
-                        className={`font-body text-xs px-2 py-1 rounded ${img.active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
+                        className={`font-body text-[10px] px-1.5 py-0.5 rounded ${img.active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
                       >
                         {img.active ? "Aktiv" : "Inaktiv"}
                       </button>
-                      <button onClick={() => deleteMutation.mutate(img.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={16} /></button>
+                      <button onClick={() => deleteMutation.mutate(img.id)} className="text-muted-foreground hover:text-destructive p-1"><Trash2 size={12} /></button>
                     </div>
                   </div>
                 </div>
               )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-card border rounded-xl overflow-hidden divide-y">
+          {images.map((img, idx) => (
+            <div key={img.id} className="flex items-center gap-3 p-2.5 hover:bg-muted/40 transition-colors">
+              <div className="relative w-24 h-14 rounded-md overflow-hidden bg-muted shrink-0">
+                <img src={img.image_url} alt={img.alt_text || ""} className="w-full h-full object-cover" />
+                {!img.active && <div className="absolute inset-0 bg-background/60" />}
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button onClick={() => handleMove(idx, "up")} disabled={idx === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1" title="Nach oben"><ArrowUp size={12} /></button>
+                <button onClick={() => handleMove(idx, "down")} disabled={idx === images.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1" title="Nach unten"><ArrowDown size={12} /></button>
+                <span className="font-body text-[11px] text-muted-foreground w-6">#{idx + 1}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                {editingId === img.id ? (
+                  <div className="flex flex-col gap-1.5">
+                    <input value={editForm.headline} onChange={e => setEditForm({ ...editForm, headline: e.target.value })} className="w-full border rounded px-2 py-1 text-xs" placeholder="Headline" />
+                    <input value={editForm.subline} onChange={e => setEditForm({ ...editForm, subline: e.target.value })} className="w-full border rounded px-2 py-1 text-xs" placeholder="Subline" />
+                    <input value={editForm.alt_text} onChange={e => setEditForm({ ...editForm, alt_text: e.target.value })} className="w-full border rounded px-2 py-1 text-xs" placeholder="Alt-Text" />
+                  </div>
+                ) : (
+                  <>
+                    <p className="font-body text-sm font-medium truncate">{img.headline || <span className="text-muted-foreground italic">Ohne Titel</span>}</p>
+                    {img.subline && <p className="font-body text-xs text-muted-foreground truncate">{img.subline}</p>}
+                  </>
+                )}
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                {editingId === img.id ? (
+                  <>
+                    <button onClick={() => updateMutation.mutate({ id: img.id, ...editForm })} className="flex items-center gap-1 bg-primary text-primary-foreground text-xs px-2 py-1 rounded"><Check size={12} /></button>
+                    <button onClick={() => setEditingId(null)} className="text-muted-foreground p-1"><X size={14} /></button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => handleRecrop(img.image_url, img.id)} className="text-muted-foreground hover:text-foreground p-1.5" title="Desktop-Zuschnitt (16:9)"><Crop size={13} /></button>
+                    <button onClick={() => setCropModal({ src: (img as any).mobile_image_url || img.image_url, existingId: img.id, mobile: true })} className="text-muted-foreground hover:text-foreground p-1.5" title="Mobile-Zuschnitt (9:16)"><Smartphone size={13} /></button>
+                    <button onClick={() => startEdit(img)} className="text-muted-foreground hover:text-foreground p-1.5" title="Bearbeiten"><Pencil size={13} /></button>
+                    <button
+                      onClick={() => toggleMutation.mutate({ id: img.id, active: !img.active })}
+                      className={`font-body text-[10px] px-2 py-1 rounded ${img.active ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
+                    >
+                      {img.active ? "Aktiv" : "Inaktiv"}
+                    </button>
+                    <button onClick={() => deleteMutation.mutate(img.id)} className="text-muted-foreground hover:text-destructive p-1.5"><Trash2 size={14} /></button>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
