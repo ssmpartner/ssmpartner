@@ -344,25 +344,6 @@ const AdminMediaLibrary = () => {
       {/* Preview modal */}
       {previewFile && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/70 backdrop-blur-sm p-6" onClick={() => setPreviewIndex(null)}>
-          {filteredFiles.length > 1 && (
-            <>
-              <button
-                onClick={(e) => { e.stopPropagation(); showPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10 shadow-lg"
-                aria-label="Vorheriges"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                onClick={(e) => { e.stopPropagation(); showNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card rounded-full p-3 z-10 shadow-lg"
-                aria-label="Nächstes"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </>
-          )}
-
           {/* Window */}
           <div
             className="relative bg-card border border-border rounded-xl shadow-2xl w-full max-w-5xl max-h-[88vh] flex flex-col overflow-hidden"
@@ -370,11 +351,9 @@ const AdminMediaLibrary = () => {
           >
             {/* Window title bar */}
             <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-muted/50">
-              <div className="flex gap-1.5">
-                <button onClick={() => setPreviewIndex(null)} className="w-3 h-3 rounded-full bg-destructive hover:opacity-80" aria-label="Schliessen" />
-                <span className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-                <span className="w-3 h-3 rounded-full bg-muted-foreground/30" />
-              </div>
+              <span className="font-body text-[10px] text-muted-foreground tabular-nums w-16">
+                {(previewIndex ?? 0) + 1} / {filteredFiles.length}
+              </span>
               <div className="flex-1 text-center min-w-0">
                 {renaming ? (
                   <input
@@ -399,14 +378,36 @@ const AdminMediaLibrary = () => {
                   </button>
                 )}
               </div>
-              <span className="font-body text-[10px] text-muted-foreground tabular-nums">
-                {(previewIndex ?? 0) + 1} / {filteredFiles.length}
-              </span>
+              <button
+                onClick={() => setPreviewIndex(null)}
+                className="w-7 h-7 rounded-md hover:bg-muted-foreground/10 inline-flex items-center justify-center text-muted-foreground hover:text-foreground"
+                aria-label="Schliessen"
+              >
+                <X size={16} />
+              </button>
             </div>
 
             {/* Body: preview + sidebar */}
             <div className="flex flex-1 min-h-0">
-              <div className="flex-1 bg-muted/30 flex items-center justify-center p-6 min-h-0 overflow-auto">
+              <div className="flex-1 bg-muted/30 flex items-center justify-center p-6 min-h-0 overflow-auto relative">
+                {filteredFiles.length > 1 && (
+                  <>
+                    <button
+                      onClick={showPrev}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card border border-border rounded-full p-2 shadow-md z-10"
+                      aria-label="Vorheriges"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      onClick={showNext}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card border border-border rounded-full p-2 shadow-md z-10"
+                      aria-label="Nächstes"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </>
+                )}
                 {previewFile.mimetype.startsWith("image") ? (
                   <img src={previewFile.url} alt={previewFile.name} className="max-w-full max-h-full object-contain rounded" />
                 ) : previewFile.mimetype.startsWith("video") ? (
