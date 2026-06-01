@@ -673,6 +673,7 @@ const AdminUsers = () => {
           </table>
         </div>
       )}
+      </>)}
 
       {avatarPickerFor && (
         <MediaPickerModal
