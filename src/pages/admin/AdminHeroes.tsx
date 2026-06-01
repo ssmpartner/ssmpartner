@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, Image as ImageIcon, FolderOpen, Crop } from "lucide-react";
+import { Upload, Image as ImageIcon, FolderOpen, Crop, LayoutGrid, List } from "lucide-react";
 import { toast } from "sonner";
 import MediaPickerModal from "@/components/MediaPickerModal";
 import ImageCropModal from "@/components/ImageCropModal";
@@ -38,6 +38,12 @@ const AdminHeroes = () => {
   const [uploading, setUploading] = useState<string | null>(null);
   const [mediaPickerKey, setMediaPickerKey] = useState<string | null>(null);
   const [cropModal, setCropModal] = useState<{ src: string; pageKey: string } | null>(null);
+  const [view, setView] = useState<"grid" | "list">(() => (localStorage.getItem("admin-heroes-view") as "grid" | "list") || "grid");
+
+  const setViewMode = (v: "grid" | "list") => {
+    setView(v);
+    localStorage.setItem("admin-heroes-view", v);
+  };
 
   const { data: heroes, isLoading } = useQuery({
     queryKey: ["admin-heroes"],
@@ -122,8 +128,28 @@ const AdminHeroes = () => {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="font-heading text-2xl font-semibold text-foreground">Hero-Bilder</h1>
-        <p className="font-body text-sm text-muted-foreground mt-1">Verwalten Sie die Hero-Bilder für jede Seite.</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="font-heading text-2xl font-semibold text-foreground">Hero-Bilder</h1>
+            <p className="font-body text-sm text-muted-foreground mt-1">Verwalten Sie die Hero-Bilder für jede Seite.</p>
+          </div>
+          <div className="inline-flex items-center gap-0.5 bg-muted rounded-lg p-0.5 shrink-0">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-1.5 rounded-md transition-colors ${view === "grid" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              title="Kachel-Ansicht"
+            >
+              <LayoutGrid size={14} />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`p-1.5 rounded-md transition-colors ${view === "list" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              title="Listen-Ansicht"
+            >
+              <List size={14} />
+            </button>
+          </div>
+        </div>
         <div className="mt-3 bg-muted/60 border border-border rounded-lg px-4 py-3">
           <p className="font-body text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">Empfohlenes Format:</span>{" "}
@@ -134,8 +160,8 @@ const AdminHeroes = () => {
 
       {isLoading ? (
         <p className="font-body text-sm text-muted-foreground">Laden...</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      ) : view === "grid" ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {pages.map((page) => {
             const hero = getHero(page.key);
             return (
@@ -145,37 +171,35 @@ const AdminHeroes = () => {
                     <img src={hero.image_url} alt={page.label} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
-                      <ImageIcon size={32} />
-                      <span className="font-body text-xs mt-2">Kein Bild</span>
+                      <ImageIcon size={20} />
+                      <span className="font-body text-[10px] mt-1">Kein Bild</span>
                     </div>
                   )}
                   <div className="absolute bottom-0 left-0 right-0 h-1" style={{ backgroundColor: "#243e3a" }} />
                 </div>
-                <div className="p-4 flex items-center justify-between">
-                  <div>
-                    <h3 className="font-body text-sm font-medium text-foreground">{page.label}</h3>
-                    <p className="font-body text-xs text-muted-foreground">Seite: /{page.key}</p>
-                  </div>
-                  <div className="flex gap-2">
+                <div className="p-2.5">
+                  <h3 className="font-body text-xs font-medium text-foreground truncate">{page.label}</h3>
+                  <p className="font-body text-[10px] text-muted-foreground truncate mb-2">/{page.key}</p>
+                  <div className="flex items-center gap-1">
                     {hero?.image_url && (
                       <button
                         onClick={() => handleRecrop(hero.image_url!, page.key)}
-                        className="inline-flex items-center gap-2 bg-muted text-foreground font-body text-xs font-medium px-3 py-2 rounded-lg hover:bg-muted/80 transition-colors"
+                        className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-muted transition-colors"
+                        title="Zuschnitt"
                       >
-                        <Crop size={14} />
-                        Zuschnitt
+                        <Crop size={12} />
                       </button>
                     )}
                     <button
                       onClick={() => setMediaPickerKey(page.key)}
-                      className="inline-flex items-center gap-2 bg-muted text-foreground font-body text-xs font-medium px-3 py-2 rounded-lg hover:bg-muted/80 transition-colors"
+                      className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-muted transition-colors"
+                      title="Mediathek"
                     >
-                      <FolderOpen size={14} />
-                      Mediathek
+                      <FolderOpen size={12} />
                     </button>
-                    <label className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-xs font-medium px-3 py-2 rounded-lg cursor-pointer hover:opacity-90 transition-opacity">
-                      <Upload size={14} />
-                      {uploading === page.key ? "Hochladen..." : "Hochladen"}
+                    <label className="ml-auto inline-flex items-center gap-1 bg-primary text-primary-foreground font-body text-[10px] font-medium px-2 py-1 rounded-md cursor-pointer hover:opacity-90 transition-opacity">
+                      <Upload size={11} />
+                      {uploading === page.key ? "..." : "Upload"}
                       <input
                         type="file"
                         accept="image/*"
@@ -185,6 +209,58 @@ const AdminHeroes = () => {
                       />
                     </label>
                   </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="bg-card border rounded-xl overflow-hidden divide-y">
+          {pages.map((page) => {
+            const hero = getHero(page.key);
+            return (
+              <div key={page.key} className="flex items-center gap-3 p-2.5 hover:bg-muted/40 transition-colors">
+                <div className="relative w-24 h-10 rounded-md overflow-hidden bg-muted shrink-0">
+                  {hero?.image_url ? (
+                    <img src={hero.image_url} alt={page.label} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <ImageIcon size={14} />
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-body text-sm font-medium text-foreground truncate">{page.label}</p>
+                  <p className="font-body text-[11px] text-muted-foreground truncate">/{page.key}</p>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  {hero?.image_url && (
+                    <button
+                      onClick={() => handleRecrop(hero.image_url!, page.key)}
+                      className="text-muted-foreground hover:text-foreground p-1.5"
+                      title="Zuschnitt"
+                    >
+                      <Crop size={13} />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setMediaPickerKey(page.key)}
+                    className="text-muted-foreground hover:text-foreground p-1.5"
+                    title="Mediathek"
+                  >
+                    <FolderOpen size={13} />
+                  </button>
+                  <label className="inline-flex items-center gap-1 bg-primary text-primary-foreground font-body text-[11px] font-medium px-2 py-1 rounded-md cursor-pointer hover:opacity-90 transition-opacity">
+                    <Upload size={11} />
+                    {uploading === page.key ? "..." : "Upload"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileSelect(page.key, e)}
+                      className="hidden"
+                      disabled={uploading === page.key}
+                    />
+                  </label>
                 </div>
               </div>
             );
