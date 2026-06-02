@@ -8,6 +8,7 @@ import {
   User, ChevronDown, Newspaper, Calendar,
   Share2,
 } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import {
@@ -38,6 +39,7 @@ const adminLinks = [
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/social-links", label: "Social Media", icon: Share2 },
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 const bottomLinks = [
