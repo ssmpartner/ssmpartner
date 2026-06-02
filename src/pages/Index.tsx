@@ -142,16 +142,14 @@ const Index = () => {
   }, [next]);
 
   // CMS values with fallbacks
-  const overlapTitle = cms["home_overlap"]?.title || "Persönliche Beratung — wir sind für Sie da.";
-  const overlapBody = cms["home_overlap"]?.body || "Unverbindlich und kostenlos — vereinbaren Sie ein Erstgespräch.";
-  const overlapCta = cms["home_overlap"]?.link_text || "Jetzt Kontakt aufnehmen";
+  const overlapCta = cms["home_overlap"]?.link_text || t("home.overlap.cta");
 
-  const whoLabel = cms["home_who"]?.link_text || "Über SSM Partner";
+  const whoLabel = cms["home_who"]?.link_text || t("home.who.label");
   const whoTitle = cms["home_who"]?.title || t("home.who.title");
   const whoBody = cms["home_who"]?.body || t("home.who.text");
   const whoCta = cms["home_who"]?.link_url ? cms["home_who"].link_url : "/ueber-uns";
 
-  const servicesLabel = cms["home_services"]?.link_text || "Unsere Dienstleistungen";
+  const servicesLabel = cms["home_services"]?.link_text || t("home.services.label");
   const servicesTitle = cms["home_services"]?.title || t("home.services.title");
   const service1Title = cms["home_service_1"]?.title || t("home.services.1.title");
   const service1Desc = cms["home_service_1"]?.body || t("home.services.1.desc");
@@ -168,25 +166,25 @@ const Index = () => {
   const trustQuote = cms["home_trust"]?.body || t("home.trust.quote");
   const trustAuthor = cms["home_trust"]?.title || t("home.trust.author");
 
-  const agencyLabel = cms["home_agencies"]?.link_text || "Schweizweit für Sie da";
-  const agencyTitle = cms["home_agencies"]?.title || "Unsere Standorte";
+  const agencyLabel = cms["home_agencies"]?.link_text || t("home.agencies.label");
+  const agencyTitle = cms["home_agencies"]?.title || t("home.agencies.title");
 
-  const careerLabel = cms["home_career"]?.link_text || "Karriere";
-  const careerTitle = cms["home_career"]?.title || "Werde Teil unseres Teams";
-  const careerBody = cms["home_career"]?.body || "Entdecke spannende Karrieremöglichkeiten bei SSM Partner. Wir bieten dir ein inspirierendes Arbeitsumfeld, faire Vergütung und echte Entwicklungsperspektiven.";
+  const careerLabel = cms["home_career"]?.link_text || t("home.career.label");
+  const careerTitle = cms["home_career"]?.title || t("home.career.title");
+  const careerBody = cms["home_career"]?.body || t("home.career.body");
 
   const phoneTitle = cms["home_phone"]?.title || t("home.phone.title");
   const phoneSub = cms["home_phone"]?.body || t("home.phone.sub");
   const phoneNumber = cms["home_phone"]?.link_text || "+41 41 220 20 50";
 
-  const contactLabel = cms["home_contact"]?.link_text || "Kontakt";
-  const contactTitle = cms["home_contact"]?.title || "Lassen Sie uns ins Gespräch kommen";
-  const contactBody = cms["home_contact"]?.body || "Ob Versicherungsfrage, Finanzplanung oder Karriereanfrage — wir sind persönlich für Sie da. Schreiben Sie uns oder besuchen Sie uns direkt.";
+  const contactLabel = cms["home_contact"]?.link_text || t("home.contact.label");
+  const contactTitle = cms["home_contact"]?.title || t("home.contact.title");
+  const contactBody = cms["home_contact"]?.body || t("home.contact.body");
 
-  const quickstart1Title = cms["home_quickstart_1"]?.title || "Karriere starten";
-  const quickstart1Desc = cms["home_quickstart_1"]?.body || "Entdecke offene Stellen bei SSM";
-  const quickstart2Title = cms["home_quickstart_2"]?.title || "Unsere Agenturen";
-  const quickstart2Desc = cms["home_quickstart_2"]?.body || "Finde deinen Standort in der Nähe";
+  const quickstart1Title = cms["home_quickstart_1"]?.title || t("home.quickstart.1.title");
+  const quickstart1Desc = cms["home_quickstart_1"]?.body || t("home.quickstart.1.desc");
+  const quickstart2Title = cms["home_quickstart_2"]?.title || t("home.quickstart.2.title");
+  const quickstart2Desc = cms["home_quickstart_2"]?.body || t("home.quickstart.2.desc");
 
   return (
     <main>
