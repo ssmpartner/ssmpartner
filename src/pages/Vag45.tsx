@@ -4,11 +4,12 @@ import ssmPattern from "@/assets/ssm-structure-pattern.png";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import { Download, ExternalLink } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 type DlItem = { id: string; lang: string; description: string; url: string; sort_order: number };
 type Partner = { id: string; section: string; branch: string; category: string; company: string; address: string; contact_email: string; privacy_url: string; sort_order: number };
 
-const PartnerRow = ({ partner }: { partner: Partner }) => (
+const PartnerRow = ({ partner, t }: { partner: Partner; t: (k: string) => string }) => (
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 py-6 border-b border-border last:border-b-0">
     <div>
       <p className="font-body text-sm font-semibold text-foreground">{partner.branch}</p>
@@ -18,9 +19,9 @@ const PartnerRow = ({ partner }: { partner: Partner }) => (
       <p className="font-body text-sm font-semibold text-foreground">{partner.company}</p>
       <p className="font-body text-xs text-muted-foreground mt-1">{partner.address}</p>
       <div className="flex items-center gap-4 mt-2">
-        <a href={`mailto:${partner.contact_email}`} className="font-body text-xs text-primary hover:underline transition-colors">Kontakt</a>
+        <a href={`mailto:${partner.contact_email}`} className="font-body text-xs text-primary hover:underline transition-colors">{t("vag45.partner.contact")}</a>
         <a href={partner.privacy_url} target="_blank" rel="noopener noreferrer" className="font-body text-xs text-primary hover:underline transition-colors inline-flex items-center gap-1">
-          Datenschutz <ExternalLink size={10} />
+          {t("vag45.partner.privacy")} <ExternalLink size={10} />
         </a>
       </div>
     </div>
@@ -28,6 +29,7 @@ const PartnerRow = ({ partner }: { partner: Partner }) => (
 );
 
 const Vag45 = () => {
+  const { t } = useLanguage();
   const { data: downloads = [] } = useQuery({
     queryKey: ["vag45_downloads"],
     queryFn: async () => {
@@ -70,13 +72,13 @@ const Vag45 = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl relative z-10">
           <AnimatedSection>
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">VAG 45</h1>
+              <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">{t("vag45.title")}</h1>
               <div className="brand-rule mt-4 mx-auto" />
               <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">
-                Am 1. Januar 2024 ist das revidierte Versicherungsaufsichtsgesetz (VAG) und die revidierte Aufsichtsverordnung (AVO) in Kraft getreten.
+                {t("vag45.intro")}
               </p>
               <p className="font-body text-sm text-muted-foreground mt-4">
-                Laden Sie jeweils in der entsprechenden Sprache das Informationsblatt herunter.
+                {t("vag45.download.hint")}
               </p>
             </div>
           </AnimatedSection>
@@ -90,7 +92,7 @@ const Vag45 = () => {
                     <p className="font-body text-sm text-muted-foreground mt-2 leading-relaxed">{item.description}</p>
                   </div>
                   <a href={item.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-body text-sm font-medium text-primary hover:underline mt-6 transition-colors">
-                    <Download size={16} /> Download
+                    <Download size={16} /> {t("vag45.download.cta")}
                   </a>
                 </div>
               ))}
@@ -104,10 +106,10 @@ const Vag45 = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
           <AnimatedSection>
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">Versicherungspartner</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{t("vag45.partners.title")}</h2>
               <div className="brand-rule mt-4 mx-auto" />
               <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">
-                Die SSM Partner AG und die SSM Life AG sind Unternehmen der VISANA-Gruppe und als solche gebundene Versicherungsvermittlerin gemäss VAG. In den untenstehenden Versicherungszweigen erfolgt die Versicherungsvermittlung ausschliesslich im Auftrag einer der folgenden Gesellschaften:
+                {t("vag45.partners.intro")}
               </p>
             </div>
           </AnimatedSection>
@@ -115,12 +117,12 @@ const Vag45 = () => {
           {lifeInsurance.length > 0 && (
             <AnimatedSection delay={0.1}>
               <div className="bg-card border border-border rounded-2xl p-8 lg:p-10 mb-8">
-                <h3 className="font-heading text-xl font-semibold text-foreground mb-2">Rubrik Lebensversicherung (A)</h3>
+                <h3 className="font-heading text-xl font-semibold text-foreground mb-2">{t("vag45.section.life")}</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-3 mb-2 border-b border-border">
-                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungszweig</p>
-                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungspartner / Risikoträger</p>
+                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("vag45.col.branch")}</p>
+                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("vag45.col.partner")}</p>
                 </div>
-                {lifeInsurance.map((p) => <PartnerRow key={p.id} partner={p} />)}
+                {lifeInsurance.map((p) => <PartnerRow key={p.id} partner={p} t={t} />)}
               </div>
             </AnimatedSection>
           )}
@@ -128,12 +130,12 @@ const Vag45 = () => {
           {damageInsurance.length > 0 && (
             <AnimatedSection delay={0.15}>
               <div className="bg-card border border-border rounded-2xl p-8 lg:p-10">
-                <h3 className="font-heading text-xl font-semibold text-foreground mb-2">Rubrik Schadenversicherung (B)</h3>
+                <h3 className="font-heading text-xl font-semibold text-foreground mb-2">{t("vag45.section.damage")}</h3>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-3 mb-2 border-b border-border">
-                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungszweig</p>
-                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versicherungspartner / Risikoträger</p>
+                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("vag45.col.branch")}</p>
+                  <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t("vag45.col.partner")}</p>
                 </div>
-                {damageInsurance.map((p) => <PartnerRow key={p.id} partner={p} />)}
+                {damageInsurance.map((p) => <PartnerRow key={p.id} partner={p} t={t} />)}
               </div>
             </AnimatedSection>
           )}
