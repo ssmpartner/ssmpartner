@@ -14,7 +14,7 @@ import { useCmsContent } from "@/hooks/useCmsContent";
 const hqImageKeys = ["hq-1", "hq-2", "hq-3", "hq-4", "hq-5"];
 
 const Agencies = () => {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const navigate = useNavigate();
   const { cmsTitle, cmsBody } = useCmsContent("agencies");
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
@@ -48,24 +48,24 @@ const Agencies = () => {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <AnimatedSection>
               <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">
-                {cmsTitle("agencies_intro", "Unsere Agenturen")}
+                {cmsTitle("agencies_intro", t("agencies.intro.title"))}
               </h1>
               <div className="brand-rule mt-4" />
               <p className="font-body text-base text-muted-foreground mt-8 leading-relaxed">
-                {cmsBody("agencies_intro", `Entdecken Sie die Agenturen der SSM Partner AG und finden Sie die richtigen Ansprechpersonen in Ihrer Nähe. Mit ${agencies?.length || 7} Standorten in der ganzen Schweiz sind wir immer für Sie da.`)}
+                {cmsBody("agencies_intro", t("agencies.intro.body").replace("{count}", String(agencies?.length || 7)))}
               </p>
               <div className="flex flex-wrap gap-4 mt-8">
                 <div className="flex items-center gap-2 bg-card border rounded-xl px-4 py-3">
                   <Building2 size={18} className="text-primary" />
-                  <span className="font-body text-sm text-foreground font-medium">{agencies?.length || 7} Standorte</span>
+                  <span className="font-body text-sm text-foreground font-medium">{agencies?.length || 7} {t("agencies.badge.locations")}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-card border rounded-xl px-4 py-3">
                   <Users size={18} className="text-primary" />
-                  <span className="font-body text-sm text-foreground font-medium">Lokale Teams</span>
+                  <span className="font-body text-sm text-foreground font-medium">{t("agencies.badge.localTeams")}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-card border rounded-xl px-4 py-3">
                   <Phone size={18} className="text-primary" />
-                  <span className="font-body text-sm text-foreground font-medium">Persönliche Beratung</span>
+                  <span className="font-body text-sm text-foreground font-medium">{t("agencies.badge.advice")}</span>
                 </div>
               </div>
             </AnimatedSection>
@@ -93,10 +93,10 @@ const Agencies = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl text-center">
           <AnimatedSection>
             <h2 className="font-heading text-2xl lg:text-3xl font-semibold text-primary-foreground">
-              {cmsTitle("agencies_cta", "Moderne Büroräumlichkeiten. Persönliche Beratung.")}
+              {cmsTitle("agencies_cta", t("agencies.cta.title"))}
             </h2>
             <p className="font-body text-sm text-primary-foreground/70 mt-4 max-w-2xl mx-auto leading-relaxed">
-              {cmsBody("agencies_cta", "Jede unserer Agenturen ist mit modernsten Arbeitsplätzen und Besprechungsräumen ausgestattet — für Beratungen auf höchstem Niveau.")}
+              {cmsBody("agencies_cta", t("agencies.cta.body"))}
             </p>
           </AnimatedSection>
         </div>
@@ -107,13 +107,13 @@ const Agencies = () => {
         <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
           <AnimatedSection>
             <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">
-              {cmsTitle("agencies_grid", "Finden Sie Ihre Agentur")}
+              {cmsTitle("agencies_grid", t("agencies.grid.title"))}
             </h2>
             <div className="brand-rule mt-4 mx-auto" />
           </AnimatedSection>
 
           {isLoading ? (
-            <p className="font-body text-sm text-muted-foreground mt-12 text-center">Laden...</p>
+            <p className="font-body text-sm text-muted-foreground mt-12 text-center">{t("agencies.loading")}</p>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
               {agencies?.map((agency, i) => (
@@ -155,7 +155,7 @@ const Agencies = () => {
                         </p>
                       )}
                       {!agency.address && (
-                        <p className="font-body text-xs text-muted-foreground mt-2">Agenturprofil ansehen →</p>
+                        <p className="font-body text-xs text-muted-foreground mt-2">{t("agencies.viewProfile")}</p>
                       )}
                     </div>
                   </button>
@@ -167,23 +167,23 @@ const Agencies = () => {
       </section>
 
       {/* HQ Gallery */}
-      <HQGallerySection onImageClick={setLightboxImg} />
+      <HQGallerySection onImageClick={setLightboxImg} t={t} />
 
       {/* Bottom CTA */}
       <section className="py-20 lg:py-28">
         <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center">
           <AnimatedSection>
             <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
-              {cmsTitle("agencies_bottom", "Bereit für ein persönliches Gespräch?")}
+              {cmsTitle("agencies_bottom", t("agencies.bottom.title"))}
             </h2>
             <p className="font-body text-base text-muted-foreground mt-4 leading-relaxed">
-              {cmsBody("agencies_bottom", "Kontaktieren Sie die Agentur in Ihrer Nähe oder besuchen Sie uns direkt — wir freuen uns auf Sie.")}
+              {cmsBody("agencies_bottom", t("agencies.bottom.body"))}
             </p>
             <button
               onClick={() => navigate("/kontakt")}
               className="mt-8 inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-8 py-3.5 rounded-xl hover:opacity-90 transition-opacity"
             >
-              Kontakt aufnehmen
+              {t("agencies.bottom.cta")}
               <ArrowRight size={16} />
             </button>
           </AnimatedSection>
@@ -215,7 +215,7 @@ const Agencies = () => {
 };
 
 /* ---------- HQ Gallery Sub-component ---------- */
-const HQGallerySection = ({ onImageClick }: { onImageClick: (url: string) => void }) => {
+const HQGallerySection = ({ onImageClick, t }: { onImageClick: (url: string) => void; t: (k: string) => string }) => {
   const { data: heroes } = useQuery({
     queryKey: ["hq-gallery-images"],
     queryFn: async () => {
@@ -246,12 +246,11 @@ const HQGallerySection = ({ onImageClick }: { onImageClick: (url: string) => voi
         <AnimatedSection>
           <div className="text-center mb-12">
             <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">
-              Entdecke unser HQ
+              {t("agencies.hq.title")}
             </h2>
             <div className="brand-rule mt-4 mx-auto" />
             <p className="font-body text-base text-muted-foreground mt-6 max-w-2xl mx-auto leading-relaxed">
-              Werfen Sie einen Blick hinter die Kulissen unseres Hauptsitzes — moderne Räumlichkeiten,
-              in denen Teamgeist und Innovation zu Hause sind.
+              {t("agencies.hq.body")}
             </p>
           </div>
         </AnimatedSection>
