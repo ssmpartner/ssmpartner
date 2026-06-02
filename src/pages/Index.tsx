@@ -415,7 +415,7 @@ const Index = () => {
                   className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl border border-border text-foreground hover:bg-muted transition-all"
                 >
                   <MapPin size={16} />
-                  Unsere Standorte
+                  {t("home.who.locations")}
                 </Link>
               </div>
             </AnimatedSection>
@@ -522,7 +522,7 @@ const Index = () => {
                   to="/agenturen"
                   className="inline-flex items-center gap-2 font-body text-sm font-medium text-primary hover:underline"
                 >
-                  Alle Agenturen
+                  {t("home.agencies.all")}
                   <ArrowRight size={16} />
                 </Link>
               </div>
@@ -582,9 +582,9 @@ const Index = () => {
               </p>
               <div className="flex flex-wrap items-center gap-3 mt-6">
                 {[
-                  { icon: HeartHandshake, text: "Work-Life-Balance" },
-                  { icon: Award, text: "Weiterbildung" },
-                  { icon: Users, text: "Starkes Team" },
+                  { icon: HeartHandshake, text: t("home.career.tag.1") },
+                  { icon: Award, text: t("home.career.tag.2") },
+                  { icon: Users, text: t("home.career.tag.3") },
                 ].map((item, i) => (
                   <span key={i} className="inline-flex items-center gap-2 font-body text-xs font-medium px-3 py-1.5 rounded-full border border-border text-foreground">
                     <item.icon size={14} className="text-primary" />
@@ -594,7 +594,7 @@ const Index = () => {
               </div>
               {jobCount !== undefined && jobCount > 0 && (
                 <p className="font-body text-sm text-muted-foreground mt-4">
-                  <span className="font-semibold text-foreground">{jobCount}</span> offene Stellen warten auf dich
+                  <span className="font-semibold text-foreground">{jobCount}</span> {t("home.career.jobs")}
                 </p>
               )}
               <Link
@@ -602,7 +602,7 @@ const Index = () => {
                 className="inline-flex items-center gap-2 font-body text-sm font-semibold px-6 py-3 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider bg-primary text-primary-foreground mt-8"
               >
                 <Briefcase size={16} />
-                Karriere entdecken
+                {t("home.career.cta")}
               </Link>
             </AnimatedSection>
           </div>
@@ -650,14 +650,14 @@ const Index = () => {
                 className="inline-flex items-center justify-center gap-2 font-body text-sm font-semibold px-8 py-3.5 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider bg-primary text-primary-foreground"
               >
                 <Send size={16} />
-                Kontakt aufnehmen
+                {t("home.contact.cta")}
               </Link>
               <Link
                 to="/agenturen"
                 className="inline-flex items-center justify-center gap-2 font-body text-sm font-medium px-8 py-3.5 rounded-xl border border-border text-foreground hover:bg-muted transition-all"
               >
                 <MapPin size={16} />
-                Agentur in Ihrer Nähe
+                {t("home.contact.nearby")}
               </Link>
             </div>
           </AnimatedSection>
