@@ -145,6 +145,13 @@ export const translations: Record<string, Record<Language, string>> = {
   "contact.form.message": { de: "Nachricht", fr: "Message", it: "Messaggio", en: "Message" },
   "contact.form.submit": { de: "Anfrage senden", fr: "Envoyer la demande", it: "Invia richiesta", en: "Send request" },
   "contact.form.required": { de: "Pflichtfeld", fr: "Champ obligatoire", it: "Campo obbligatorio", en: "Required field" },
+  "contact.form.sending": { de: "Wird gesendet...", fr: "Envoi en cours...", it: "Invio in corso...", en: "Sending..." },
+  "contact.toast.success": { de: "Anfrage wurde gesendet!", fr: "Demande envoyée !", it: "Richiesta inviata!", en: "Request sent!" },
+  "contact.toast.error": { de: "Ein Fehler ist aufgetreten.", fr: "Une erreur s'est produite.", it: "Si è verificato un errore.", en: "An error occurred." },
+  "contact.hours.title": { de: "Öffnungszeiten", fr: "Heures d'ouverture", it: "Orari di apertura", en: "Opening hours" },
+  "contact.hours.weekdays": { de: "Montag – Freitag", fr: "Lundi – Vendredi", it: "Lunedì – Venerdì", en: "Monday – Friday" },
+  "contact.hours.weekend": { de: "Samstag – Sonntag", fr: "Samedi – Dimanche", it: "Sabato – Domenica", en: "Saturday – Sunday" },
+  "contact.hours.closed": { de: "Geschlossen", fr: "Fermé", it: "Chiuso", en: "Closed" },
 
   // Footer
   "footer.imprint": { de: "Impressum", fr: "Mentions légales", it: "Impressum", en: "Imprint" },
