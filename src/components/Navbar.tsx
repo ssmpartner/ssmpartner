@@ -79,9 +79,9 @@ const Navbar = () => {
             <img src={ssmLogo} alt="SSM Partner AG" className="h-8" />
             <div className="w-px h-10 bg-border" />
             <div className="leading-tight" style={{ fontSize: "10px" }}>
-              <span style={{ color: "#243e3a" }}>Eine Tochtergesellschaft der Visana-Gruppe.</span>
+              <span style={{ color: "#243e3a" }}>{t("nav.subtext.1")}</span>
               <br />
-              <span className="text-muted-foreground">Gebundener Vermittler gemäss VAG.</span>
+              <span className="text-muted-foreground">{t("nav.subtext.2")}</span>
             </div>
           </Link>
 
