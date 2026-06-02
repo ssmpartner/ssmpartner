@@ -23,27 +23,27 @@ const Footer = () => {
               style={{ filter: "brightness(0) invert(1)" }}
             />
             <p className="font-body text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.5)" }}>
-              Eine Tochtergesellschaft der Visana-Gruppe.
+              {t("nav.subtext.1")}
               <br />
-              Gebundener Vermittler gemäss VAG.
+              {t("nav.subtext.2")}
             </p>
           </div>
 
           {/* Sitemap */}
           <div>
-            <h4 className="font-heading text-xs font-semibold uppercase tracking-widest text-white mb-4">Sitemap</h4>
+            <h4 className="font-heading text-xs font-semibold uppercase tracking-widest text-white mb-4">{t("footer.sitemap")}</h4>
             <nav className="flex flex-col gap-2.5">
-              <Link to="/" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Home</Link>
-              <Link to="/ueber-uns" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Über uns</Link>
-              <Link to="/agenturen" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Agenturen</Link>
-              <Link to="/karriere" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Karriere</Link>
-              <Link to="/kontakt" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>Kontakt</Link>
+              <Link to="/" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>{t("nav.home")}</Link>
+              <Link to="/ueber-uns" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>{t("nav.about")}</Link>
+              <Link to="/agenturen" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>{t("home.quickstart.2.title")}</Link>
+              <Link to="/karriere" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>{t("nav.career")}</Link>
+              <Link to="/kontakt" className="font-body text-sm transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>{t("nav.cta")}</Link>
             </nav>
           </div>
 
           {/* Kontakt */}
           <div>
-            <h4 className="font-heading text-xs font-semibold uppercase tracking-widest text-white mb-4">Kontakt</h4>
+            <h4 className="font-heading text-xs font-semibold uppercase tracking-widest text-white mb-4">{t("footer.contact")}</h4>
             <div className="font-body text-sm space-y-2" style={{ color: "rgba(255,255,255,0.6)" }}>
               <p>SSM Partner AG</p>
               <p>Stationsstrasse 92</p>
@@ -55,7 +55,7 @@ const Footer = () => {
 
           {/* Social Media */}
           <div>
-            <h4 className="font-heading text-xs font-semibold uppercase tracking-widest text-white mb-4">Social Media</h4>
+            <h4 className="font-heading text-xs font-semibold uppercase tracking-widest text-white mb-4">{t("footer.social")}</h4>
             <div className="flex items-center gap-4">
               {social.linkedin && (
               <a href={social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="transition-colors" style={{ color: "rgba(255,255,255,0.6)" }} onMouseEnter={e => e.currentTarget.style.color = "#fff"} onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}>
@@ -87,7 +87,7 @@ const Footer = () => {
         {/* Bottom bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-3">
           <span className="font-body text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
-            © 2025 SSM Partner AG — Alle Rechte vorbehalten.
+            © 2025 SSM Partner AG — {t("footer.rights")}
           </span>
           <div className="flex items-center gap-4 font-body text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
             <Link to="/rechtliches?tab=impressum" className="hover:text-white transition-colors">{t("footer.imprint")}</Link>
