@@ -8,10 +8,12 @@ import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import SwissMap from "@/components/SwissMap";
 import { ContactCardModal } from "@/components/ContactCardModal";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const AgencyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { lang, t } = useLanguage();
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "", recipient: "" });
   const [sending, setSending] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
@@ -74,10 +76,12 @@ const AgencyDetail = () => {
     enabled: !!agency?.id,
   });
 
+  const localized = (obj: any, base: string) => obj?.[`${base}_${lang}`] || obj?.[`${base}_de`] || "";
+
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactForm.name.trim() || !contactForm.email.trim() || !contactForm.message.trim()) {
-      toast.error("Bitte füllen Sie alle Pflichtfelder aus.");
+      toast.error(t("agency.form.required"));
       return;
     }
     setSending(true);
@@ -94,10 +98,10 @@ const AgencyDetail = () => {
         message: contactForm.message,
       });
       if (error) throw error;
-      toast.success("Vielen Dank für Ihre Anfrage!");
+      toast.success(t("agency.form.success"));
       setContactForm({ name: "", email: "", phone: "", message: "", recipient: "" });
     } catch {
-      toast.error("Ein Fehler ist aufgetreten.");
+      toast.error(t("agency.form.error"));
     } finally {
       setSending(false);
     }
@@ -106,7 +110,7 @@ const AgencyDetail = () => {
   if (isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <p className="font-body text-sm text-muted-foreground">Laden...</p>
+        <p className="font-body text-sm text-muted-foreground">{t("agency.loading")}</p>
       </main>
     );
   }
@@ -114,9 +118,9 @@ const AgencyDetail = () => {
   if (!agency) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <p className="font-body text-sm text-muted-foreground">Agentur nicht gefunden.</p>
+        <p className="font-body text-sm text-muted-foreground">{t("agency.notFound")}</p>
         <button onClick={() => navigate("/agenturen")} className="text-primary font-body text-sm underline">
-          Zurück zu Agenturen
+          {t("agency.back")}
         </button>
       </main>
     );
@@ -135,10 +139,10 @@ const AgencyDetail = () => {
               className="inline-flex items-center gap-2 font-body text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
             >
               <ArrowLeft size={16} />
-              Alle Agenturen
+              {t("agency.back")}
             </button>
             <h1 className="font-heading text-4xl lg:text-5xl font-semibold text-foreground">
-              Agentur {agency.name}
+              {t("agency.titlePrefix")} {agency.name}
             </h1>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
@@ -162,10 +166,10 @@ const AgencyDetail = () => {
                 </div>
               </AnimatedSection>
 
-              {agency.description_de && (
+              {localized(agency, "description") && (
                 <AnimatedSection delay={0.1}>
                   <p className="font-body text-base text-muted-foreground leading-relaxed">
-                    {agency.description_de}
+                    {localized(agency, "description")}
                   </p>
                 </AnimatedSection>
               )}
@@ -174,7 +178,7 @@ const AgencyDetail = () => {
               {(() => {
                 const leader = teamMembers?.find((tm: any) => tm.is_agency_leader);
                 const leaderName = leader?.name || agency.leader_name;
-                const leaderRole = leader?.role_de || agency.leader_role;
+                const leaderRole = (leader && localized(leader, "role")) || agency.leader_role;
                 const leaderImage = leader?.image_url || agency.leader_image_url;
                 if (!leaderName) return null;
                 return (
@@ -196,7 +200,7 @@ const AgencyDetail = () => {
                         )}
                       </div>
                       <div>
-                        <p className="font-body text-xs font-medium text-primary uppercase tracking-wider mb-1">Agenturleitung</p>
+                        <p className="font-body text-xs font-medium text-primary uppercase tracking-wider mb-1">{t("agency.leadership")}</p>
                         <h3 className="font-heading text-xl lg:text-2xl font-semibold text-foreground">{leaderName}</h3>
                         {leaderRole && (
                           <p className="font-body text-sm text-muted-foreground mt-1">{leaderRole}</p>
@@ -207,7 +211,7 @@ const AgencyDetail = () => {
                             className="inline-flex items-center gap-2 font-body text-sm text-primary hover:underline mt-3"
                           >
                             <Mail size={14} />
-                            Kontakt aufnehmen
+                            {t("agency.contact.cta")}
                           </a>
                         )}
                       </div>
@@ -224,7 +228,7 @@ const AgencyDetail = () => {
                   className="bg-card border rounded-2xl p-6 lg:p-8 sticky top-32"
                   style={{ boxShadow: "0 4px 24px rgba(36,62,58,0.08)" }}
                 >
-                  <h3 className="font-heading text-lg font-semibold text-foreground">Kontakt</h3>
+                  <h3 className="font-heading text-lg font-semibold text-foreground">{t("agency.contact.title")}</h3>
                   <div className="brand-rule mt-2" />
 
                   <div className="mt-6 space-y-4">
@@ -252,7 +256,7 @@ const AgencyDetail = () => {
                     )}
                     {agency.opening_hours && (
                       <div className="pt-2 border-t">
-                        <p className="font-body text-xs font-medium text-foreground mb-1">Öffnungszeiten</p>
+                        <p className="font-body text-xs font-medium text-foreground mb-1">{t("agency.contact.hours")}</p>
                         <p className="font-body text-sm text-muted-foreground whitespace-pre-line">{agency.opening_hours}</p>
                       </div>
                     )}
@@ -260,21 +264,22 @@ const AgencyDetail = () => {
 
                   {!agency.address && !agency.phone && !agency.email && (
                     <p className="font-body text-sm text-muted-foreground mt-6 italic">
-                      Kontaktdaten werden in Kürze ergänzt.
+                      {t("agency.contact.empty")}
                     </p>
                   )}
 
                   {/* Mini Contact Form */}
                   <div className="mt-8 pt-6 border-t">
-                    <h4 className="font-heading text-sm font-semibold text-foreground mb-4">Schnellanfrage</h4>
+                    <h4 className="font-heading text-sm font-semibold text-foreground mb-4">{t("agency.form.title")}</h4>
                     <form onSubmit={handleContactSubmit} className="space-y-3">
                       {/* Recipient selector */}
                       {(() => {
                         const people: { name: string; label: string }[] = [];
                         const leader = teamMembers?.find((tm: any) => tm.is_agency_leader);
-                        if (leader) people.push({ name: leader.name, label: `${leader.name} (Agenturleitung)` });
+                        if (leader) people.push({ name: leader.name, label: `${leader.name} (${t("agency.recipientLeadershipSuffix")})` });
                         teamMembers?.filter((tm: any) => !tm.is_agency_leader).forEach(tm => {
-                          people.push({ name: tm.name, label: `${tm.name}${tm.role_de ? ` – ${tm.role_de}` : ""}` });
+                          const r = localized(tm, "role");
+                          people.push({ name: tm.name, label: `${tm.name}${r ? ` – ${r}` : ""}` });
                         });
                         members?.forEach(m => {
                           if (!people.some(p => p.name === m.name)) {
@@ -288,7 +293,7 @@ const AgencyDetail = () => {
                             onChange={(e) => setContactForm({ ...contactForm, recipient: e.target.value })}
                             className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                           >
-                            <option value="">Ansprechperson wählen (optional)</option>
+                            <option value="">{t("agency.form.recipient")}</option>
                             {people.map(p => (
                               <option key={p.name} value={p.name}>{p.label}</option>
                             ))}
@@ -299,7 +304,7 @@ const AgencyDetail = () => {
                         type="text"
                         value={contactForm.name}
                         onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                        placeholder="Ihr Name *"
+                        placeholder={t("agency.form.name")}
                         required
                         maxLength={100}
                         className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
@@ -308,7 +313,7 @@ const AgencyDetail = () => {
                         type="email"
                         value={contactForm.email}
                         onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                        placeholder="E-Mail *"
+                        placeholder={t("agency.form.email")}
                         required
                         maxLength={255}
                         className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
@@ -317,14 +322,14 @@ const AgencyDetail = () => {
                         type="tel"
                         value={contactForm.phone}
                         onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-                        placeholder="Telefon (optional)"
+                        placeholder={t("agency.form.phone")}
                         maxLength={30}
                         className="w-full border border-border rounded-xl px-4 py-2.5 text-sm font-body bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                       />
                       <textarea
                         value={contactForm.message}
                         onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                        placeholder="Ihre Nachricht *"
+                        placeholder={t("agency.form.message")}
                         required
                         maxLength={1000}
                         rows={3}
@@ -336,7 +341,7 @@ const AgencyDetail = () => {
                         className="w-full inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-6 py-3 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                       >
                         <Send size={14} />
-                        {sending ? "Wird gesendet..." : "Anfrage senden"}
+                        {sending ? t("agency.form.sending") : t("agency.form.submit")}
                       </button>
                     </form>
                   </div>
@@ -353,7 +358,7 @@ const AgencyDetail = () => {
           <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
             <AnimatedSection>
               <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">
-                Unser Team in {agency.name}
+                {t("agency.team.title")} {agency.name}
               </h2>
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
@@ -393,8 +398,15 @@ const AgencyDetail = () => {
               })}
               {teamMembers?.filter((tm: any) => !tm.is_agency_leader).map((member, i) => {
                 const hasContact = (member as any).email || (member as any).phone;
-                const badgeMap: Record<string, string> = { verkaufsleiter: "Verkaufsleiter", teamleiter: "Teamleiter", finanzexperte: "Finanzexperte", finanzcoach: "Finanzcoach", finanzcoach_vbv: "Finanzcoach VBV", finanzcoach_ssm: "Finanzcoach SSM", vermoegensberater: "Vermögensberater", vermoegensberater_iaf: "Vermögensberater IAF", dipl_finanzberater_iaf: "Dipl. Finanzberater IAF", agenturleiter: "Agenturleiter", trainee: "Trainee" };
+                const badgeMaps: Record<string, Record<string, string>> = {
+                  de: { verkaufsleiter: "Verkaufsleiter", teamleiter: "Teamleiter", finanzexperte: "Finanzexperte", finanzcoach: "Finanzcoach", finanzcoach_vbv: "Finanzcoach VBV", finanzcoach_ssm: "Finanzcoach SSM", vermoegensberater: "Vermögensberater", vermoegensberater_iaf: "Vermögensberater IAF", dipl_finanzberater_iaf: "Dipl. Finanzberater IAF", agenturleiter: "Agenturleiter", trainee: "Trainee" },
+                  fr: { verkaufsleiter: "Directeur des ventes", teamleiter: "Chef d'équipe", finanzexperte: "Expert financier", finanzcoach: "Coach financier", finanzcoach_vbv: "Coach financier VBV", finanzcoach_ssm: "Coach financier SSM", vermoegensberater: "Conseiller en patrimoine", vermoegensberater_iaf: "Conseiller en patrimoine IAF", dipl_finanzberater_iaf: "Conseiller financier dipl. IAF", agenturleiter: "Directeur d'agence", trainee: "Stagiaire" },
+                  it: { verkaufsleiter: "Direttore vendite", teamleiter: "Caposquadra", finanzexperte: "Esperto finanziario", finanzcoach: "Coach finanziario", finanzcoach_vbv: "Coach finanziario VBV", finanzcoach_ssm: "Coach finanziario SSM", vermoegensberater: "Consulente patrimoniale", vermoegensberater_iaf: "Consulente patrimoniale IAF", dipl_finanzberater_iaf: "Consulente finanziario dipl. IAF", agenturleiter: "Direttore d'agenzia", trainee: "Tirocinante" },
+                  en: { verkaufsleiter: "Sales manager", teamleiter: "Team leader", finanzexperte: "Financial expert", finanzcoach: "Financial coach", finanzcoach_vbv: "Financial coach VBV", finanzcoach_ssm: "Financial coach SSM", vermoegensberater: "Wealth advisor", vermoegensberater_iaf: "Wealth advisor IAF", dipl_finanzberater_iaf: "Cert. financial advisor IAF", agenturleiter: "Agency manager", trainee: "Trainee" },
+                };
+                const badgeMap = badgeMaps[lang] || badgeMaps.de;
                 const badgeLabel = badgeMap[(member as any).badge] || null;
+                const roleLocalized = localized(member, "role");
                 return (
                 <AnimatedSection key={member.id} delay={(members?.length || 0 + i) * 0.05}>
                   <div
@@ -426,7 +438,7 @@ const AgencyDetail = () => {
                       )}
                     </div>
                     <h3 className="font-heading text-base font-semibold text-foreground mt-4">{member.name}</h3>
-                    {member.role_de && <p className="font-body text-sm text-muted-foreground mt-1">{member.role_de}</p>}
+                    {roleLocalized && <p className="font-body text-sm text-muted-foreground mt-1">{roleLocalized}</p>}
                   </div>
                 </AnimatedSection>
                 );
@@ -441,7 +453,7 @@ const AgencyDetail = () => {
         <section className="py-20 lg:py-28 border-t">
           <div className="container mx-auto px-6 lg:px-8 max-w-6xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">Standort</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">{t("agency.location")}</h2>
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
             <div className="mt-14">
@@ -462,7 +474,7 @@ const AgencyDetail = () => {
           <div className="container mx-auto px-6 lg:px-8 max-w-5xl">
             <AnimatedSection>
               <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">
-                Das sagen unsere Kunden
+                {t("agency.reviews.title")}
               </h2>
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
