@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { usePageViewTracker } from "@/hooks/usePageViewTracker";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -55,6 +56,11 @@ const ScrollToTop = () => {
   return null;
 };
 
+const AnalyticsTracker = () => {
+  usePageViewTracker();
+  return null;
+};
+
 const queryClient = new QueryClient();
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
@@ -73,6 +79,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <AnalyticsTracker />
           <Routes>
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
