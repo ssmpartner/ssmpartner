@@ -41,45 +41,51 @@ const FaqItem = ({ question, answer }: { question: string; answer: string }) => 
   );
 };
 
-/* ── Bewerbungsprozess phases ── */
-const phases = [
+/* ── Bewerbungsprozess phases (localized via t) ── */
+const buildPhases = (t: (k: string) => string) => [
   {
-    phase: "Phase 1", label: "Bewerbung", motto: "Der erste Schritt zählt!", sub: "Zeig, was dich ausmacht!",
+    phase: t("career.phase.1.phase"), label: t("career.phase.1.label"),
+    motto: t("career.phase.1.motto"), sub: t("career.phase.1.sub"),
     icon: Send, color: "#6A9387",
     steps: [
-      { title: "Bewerbung", icon: Send, desc: "Hast du die passende Stelle gefunden? Bewirb dich online über unser Bewerbungsformular. Du erhältst sofort eine Eingangsbestätigung." },
-      { title: "Bewerbungsunterlagen", icon: FileText, desc: "Deine Bewerbungsunterlagen werden vom HR-Recruiting-Partner geprüft und zur Beurteilung an die zuständige Führungsperson weitergeleitet." },
-      { title: "Auswahl", icon: Users, desc: "Wir prüfen deine Qualifikation, Fähigkeit und Soft-Skills. Passt du zu SSM, laden wir dich gerne zu einem ersten Kennenlernen ein. Du hörst innerhalb von rund einer Arbeitswoche von uns." },
+      { title: t("career.phase.1.step1.title"), icon: Send, desc: t("career.phase.1.step1.desc") },
+      { title: t("career.phase.1.step2.title"), icon: FileText, desc: t("career.phase.1.step2.desc") },
+      { title: t("career.phase.1.step3.title"), icon: Users, desc: t("career.phase.1.step3.desc") },
     ],
   },
   {
-    phase: "Phase 2", label: "Kennenlernen", motto: "Deine Chance wartet!", sub: "Überzeuge mit Persönlichkeit!",
+    phase: t("career.phase.2.phase"), label: t("career.phase.2.label"),
+    motto: t("career.phase.2.motto"), sub: t("career.phase.2.sub"),
     icon: MessageSquare, color: "#4A7A6E",
     steps: [
-      { title: "Erstes Gespräch «Kennenlernen»", icon: MessageSquare, desc: "Im ersten Gespräch erfährst du mehr über uns und die Stelle. Wir lernen dich und deine Wünsche kennen. Wenn auf beiden Seiten alles passt, laden wir dich zu einem zweiten Gespräch ein." },
-      { title: "Zweites Gespräch «oder Schnuppern»", icon: Users, desc: "Im Aussendienst wirst du zu einem zweiten Gespräch eingeladen, und im Innendienst laden wir dich je nach Position zu einem Schnuppertag ein. So erhältst du einen Einblick in unseren Arbeitsalltag." },
+      { title: t("career.phase.2.step1.title"), icon: MessageSquare, desc: t("career.phase.2.step1.desc") },
+      { title: t("career.phase.2.step2.title"), icon: Users, desc: t("career.phase.2.step2.desc") },
     ],
   },
   {
-    phase: "Phase 3", label: "Angebot & Vertrag", motto: "Der Erfolg rückt näher!", sub: "Fast geschafft!",
+    phase: t("career.phase.3.phase"), label: t("career.phase.3.label"),
+    motto: t("career.phase.3.motto"), sub: t("career.phase.3.sub"),
     icon: Handshake, color: "#3A6A5E",
     steps: [
-      { title: "Angebot", icon: FileCheck, desc: "Du hast uns überzeugt! Wir machen dir ein konkretes Angebot." },
-      { title: "Vertrag", icon: Handshake, desc: "Du entscheidest dich für SSM. Dein Vertrag ist innerhalb von fünf Tagen in deiner Mailbox." },
+      { title: t("career.phase.3.step1.title"), icon: FileCheck, desc: t("career.phase.3.step1.desc") },
+      { title: t("career.phase.3.step2.title"), icon: Handshake, desc: t("career.phase.3.step2.desc") },
     ],
   },
   {
-    phase: "Phase 4", label: "Willkommen!", motto: "Auf geht's zum neuen Abenteuer!", sub: "Willkommen an Board!",
+    phase: t("career.phase.4.phase"), label: t("career.phase.4.label"),
+    motto: t("career.phase.4.motto"), sub: t("career.phase.4.sub"),
     icon: PartyPopper, color: "#2A5A4E",
     steps: [
-      { title: "Willkommen an Board!", icon: Rocket, desc: "Dein erster Tag bei SSM ist da! Wir freuen uns, dich im Team zu begrüssen. Damit du dich schnell bei uns zu Hause fühlst, gibt dir unser «WelcomeDay» einen ersten Einblick in unser Unternehmen. Wir wünschen dir viel Erfolg und Freude!" },
+      { title: t("career.phase.4.step1.title"), icon: Rocket, desc: t("career.phase.4.step1.desc") },
     ],
   },
 ];
 
 const Career = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { cmsTitle, cmsBody } = useCmsContent("career");
+  const phases = buildPhases(t);
+  const localized = (obj: any, base: string) => obj?.[`${base}_${lang}`] || obj?.[`${base}_de`] || "";
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [showProcess, setShowProcess] = useState(false);
   const [activePhase, setActivePhase] = useState(0);
@@ -193,7 +199,7 @@ const Career = () => {
                 onClick={() => { setShowProcess(true); setActivePhase(0); }}
                 className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl border border-border text-foreground hover:bg-muted transition-colors"
               >
-                Bewerbungsprozess erkunden <ArrowRight size={16} />
+                {t("career.exploreProcess")} <ArrowRight size={16} />
               </button>
             </div>
           </AnimatedSection>
@@ -210,7 +216,7 @@ const Career = () => {
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3a99, #6A938766)" }} />
         <div className="absolute inset-0 flex items-center justify-center">
           <p className="font-heading text-2xl lg:text-3xl font-semibold text-white text-center px-6 drop-shadow-lg">
-            {cmsBody("career_divider_1", "«Gemeinsam gestalten wir die Zukunft der Finanzberatung.»")}
+            {cmsBody("career_divider_1", t("career.divider1"))}
           </p>
         </div>
       </div>
@@ -220,9 +226,9 @@ const Career = () => {
         <section className="py-20 lg:py-28">
           <div className="container mx-auto px-6 lg:px-8">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{cmsTitle("career_videos", "Einblick in unsere Welt")}</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{cmsTitle("career_videos", t("career.videos.title"))}</h2>
               <p className="font-body text-base text-muted-foreground mt-4 max-w-2xl leading-relaxed">
-                {cmsBody("career_videos", "Erleben Sie, wie der Arbeitsalltag bei SSM Partner aussieht — authentisch, motivierend und voller Möglichkeiten.")}
+                {cmsBody("career_videos", t("career.videos.body"))}
               </p>
               <div className="brand-rule mt-4" />
             </AnimatedSection>
@@ -261,16 +267,16 @@ const Career = () => {
       <section className="py-20 lg:py-28 bg-card">
         <div className="container mx-auto px-6 lg:px-8">
           <AnimatedSection>
-            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{cmsTitle("career_benefits", "Was dich erwartet bei SSM")}</h2>
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{cmsTitle("career_benefits", t("career.benefits.title"))}</h2>
             <div className="brand-rule mt-4" />
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 mt-12">
             {[
-              { icon: HeartHandshake, label: "Work-Life-Balance" },
-              { icon: Scale, label: "Faire Vergütung" },
-              { icon: Palmtree, label: "Ferien" },
-              { icon: BadgePercent, label: "Rabatte" },
-              { icon: GraduationCap, label: "Aus- & Weiterbildung" },
+              { icon: HeartHandshake, label: t("career.benefit.balance") },
+              { icon: Scale, label: t("career.benefit.pay") },
+              { icon: Palmtree, label: t("career.benefit.holidays") },
+              { icon: BadgePercent, label: t("career.benefit.discounts") },
+              { icon: GraduationCap, label: t("career.benefit.training") },
             ].map((item, i) => (
               <AnimatedSection key={i} delay={i * 0.08}>
                 <div className="flex flex-col items-center text-center gap-4 rounded-2xl border border-border bg-background p-6 lg:p-8 hover:shadow-lg transition-shadow">
@@ -308,7 +314,7 @@ const Career = () => {
         <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #243e3acc, #6A938788)" }} />
         <div className="absolute inset-0 flex items-center justify-center">
           <p className="font-heading text-2xl lg:text-3xl font-semibold text-white text-center px-6 drop-shadow-lg">
-            {cmsBody("career_divider_2", "Moderne Arbeitsplätze. Inspirierendes Umfeld.")}
+            {cmsBody("career_divider_2", t("career.divider2"))}
           </p>
         </div>
       </div>
@@ -330,23 +336,23 @@ const Career = () => {
                     )}
                   </div>
                   <div className="flex-1 p-8 lg:p-10 flex flex-col justify-center">
-                    <span className="font-body text-xs font-medium uppercase tracking-widest text-muted-foreground">Dein Ansprechpartner</span>
+                    <span className="font-body text-xs font-medium uppercase tracking-widest text-muted-foreground">{t("career.partner.label")}</span>
                     <h3 className="font-heading text-2xl lg:text-3xl font-semibold text-foreground mt-2">{recruitingPartner.name}</h3>
                     <p className="font-body text-sm font-medium mt-1" style={{ color: "#6A9387" }}>
-                      {recruitingPartner.role_de || "Recruiting Partner"}
+                      {localized(recruitingPartner, "role") || t("career.partner.defaultRole")}
                     </p>
                     <p className="font-body text-sm text-muted-foreground mt-4 leading-relaxed max-w-lg">
-                      Spontane Bewerbung? Oder hast du eine Frage? {recruitingPartner.name.split(" ")[0]} nimmt sich für deine offenen Fragen Zeit. Entdecke unten die nächsten Schritte im Bewerbungsprozess.
+                      {t("career.partner.body").replace("{name}", recruitingPartner.name.split(" ")[0])}
                     </p>
                     <div className="flex flex-wrap gap-3 mt-6">
                       <button onClick={() => setShowApply(true)} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
-                        <Mail size={16} /> Jetzt bewerben
+                        <Mail size={16} /> {t("career.partner.applyNow")}
                       </button>
                       <Link to="/agenturen" className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted transition-colors">
-                        <Building2 size={16} /> Unsere Agenturen
+                        <Building2 size={16} /> {t("career.partner.agencies")}
                       </Link>
                       <Link to="/kontakt?subject=other" className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl border border-border text-foreground hover:bg-muted transition-colors">
-                        <MessageCircleQuestion size={16} /> Frage stellen
+                        <MessageCircleQuestion size={16} /> {t("career.partner.askQuestion")}
                       </Link>
                     </div>
                   </div>
@@ -380,16 +386,16 @@ const Career = () => {
               <AnimatedSection>
                 <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground">{t("career.onboarding.title")}</h2>
                 <p className="font-body text-base text-muted-foreground mt-4 max-w-lg leading-relaxed">
-                  Von der Bewerbung bis zum ersten Arbeitstag — wir begleiten dich durch jeden Schritt.
+                  {t("career.onboarding.body")}
                 </p>
                 <div className="brand-rule mt-4" />
               </AnimatedSection>
 
               <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {[
-                  { icon: Rocket, title: "Start", desc: "Stell dich neuen Herausforderungen und wachse mit uns." },
-                  { icon: HeartHandshake, title: "Empower", desc: "Inspiriere andere durch starke Werte und Visionen." },
-                  { icon: Scale, title: "Lead", desc: "Setze neue Massstäbe und mische mit uns die Branche auf." },
+                  { icon: Rocket, title: t("career.path.start.title"), desc: t("career.path.start.desc") },
+                  { icon: HeartHandshake, title: t("career.path.empower.title"), desc: t("career.path.empower.desc") },
+                  { icon: Scale, title: t("career.path.lead.title"), desc: t("career.path.lead.desc") },
                 ].map((card, i) => (
                   <AnimatedSection key={card.title} delay={i * 0.15}>
                     <motion.div
@@ -417,7 +423,7 @@ const Career = () => {
                   className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl text-white hover:opacity-90 transition-colors"
                   style={{ backgroundColor: "#6A9387" }}
                 >
-                  Bewerbungsprozess erkunden <ArrowRight size={16} />
+                  {t("career.exploreProcess")} <ArrowRight size={16} />
                 </button>
               </AnimatedSection>
             </div>
@@ -461,8 +467,8 @@ const Career = () => {
               <div className="sticky top-0 z-10 bg-background rounded-t-2xl border-b">
                 <div className="flex items-center justify-between p-5">
                   <div>
-                    <h2 className="font-heading text-xl font-semibold text-foreground">Dein Weg zu uns</h2>
-                    <p className="font-body text-xs text-muted-foreground mt-0.5">Schritt für Schritt zum neuen Job</p>
+                    <h2 className="font-heading text-xl font-semibold text-foreground">{t("career.process.title")}</h2>
+                    <p className="font-body text-xs text-muted-foreground mt-0.5">{t("career.process.sub")}</p>
                   </div>
                   <button onClick={() => setShowProcess(false)} className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors">
                     <X size={18} className="text-foreground" />
@@ -539,7 +545,7 @@ const Career = () => {
                         </button>
                       ) : (
                         <button onClick={() => { setShowProcess(false); setShowApply(true); }} className="inline-flex items-center gap-2 font-body text-sm font-medium px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-colors" style={{ backgroundColor: "#6A9387" }}>
-                          <Send size={14} /> Jetzt bewerben
+                          <Send size={14} /> {t("career.partner.applyNow")}
                         </button>
                       )}
                     </div>
@@ -556,9 +562,9 @@ const Career = () => {
         <section className="py-20 lg:py-28">
           <div className="container mx-auto px-6 lg:px-8 max-w-3xl">
             <AnimatedSection>
-              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">Häufig gestellte Fragen</h2>
+              <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground text-center">{t("career.faq.title")}</h2>
               <p className="font-body text-base text-muted-foreground mt-4 text-center">
-                Alles, was du über eine Karriere bei SSM Partner wissen musst.
+                {t("career.faq.body")}
               </p>
               <div className="brand-rule mt-4 mx-auto" />
             </AnimatedSection>
@@ -594,8 +600,8 @@ const Career = () => {
             >
               <div className="flex items-center justify-between p-5 border-b">
                 <div>
-                  <h2 className="font-heading text-xl font-semibold text-foreground">Jetzt bewerben</h2>
-                  <p className="font-body text-xs text-muted-foreground mt-0.5">SSM Partner — Bewerbungsformular</p>
+                  <h2 className="font-heading text-xl font-semibold text-foreground">{t("career.apply.title")}</h2>
+                  <p className="font-body text-xs text-muted-foreground mt-0.5">{t("career.apply.sub")}</p>
                 </div>
                 <button onClick={() => setShowApply(false)} className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center transition-colors">
                   <X size={18} className="text-foreground" />
