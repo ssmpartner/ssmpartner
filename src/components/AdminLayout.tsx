@@ -6,6 +6,7 @@ import {
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
   MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
   User, ChevronDown, Newspaper, Calendar,
+  Share2,
 } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -36,6 +37,7 @@ const adminLinks = [
   { to: "/admin/events", label: "Events", icon: Calendar },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
+  { to: "/admin/social-links", label: "Social Media", icon: Share2 },
 ];
 
 const bottomLinks = [
