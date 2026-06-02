@@ -571,7 +571,10 @@ const Career = () => {
             <div className="mt-12 space-y-3">
               {faqs.map((faq, i) => (
                 <AnimatedSection key={faq.id} delay={i * 0.05}>
-                  <FaqItem question={faq.question} answer={faq.answer} />
+                  <FaqItem
+                    question={localized(faq, "question") || faq.question}
+                    answer={localized(faq, "answer") || faq.answer}
+                  />
                 </AnimatedSection>
               ))}
             </div>

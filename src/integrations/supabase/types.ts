@@ -217,27 +217,51 @@ export type Database = {
         Row: {
           active: boolean
           answer: string
+          answer_de: string | null
+          answer_en: string | null
+          answer_fr: string | null
+          answer_it: string | null
           created_at: string
           id: string
           question: string
+          question_de: string | null
+          question_en: string | null
+          question_fr: string | null
+          question_it: string | null
           sort_order: number
           updated_at: string
         }
         Insert: {
           active?: boolean
           answer?: string
+          answer_de?: string | null
+          answer_en?: string | null
+          answer_fr?: string | null
+          answer_it?: string | null
           created_at?: string
           id?: string
           question?: string
+          question_de?: string | null
+          question_en?: string | null
+          question_fr?: string | null
+          question_it?: string | null
           sort_order?: number
           updated_at?: string
         }
         Update: {
           active?: boolean
           answer?: string
+          answer_de?: string | null
+          answer_en?: string | null
+          answer_fr?: string | null
+          answer_it?: string | null
           created_at?: string
           id?: string
           question?: string
+          question_de?: string | null
+          question_en?: string | null
+          question_fr?: string | null
+          question_it?: string | null
           sort_order?: number
           updated_at?: string
         }
