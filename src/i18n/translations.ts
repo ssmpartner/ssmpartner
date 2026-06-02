@@ -154,4 +154,21 @@ export const translations: Record<string, Record<Language, string>> = {
   "footer.contact": { de: "Kontakt", fr: "Contact", it: "Contatto", en: "Contact" },
   "footer.social": { de: "Social Media", fr: "Réseaux sociaux", it: "Social Media", en: "Social Media" },
   "footer.rights": { de: "Alle Rechte vorbehalten.", fr: "Tous droits réservés.", it: "Tutti i diritti riservati.", en: "All rights reserved." },
+
+  // Agencies page
+  "agencies.intro.title": { de: "Unsere Agenturen", fr: "Nos agences", it: "Le nostre agenzie", en: "Our agencies" },
+  "agencies.intro.body": { de: "Entdecken Sie die Agenturen der SSM Partner AG und finden Sie die richtigen Ansprechpersonen in Ihrer Nähe. Mit {count} Standorten in der ganzen Schweiz sind wir immer für Sie da.", fr: "Découvrez les agences de SSM Partner SA et trouvez les bons interlocuteurs près de chez vous. Avec {count} sites dans toute la Suisse, nous sommes toujours à votre disposition.", it: "Scoprite le agenzie di SSM Partner SA e trovate i giusti referenti vicino a voi. Con {count} sedi in tutta la Svizzera, siamo sempre al vostro fianco.", en: "Discover the agencies of SSM Partner AG and find the right contacts near you. With {count} locations across Switzerland, we are always there for you." },
+  "agencies.badge.locations": { de: "Standorte", fr: "Sites", it: "Sedi", en: "Locations" },
+  "agencies.badge.localTeams": { de: "Lokale Teams", fr: "Équipes locales", it: "Team locali", en: "Local teams" },
+  "agencies.badge.advice": { de: "Persönliche Beratung", fr: "Conseil personnalisé", it: "Consulenza personalizzata", en: "Personal advice" },
+  "agencies.cta.title": { de: "Moderne Büroräumlichkeiten. Persönliche Beratung.", fr: "Bureaux modernes. Conseil personnalisé.", it: "Uffici moderni. Consulenza personalizzata.", en: "Modern offices. Personal advice." },
+  "agencies.cta.body": { de: "Jede unserer Agenturen ist mit modernsten Arbeitsplätzen und Besprechungsräumen ausgestattet — für Beratungen auf höchstem Niveau.", fr: "Chacune de nos agences est équipée de postes de travail et de salles de réunion modernes — pour des conseils au plus haut niveau.", it: "Ognuna delle nostre agenzie è dotata di postazioni di lavoro e sale riunioni moderne — per consulenze al massimo livello.", en: "Each of our agencies is equipped with state-of-the-art workspaces and meeting rooms — for advice at the highest level." },
+  "agencies.grid.title": { de: "Finden Sie Ihre Agentur", fr: "Trouvez votre agence", it: "Trova la tua agenzia", en: "Find your agency" },
+  "agencies.loading": { de: "Laden...", fr: "Chargement...", it: "Caricamento...", en: "Loading..." },
+  "agencies.viewProfile": { de: "Agenturprofil ansehen →", fr: "Voir le profil de l'agence →", it: "Vedi profilo dell'agenzia →", en: "View agency profile →" },
+  "agencies.bottom.title": { de: "Bereit für ein persönliches Gespräch?", fr: "Prêt pour un entretien personnel ?", it: "Pronti per un colloquio personale?", en: "Ready for a personal conversation?" },
+  "agencies.bottom.body": { de: "Kontaktieren Sie die Agentur in Ihrer Nähe oder besuchen Sie uns direkt — wir freuen uns auf Sie.", fr: "Contactez l'agence près de chez vous ou venez nous rendre visite — nous nous réjouissons de vous accueillir.", it: "Contattate l'agenzia più vicina o venite a trovarci — non vediamo l'ora di incontrarvi.", en: "Contact the agency near you or visit us directly — we look forward to meeting you." },
+  "agencies.bottom.cta": { de: "Kontakt aufnehmen", fr: "Nous contacter", it: "Contattaci", en: "Get in touch" },
+  "agencies.hq.title": { de: "Entdecke unser HQ", fr: "Découvrez notre siège", it: "Scopri la nostra sede", en: "Discover our HQ" },
+  "agencies.hq.body": { de: "Werfen Sie einen Blick hinter die Kulissen unseres Hauptsitzes — moderne Räumlichkeiten, in denen Teamgeist und Innovation zu Hause sind.", fr: "Jetez un coup d'œil dans les coulisses de notre siège — des locaux modernes où l'esprit d'équipe et l'innovation sont chez eux.", it: "Date un'occhiata dietro le quinte della nostra sede — spazi moderni dove spirito di squadra e innovazione sono di casa.", en: "Take a look behind the scenes of our headquarters — modern spaces where team spirit and innovation are at home." },
 };
