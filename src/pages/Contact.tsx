@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageHero from "@/components/PageHero";
 import { useCmsContent } from "@/hooks/useCmsContent";
+import { useSocialLinks } from "@/hooks/useSocialLinks";
 
 const ContactMap = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -50,6 +51,7 @@ const ContactMap = () => {
 const Contact = () => {
   const { t } = useLanguage();
   const { cmsTitle, cmsBody } = useCmsContent("contact");
+  const social = useSocialLinks();
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
