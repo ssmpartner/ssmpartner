@@ -142,16 +142,14 @@ const Index = () => {
   }, [next]);
 
   // CMS values with fallbacks
-  const overlapTitle = cms["home_overlap"]?.title || "Persönliche Beratung — wir sind für Sie da.";
-  const overlapBody = cms["home_overlap"]?.body || "Unverbindlich und kostenlos — vereinbaren Sie ein Erstgespräch.";
-  const overlapCta = cms["home_overlap"]?.link_text || "Jetzt Kontakt aufnehmen";
+  const overlapCta = cms["home_overlap"]?.link_text || t("home.overlap.cta");
 
-  const whoLabel = cms["home_who"]?.link_text || "Über SSM Partner";
+  const whoLabel = cms["home_who"]?.link_text || t("home.who.label");
   const whoTitle = cms["home_who"]?.title || t("home.who.title");
   const whoBody = cms["home_who"]?.body || t("home.who.text");
   const whoCta = cms["home_who"]?.link_url ? cms["home_who"].link_url : "/ueber-uns";
 
-  const servicesLabel = cms["home_services"]?.link_text || "Unsere Dienstleistungen";
+  const servicesLabel = cms["home_services"]?.link_text || t("home.services.label");
   const servicesTitle = cms["home_services"]?.title || t("home.services.title");
   const service1Title = cms["home_service_1"]?.title || t("home.services.1.title");
   const service1Desc = cms["home_service_1"]?.body || t("home.services.1.desc");
@@ -168,25 +166,25 @@ const Index = () => {
   const trustQuote = cms["home_trust"]?.body || t("home.trust.quote");
   const trustAuthor = cms["home_trust"]?.title || t("home.trust.author");
 
-  const agencyLabel = cms["home_agencies"]?.link_text || "Schweizweit für Sie da";
-  const agencyTitle = cms["home_agencies"]?.title || "Unsere Standorte";
+  const agencyLabel = cms["home_agencies"]?.link_text || t("home.agencies.label");
+  const agencyTitle = cms["home_agencies"]?.title || t("home.agencies.title");
 
-  const careerLabel = cms["home_career"]?.link_text || "Karriere";
-  const careerTitle = cms["home_career"]?.title || "Werde Teil unseres Teams";
-  const careerBody = cms["home_career"]?.body || "Entdecke spannende Karrieremöglichkeiten bei SSM Partner. Wir bieten dir ein inspirierendes Arbeitsumfeld, faire Vergütung und echte Entwicklungsperspektiven.";
+  const careerLabel = cms["home_career"]?.link_text || t("home.career.label");
+  const careerTitle = cms["home_career"]?.title || t("home.career.title");
+  const careerBody = cms["home_career"]?.body || t("home.career.body");
 
   const phoneTitle = cms["home_phone"]?.title || t("home.phone.title");
   const phoneSub = cms["home_phone"]?.body || t("home.phone.sub");
   const phoneNumber = cms["home_phone"]?.link_text || "+41 41 220 20 50";
 
-  const contactLabel = cms["home_contact"]?.link_text || "Kontakt";
-  const contactTitle = cms["home_contact"]?.title || "Lassen Sie uns ins Gespräch kommen";
-  const contactBody = cms["home_contact"]?.body || "Ob Versicherungsfrage, Finanzplanung oder Karriereanfrage — wir sind persönlich für Sie da. Schreiben Sie uns oder besuchen Sie uns direkt.";
+  const contactLabel = cms["home_contact"]?.link_text || t("home.contact.label");
+  const contactTitle = cms["home_contact"]?.title || t("home.contact.title");
+  const contactBody = cms["home_contact"]?.body || t("home.contact.body");
 
-  const quickstart1Title = cms["home_quickstart_1"]?.title || "Karriere starten";
-  const quickstart1Desc = cms["home_quickstart_1"]?.body || "Entdecke offene Stellen bei SSM";
-  const quickstart2Title = cms["home_quickstart_2"]?.title || "Unsere Agenturen";
-  const quickstart2Desc = cms["home_quickstart_2"]?.body || "Finde deinen Standort in der Nähe";
+  const quickstart1Title = cms["home_quickstart_1"]?.title || t("home.quickstart.1.title");
+  const quickstart1Desc = cms["home_quickstart_1"]?.body || t("home.quickstart.1.desc");
+  const quickstart2Title = cms["home_quickstart_2"]?.title || t("home.quickstart.2.title");
+  const quickstart2Desc = cms["home_quickstart_2"]?.body || t("home.quickstart.2.desc");
 
   return (
     <main>
@@ -417,7 +415,7 @@ const Index = () => {
                   className="inline-flex items-center gap-2 font-body text-sm font-medium px-6 py-3 rounded-xl border border-border text-foreground hover:bg-muted transition-all"
                 >
                   <MapPin size={16} />
-                  Unsere Standorte
+                  {t("home.who.locations")}
                 </Link>
               </div>
             </AnimatedSection>
@@ -524,7 +522,7 @@ const Index = () => {
                   to="/agenturen"
                   className="inline-flex items-center gap-2 font-body text-sm font-medium text-primary hover:underline"
                 >
-                  Alle Agenturen
+                  {t("home.agencies.all")}
                   <ArrowRight size={16} />
                 </Link>
               </div>
@@ -584,9 +582,9 @@ const Index = () => {
               </p>
               <div className="flex flex-wrap items-center gap-3 mt-6">
                 {[
-                  { icon: HeartHandshake, text: "Work-Life-Balance" },
-                  { icon: Award, text: "Weiterbildung" },
-                  { icon: Users, text: "Starkes Team" },
+                  { icon: HeartHandshake, text: t("home.career.tag.1") },
+                  { icon: Award, text: t("home.career.tag.2") },
+                  { icon: Users, text: t("home.career.tag.3") },
                 ].map((item, i) => (
                   <span key={i} className="inline-flex items-center gap-2 font-body text-xs font-medium px-3 py-1.5 rounded-full border border-border text-foreground">
                     <item.icon size={14} className="text-primary" />
@@ -596,7 +594,7 @@ const Index = () => {
               </div>
               {jobCount !== undefined && jobCount > 0 && (
                 <p className="font-body text-sm text-muted-foreground mt-4">
-                  <span className="font-semibold text-foreground">{jobCount}</span> offene Stellen warten auf dich
+                  <span className="font-semibold text-foreground">{jobCount}</span> {t("home.career.jobs")}
                 </p>
               )}
               <Link
@@ -604,7 +602,7 @@ const Index = () => {
                 className="inline-flex items-center gap-2 font-body text-sm font-semibold px-6 py-3 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider bg-primary text-primary-foreground mt-8"
               >
                 <Briefcase size={16} />
-                Karriere entdecken
+                {t("home.career.cta")}
               </Link>
             </AnimatedSection>
           </div>
@@ -652,14 +650,14 @@ const Index = () => {
                 className="inline-flex items-center justify-center gap-2 font-body text-sm font-semibold px-8 py-3.5 rounded-xl transition-all hover:opacity-90 uppercase tracking-wider bg-primary text-primary-foreground"
               >
                 <Send size={16} />
-                Kontakt aufnehmen
+                {t("home.contact.cta")}
               </Link>
               <Link
                 to="/agenturen"
                 className="inline-flex items-center justify-center gap-2 font-body text-sm font-medium px-8 py-3.5 rounded-xl border border-border text-foreground hover:bg-muted transition-all"
               >
                 <MapPin size={16} />
-                Agentur in Ihrer Nähe
+                {t("home.contact.nearby")}
               </Link>
             </div>
           </AnimatedSection>

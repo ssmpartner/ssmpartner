@@ -9,6 +9,49 @@ export const translations: Record<string, Record<Language, string>> = {
   "nav.vag": { de: "VAG45", fr: "LSA45", it: "LSA45", en: "ISA45" },
   "nav.cta": { de: "Kontakt", fr: "Contact", it: "Contatto", en: "Contact" },
 
+  // Navbar subtext (next to logo)
+  "nav.subtext.1": { de: "Eine Tochtergesellschaft der Visana-Gruppe.", fr: "Une filiale du groupe Visana.", it: "Una società affiliata del gruppo Visana.", en: "A subsidiary of the Visana Group." },
+  "nav.subtext.2": { de: "Gebundener Vermittler gemäss VAG.", fr: "Intermédiaire lié selon la LSA.", it: "Intermediario vincolato secondo la LSA.", en: "Tied intermediary under the ISA." },
+
+  // Home - Overlap CTA bar
+  "home.overlap.cta": { de: "Jetzt Kontakt aufnehmen", fr: "Nous contacter", it: "Contattaci ora", en: "Contact us now" },
+
+  // Home - Quickstart cards (slider tiles)
+  "home.quickstart.1.title": { de: "Karriere starten", fr: "Démarrer votre carrière", it: "Inizia la tua carriera", en: "Start your career" },
+  "home.quickstart.1.desc": { de: "Entdecke offene Stellen bei SSM", fr: "Découvrez les postes ouverts chez SSM", it: "Scopri le posizioni aperte presso SSM", en: "Discover open positions at SSM" },
+  "home.quickstart.2.title": { de: "Unsere Agenturen", fr: "Nos agences", it: "Le nostre agenzie", en: "Our agencies" },
+  "home.quickstart.2.desc": { de: "Finde deinen Standort in der Nähe", fr: "Trouvez une agence près de chez vous", it: "Trova una sede vicino a te", en: "Find a location near you" },
+
+  // Home - Who section
+  "home.who.label": { de: "Über SSM Partner", fr: "À propos de SSM Partner", it: "Su SSM Partner", en: "About SSM Partner" },
+  "home.who.locations": { de: "Unsere Standorte", fr: "Nos sites", it: "Le nostre sedi", en: "Our locations" },
+
+  // Home - Services section
+  "home.services.label": { de: "Unsere Dienstleistungen", fr: "Nos services", it: "I nostri servizi", en: "Our services" },
+
+  // Home - Agencies teaser
+  "home.agencies.label": { de: "Schweizweit für Sie da", fr: "À votre service dans toute la Suisse", it: "Al vostro servizio in tutta la Svizzera", en: "At your service throughout Switzerland" },
+  "home.agencies.title": { de: "Unsere Standorte", fr: "Nos sites", it: "Le nostre sedi", en: "Our locations" },
+  "home.agencies.all": { de: "Alle Agenturen", fr: "Toutes les agences", it: "Tutte le agenzie", en: "All agencies" },
+
+  // Home - Career CTA
+  "home.career.label": { de: "Karriere", fr: "Carrière", it: "Carriera", en: "Career" },
+  "home.career.title": { de: "Werde Teil unseres Teams", fr: "Rejoignez notre équipe", it: "Entra a far parte del nostro team", en: "Join our team" },
+  "home.career.body": { de: "Entdecke spannende Karrieremöglichkeiten bei SSM Partner. Wir bieten dir ein inspirierendes Arbeitsumfeld, faire Vergütung und echte Entwicklungsperspektiven.", fr: "Découvrez des opportunités de carrière passionnantes chez SSM Partner. Nous vous offrons un environnement de travail inspirant, une rémunération équitable et de réelles perspectives d'évolution.", it: "Scopri interessanti opportunità di carriera presso SSM Partner. Ti offriamo un ambiente di lavoro stimolante, una retribuzione equa e reali prospettive di sviluppo.", en: "Discover exciting career opportunities at SSM Partner. We offer you an inspiring work environment, fair compensation, and real development prospects." },
+  "home.career.cta": { de: "Karriere entdecken", fr: "Découvrir les carrières", it: "Scopri le carriere", en: "Discover careers" },
+  "home.career.tag.1": { de: "Work-Life-Balance", fr: "Équilibre vie pro/perso", it: "Equilibrio vita-lavoro", en: "Work-life balance" },
+  "home.career.tag.2": { de: "Weiterbildung", fr: "Formation continue", it: "Formazione continua", en: "Training" },
+  "home.career.tag.3": { de: "Starkes Team", fr: "Une équipe forte", it: "Squadra forte", en: "Strong team" },
+  "home.career.jobs": { de: "offene Stellen warten auf dich", fr: "postes ouverts vous attendent", it: "posizioni aperte ti aspettano", en: "open positions waiting for you" },
+
+  // Home - Contact section
+  "home.contact.label": { de: "Kontakt", fr: "Contact", it: "Contatto", en: "Contact" },
+  "home.contact.title": { de: "Lassen Sie uns ins Gespräch kommen", fr: "Entrons en contact", it: "Mettiamoci in contatto", en: "Let's get in touch" },
+  "home.contact.body": { de: "Ob Versicherungsfrage, Finanzplanung oder Karriereanfrage — wir sind persönlich für Sie da. Schreiben Sie uns oder besuchen Sie uns direkt.", fr: "Question d'assurance, planification financière ou demande de carrière — nous sommes personnellement à votre disposition. Écrivez-nous ou rendez-nous visite directement.", it: "Domande sulle assicurazioni, pianificazione finanziaria o richieste di carriera — siamo personalmente a vostra disposizione. Scriveteci o venite a trovarci direttamente.", en: "Whether it's an insurance question, financial planning or a career inquiry — we are personally there for you. Write to us or visit us directly." },
+  "home.contact.cta": { de: "Kontakt aufnehmen", fr: "Nous contacter", it: "Contattaci", en: "Get in touch" },
+  "home.contact.nearby": { de: "Agentur in Ihrer Nähe", fr: "Une agence près de chez vous", it: "Un'agenzia vicino a te", en: "Agency near you" },
+
+
   // Phone bar
   "home.phone.title": { de: "Sie haben eine Frage?", fr: "Vous avez une question?", it: "Avete una domanda?", en: "Do you have a question?" },
   "home.phone.sub": { de: "Wir freuen uns auf Ihren Anruf.", fr: "Nous nous réjouissons de votre appel.", it: "Saremo lieti di ricevere la vostra chiamata.", en: "We look forward to your call." },
