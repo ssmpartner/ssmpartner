@@ -263,4 +263,33 @@ export const translations: Record<string, Record<Language, string>> = {
   "career.phase.4.sub": { de: "Willkommen an Board!", fr: "Bienvenue à bord !", it: "Benvenuto a bordo!", en: "Welcome aboard!" },
   "career.phase.4.step1.title": { de: "Willkommen an Board!", fr: "Bienvenue à bord !", it: "Benvenuto a bordo!", en: "Welcome aboard!" },
   "career.phase.4.step1.desc": { de: "Dein erster Tag bei SSM ist da! Wir freuen uns, dich im Team zu begrüssen. Damit du dich schnell bei uns zu Hause fühlst, gibt dir unser «WelcomeDay» einen ersten Einblick in unser Unternehmen. Wir wünschen dir viel Erfolg und Freude!", fr: "C'est votre premier jour chez SSM ! Ravis de vous accueillir dans l'équipe. Notre « WelcomeDay » vous offre un premier aperçu de notre entreprise pour vous sentir vite chez vous. Bon succès et beaucoup de plaisir !", it: "È il tuo primo giorno in SSM! Felici di darti il benvenuto nel team. Il nostro «WelcomeDay» ti offre un primo sguardo sull'azienda per farti sentire subito a casa. Buon successo e tanto divertimento!", en: "It's your first day at SSM! We're glad to welcome you. Our \"WelcomeDay\" gives you a first glimpse of our company so you feel at home quickly. We wish you success and joy!" },
+
+  // VAG45 / LSA45 / ISA45 page
+  "vag45.title": { de: "VAG 45", fr: "LSA 45", it: "LSA 45", en: "ISA 45" },
+  "vag45.intro": {
+    de: "Am 1. Januar 2024 ist das revidierte Versicherungsaufsichtsgesetz (VAG) und die revidierte Aufsichtsverordnung (AVO) in Kraft getreten.",
+    fr: "Le 1er janvier 2024, la loi révisée sur la surveillance des assurances (LSA) et l'ordonnance révisée sur la surveillance (OS) sont entrées en vigueur.",
+    it: "Il 1° gennaio 2024 sono entrate in vigore la legge sulla sorveglianza degli assicuratori (LSA) e l'ordinanza sulla sorveglianza (OS) rivedute.",
+    en: "On 1 January 2024, the revised Insurance Supervision Act (ISA) and the revised Supervision Ordinance (SO) came into force.",
+  },
+  "vag45.download.hint": {
+    de: "Laden Sie jeweils in der entsprechenden Sprache das Informationsblatt herunter.",
+    fr: "Téléchargez la fiche d'information dans la langue correspondante.",
+    it: "Scaricate la scheda informativa nella lingua corrispondente.",
+    en: "Download the information sheet in the corresponding language.",
+  },
+  "vag45.download.cta": { de: "Download", fr: "Télécharger", it: "Scarica", en: "Download" },
+  "vag45.partners.title": { de: "Versicherungspartner", fr: "Partenaires d'assurance", it: "Partner assicurativi", en: "Insurance partners" },
+  "vag45.partners.intro": {
+    de: "Die SSM Partner AG und die SSM Life AG sind Unternehmen der VISANA-Gruppe und als solche gebundene Versicherungsvermittlerin gemäss VAG. In den untenstehenden Versicherungszweigen erfolgt die Versicherungsvermittlung ausschliesslich im Auftrag einer der folgenden Gesellschaften:",
+    fr: "SSM Partner SA et SSM Life SA sont des sociétés du groupe VISANA et, à ce titre, des intermédiaires d'assurance liés au sens de la LSA. Dans les branches d'assurance ci-dessous, l'intermédiation est effectuée exclusivement pour le compte de l'une des sociétés suivantes :",
+    it: "SSM Partner SA e SSM Life SA sono società del gruppo VISANA e, in quanto tali, intermediari assicurativi vincolati ai sensi della LSA. Nei seguenti rami assicurativi l'intermediazione avviene esclusivamente per conto di una delle seguenti società:",
+    en: "SSM Partner AG and SSM Life AG are companies of the VISANA Group and, as such, tied insurance intermediaries under the ISA. In the insurance branches listed below, the intermediation is carried out exclusively on behalf of one of the following companies:",
+  },
+  "vag45.section.life": { de: "Rubrik Lebensversicherung (A)", fr: "Branche assurance vie (A)", it: "Ramo assicurazione vita (A)", en: "Life insurance category (A)" },
+  "vag45.section.damage": { de: "Rubrik Schadenversicherung (B)", fr: "Branche assurance dommages (B)", it: "Ramo assicurazione danni (B)", en: "Non-life insurance category (B)" },
+  "vag45.col.branch": { de: "Versicherungszweig", fr: "Branche d'assurance", it: "Ramo assicurativo", en: "Insurance branch" },
+  "vag45.col.partner": { de: "Versicherungspartner / Risikoträger", fr: "Partenaire d'assurance / Porteur de risque", it: "Partner assicurativo / Portatore di rischio", en: "Insurance partner / Risk carrier" },
+  "vag45.partner.contact": { de: "Kontakt", fr: "Contact", it: "Contatto", en: "Contact" },
+  "vag45.partner.privacy": { de: "Datenschutz", fr: "Confidentialité", it: "Privacy", en: "Privacy" },
 };
