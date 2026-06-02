@@ -85,9 +85,9 @@ const Contact = () => {
       });
       if (error) throw error;
       setSubmitted(true);
-      toast.success("Anfrage wurde gesendet!");
+      toast.success(t("contact.toast.success"));
     } catch {
-      toast.error("Ein Fehler ist aufgetreten.");
+      toast.error(t("contact.toast.error"));
     } finally {
       setSending(false);
     }
@@ -148,7 +148,7 @@ const Contact = () => {
                   disabled={sending}
                   className="w-full gradient-primary text-primary-foreground font-body text-sm font-medium py-4 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  {sending ? "Wird gesendet..." : t("contact.form.submit")}
+                  {sending ? t("contact.form.sending") : t("contact.form.submit")}
                 </button>
               </form>
             )}
@@ -200,16 +200,16 @@ const Contact = () => {
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Clock className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="font-heading text-lg font-semibold text-foreground">{cmsTitle("contact_hours", "Öffnungszeiten")}</h3>
+                <h3 className="font-heading text-lg font-semibold text-foreground">{cmsTitle("contact_hours", t("contact.hours.title"))}</h3>
               </div>
               <div className="font-body text-sm text-muted-foreground space-y-2">
                 <div className="flex justify-between">
-                  <span>Montag – Freitag</span>
+                  <span>{t("contact.hours.weekdays")}</span>
                   <span className="font-medium text-foreground">08:00 – 12:00 / 13:30 – 17:00</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Samstag – Sonntag</span>
-                  <span className="font-medium text-foreground">Geschlossen</span>
+                  <span>{t("contact.hours.weekend")}</span>
+                  <span className="font-medium text-foreground">{t("contact.hours.closed")}</span>
                 </div>
               </div>
             </div>
