@@ -150,4 +150,8 @@ export const translations: Record<string, Record<Language, string>> = {
   "footer.imprint": { de: "Impressum", fr: "Mentions légales", it: "Impressum", en: "Imprint" },
   "footer.privacy": { de: "Datenschutz", fr: "Protection des données", it: "Privacy", en: "Privacy" },
   "footer.terms": { de: "AGB", fr: "CGV", it: "CG", en: "Terms" },
+  "footer.sitemap": { de: "Sitemap", fr: "Plan du site", it: "Mappa del sito", en: "Sitemap" },
+  "footer.contact": { de: "Kontakt", fr: "Contact", it: "Contatto", en: "Contact" },
+  "footer.social": { de: "Social Media", fr: "Réseaux sociaux", it: "Social Media", en: "Social Media" },
+  "footer.rights": { de: "Alle Rechte vorbehalten.", fr: "Tous droits réservés.", it: "Tutti i diritti riservati.", en: "All rights reserved." },
 };
