@@ -1056,6 +1056,42 @@ export type Database = {
           },
         ]
       }
+      seo_settings: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          label: string
+          noindex: boolean
+          og_image: string | null
+          route: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          label?: string
+          noindex?: boolean
+          og_image?: string | null
+          route: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          label?: string
+          noindex?: boolean
+          og_image?: string | null
+          route?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_content: {
         Row: {
           body: string | null

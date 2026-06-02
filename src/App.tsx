@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { usePageViewTracker } from "@/hooks/usePageViewTracker";
+import SeoHead from "@/components/SeoHead";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
@@ -39,6 +40,7 @@ import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSocialLinks from "./pages/admin/AdminSocialLinks";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminSEO from "./pages/admin/AdminSEO";
 import { Navigate } from "react-router-dom";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminEvents from "./pages/admin/AdminEvents";
@@ -81,6 +83,7 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <AnalyticsTracker />
+          <SeoHead />
           <Routes>
             {/* Public pages */}
             <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
@@ -125,6 +128,7 @@ const App = () => (
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/social-links" element={<AdminSocialLinks />} />
                 <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                <Route path="/admin/seo" element={<AdminSEO />} />
                 <Route path="/admin/sso" element={<Navigate to="/admin/users" replace />} />
                 <Route path="/admin/news" element={<AdminNews />} />
                 <Route path="/admin/events" element={<AdminEvents />} />
