@@ -93,7 +93,7 @@ const AdminNews = () => {
 
   useEffect(() => {
     if (editingVisibility && editing) {
-      setEditing({ ...editing, selected_roles: editingVisibility.roles, selected_agencies: editingVisibility.agencies });
+      setEditing((prev) => prev ? { ...prev, selected_roles: editingVisibility.roles, selected_agencies: editingVisibility.agencies } : prev);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editingVisibility]);
@@ -362,7 +362,7 @@ const AdminNews = () => {
 
       {/* Edit Modal */}
       {editing && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) setEditing(null); }}>
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-card border rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-hidden flex flex-col">
             {/* Header with Stepper */}
             <div className="px-6 py-4 border-b">
