@@ -179,6 +179,7 @@ const AdminTeam = () => {
         const { error } = await supabase.from("team_members").update({ image_url: publicUrl }).eq("id", memberId);
         if (error) throw error;
         queryClient.invalidateQueries({ queryKey: ["admin-team"] });
+        setForm((prev) => ({ ...prev, image_url: publicUrl }));
         toast.success("Foto hochgeladen");
       } else {
         setForm((prev) => ({ ...prev, image_url: publicUrl }));
