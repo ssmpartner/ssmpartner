@@ -1,12 +1,14 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   LayoutDashboard, Image, Users, UserCog, Briefcase, FileText, LogOut, KeyRound,
   Menu as MenuIcon, ImageIcon, Building2, Inbox, Settings, Code2,
   Book, Video, FolderOpen, HelpCircle, Bot, MessagesSquare,
   MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
   User, ChevronDown, Newspaper, Calendar,
-  Share2,
+  Share2, Activity, AlertCircle,
 } from "lucide-react";
 import { BarChart3, Search } from "lucide-react";
 import { useState } from "react";
@@ -41,6 +43,7 @@ const adminLinks = [
   { to: "/admin/social-links", label: "Social Media", icon: Share2 },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/admin/seo", label: "SEO Optimierung", icon: Search },
+  { to: "/admin/gsc-monitor", label: "Search Console", icon: Activity },
 ];
 
 const bottomLinks = [
@@ -86,6 +89,19 @@ const AdminLayout = () => {
   const { signOut, user, profile } = useAuth();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+
+  const { data: openIssues = 0 } = useQuery({
+    queryKey: ["gsc_open_issues_count"],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from("gsc_monitor_issues")
+        .select("id", { count: "exact", head: true })
+        .is("resolved_at", null)
+        .eq("acknowledged", false);
+      return count ?? 0;
+    },
+    refetchInterval: 5 * 60 * 1000,
+  });
 
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "Admin";
   const initials = displayName
@@ -255,6 +271,18 @@ const AdminLayout = () => {
         </header>
 
           <main className="p-8">
+            {openIssues > 0 && location.pathname !== "/admin/gsc-monitor" && (
+              <Link
+                to="/admin/gsc-monitor"
+                className="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900 hover:bg-red-100 transition-colors"
+              >
+                <AlertCircle className="h-5 w-5 text-red-600 shrink-0" />
+                <div className="flex-1">
+                  <strong>{openIssues}</strong> offene{openIssues === 1 ? "s" : ""} Search-Console-Problem{openIssues === 1 ? "" : "e"} erkannt.
+                </div>
+                <span className="text-xs underline">Details ansehen</span>
+              </Link>
+            )}
             <Outlet />
           </main>
         </div>
