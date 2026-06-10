@@ -511,6 +511,87 @@ export type Database = {
           },
         ]
       }
+      gsc_monitor_issues: {
+        Row: {
+          acknowledged: boolean
+          details: Json | null
+          detected_at: string
+          fingerprint: string
+          id: string
+          issue_code: string | null
+          last_seen_at: string
+          message: string
+          resolved_at: string | null
+          severity: string
+          source: string
+          url: string | null
+        }
+        Insert: {
+          acknowledged?: boolean
+          details?: Json | null
+          detected_at?: string
+          fingerprint: string
+          id?: string
+          issue_code?: string | null
+          last_seen_at?: string
+          message: string
+          resolved_at?: string | null
+          severity?: string
+          source: string
+          url?: string | null
+        }
+        Update: {
+          acknowledged?: boolean
+          details?: Json | null
+          detected_at?: string
+          fingerprint?: string
+          id?: string
+          issue_code?: string | null
+          last_seen_at?: string
+          message?: string
+          resolved_at?: string | null
+          severity?: string
+          source?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      gsc_monitor_runs: {
+        Row: {
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          issues_found: number
+          performance: Json | null
+          ran_at: string
+          sitemap_status: Json | null
+          status: string
+          url_inspections: Json | null
+        }
+        Insert: {
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          issues_found?: number
+          performance?: Json | null
+          ran_at?: string
+          sitemap_status?: Json | null
+          status?: string
+          url_inspections?: Json | null
+        }
+        Update: {
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          issues_found?: number
+          performance?: Json | null
+          ran_at?: string
+          sitemap_status?: Json | null
+          status?: string
+          url_inspections?: Json | null
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           agency_id: string | null
