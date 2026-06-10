@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const { user, loading, signIn } = useAuth();
@@ -15,11 +16,31 @@ const Login = () => {
   const [submitting, setSubmitting] = useState(false);
   const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("ssm_remember_me") === "true");
   const [authError, setAuthError] = useState<string | null>(null);
+  const [ssoLoading, setSsoLoading] = useState(false);
 
   // SSO redirect params
   const ssoRedirect = searchParams.get("redirect_uri");
   const ssoProjectKey = searchParams.get("project_key");
   const ssoState = searchParams.get("state");
+
+  const handleEntraSso = async () => {
+    const domain = email.trim().split("@")[1]?.toLowerCase();
+    if (!domain) {
+      toast.error("Bitte zuerst deine Firmen-E-Mail eintragen");
+      return;
+    }
+    setSsoLoading(true);
+    const { data, error } = await supabase.auth.signInWithSSO({
+      domain,
+      options: { redirectTo: `${window.location.origin}/portal` },
+    });
+    setSsoLoading(false);
+    if (error) {
+      toast.error("Für diese Domain ist kein SSO aktiv.");
+      return;
+    }
+    if (data?.url) window.location.href = data.url;
+  };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center font-body text-muted-foreground">Laden...</div>;
 
@@ -176,6 +197,34 @@ const Login = () => {
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
             {submitting ? "Wird angemeldet..." : "Anmelden"}
           </button>
+
+          {!ssoProjectKey && (
+            <>
+              <div className="relative flex items-center my-1">
+                <div className="flex-1 h-px bg-white/15" />
+                <span className="px-3 text-[10px] uppercase tracking-widest text-white/40 font-body">oder</span>
+                <div className="flex-1 h-px bg-white/15" />
+              </div>
+              <button
+                type="button"
+                onClick={handleEntraSso}
+                disabled={ssoLoading}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 text-sm font-medium text-white font-body hover:bg-white/10 transition-colors disabled:opacity-50"
+              >
+                {ssoLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <svg className="h-4 w-4" viewBox="0 0 23 23" aria-hidden="true">
+                    <rect width="10" height="10" x="1" y="1" fill="#F25022" />
+                    <rect width="10" height="10" x="12" y="1" fill="#7FBA00" />
+                    <rect width="10" height="10" x="1" y="12" fill="#00A4EF" />
+                    <rect width="10" height="10" x="12" y="12" fill="#FFB900" />
+                  </svg>
+                )}
+                Mit Microsoft anmelden (SSO)
+              </button>
+            </>
+          )}
         </form>
         <p className="text-center text-xs text-white/50 font-body">
           SSM Partner AG. Eine Tochtergesellschaft der Visana-Gruppe. Gebundener Vermittler gemäss VAG.

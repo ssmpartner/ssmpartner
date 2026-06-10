@@ -9,6 +9,7 @@ import {
   MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
   User, ChevronDown, Newspaper, Calendar,
   Share2, Activity, AlertCircle,
+  KeySquare,
 } from "lucide-react";
 import { BarChart3, Search } from "lucide-react";
 import { useState } from "react";
@@ -49,6 +50,7 @@ const adminLinks = [
 const bottomLinks = [
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },
   { to: "/admin/users", label: "Benutzer", icon: UserCog },
+  { to: "/admin/entra-sso", label: "Microsoft SSO", icon: KeySquare },
   { to: "/admin/api-docs", label: "API-Docs", icon: Code2 },
   { to: "/admin/docs", label: "Dokumentation", icon: Book },
 ];
