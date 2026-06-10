@@ -41,6 +41,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSocialLinks from "./pages/admin/AdminSocialLinks";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminSEO from "./pages/admin/AdminSEO";
+import AdminGscMonitor from "./pages/admin/AdminGscMonitor";
 import { Navigate } from "react-router-dom";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminEvents from "./pages/admin/AdminEvents";
@@ -129,6 +130,7 @@ const App = () => (
                 <Route path="/admin/social-links" element={<AdminSocialLinks />} />
                 <Route path="/admin/analytics" element={<AdminAnalytics />} />
                 <Route path="/admin/seo" element={<AdminSEO />} />
+                <Route path="/admin/gsc-monitor" element={<AdminGscMonitor />} />
                 <Route path="/admin/sso" element={<Navigate to="/admin/users" replace />} />
                 <Route path="/admin/news" element={<AdminNews />} />
                 <Route path="/admin/events" element={<AdminEvents />} />
