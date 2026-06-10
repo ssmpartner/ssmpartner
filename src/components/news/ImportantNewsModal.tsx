@@ -93,9 +93,10 @@ export const ImportantNewsModal = () => {
             </span>
           )}
           <h2 className="text-2xl font-semibold text-foreground mt-2 mb-4">{current.title}</h2>
-          <div className="prose prose-sm max-w-none text-foreground whitespace-pre-wrap leading-relaxed">
-            {current.content}
-          </div>
+          <div
+            className="prose prose-sm max-w-none text-foreground leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: current.content || "" }}
+          />
         </div>
 
         <div className="border-t p-6 bg-muted/30 space-y-4">
