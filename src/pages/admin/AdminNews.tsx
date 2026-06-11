@@ -6,6 +6,16 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import MediaPickerModal from "@/components/MediaPickerModal";
 import RichTextEditor from "@/components/RichTextEditor";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const APP_ROLES = ["superadmin","admin","backoffice","analyst","teamleiter","controlling","geschaeftsleitung","hr","agency_manager","vertriebsleiter","agenturleiter","finanzcoach","trainee","verkaufsleiter"] as const;
 
@@ -44,6 +54,7 @@ const AdminNews = () => {
   const [newCat, setNewCat] = useState({ id: "", name: "", color: "#243e3a" });
   const [step, setStep] = useState(0);
   const [picker, setPicker] = useState<null | "cover_image" | "cover_video" | "media">(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => { if (editing) setStep(0); }, [editing?.id]);
 
@@ -269,7 +280,7 @@ const AdminNews = () => {
                   })}
                   className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
                 ><Pencil size={16}/></button>
-                <button onClick={() => { if(confirm("News wirklich löschen?")) deletePost.mutate(p.id); }} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
+                <button onClick={() => setDeleteId(p.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
                   <Trash2 size={16}/>
                 </button>
               </div>
@@ -611,6 +622,29 @@ const AdminNews = () => {
           />
         </div>
       )}
+
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>News wirklich löschen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Dieser Beitrag wird unwiderruflich entfernt.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteId) deletePost.mutate(deleteId);
+                setDeleteId(null);
+              }}
+            >
+              Löschen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
