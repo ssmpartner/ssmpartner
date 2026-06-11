@@ -54,6 +54,7 @@ const AdminNews = () => {
   const [newCat, setNewCat] = useState({ id: "", name: "", color: "#243e3a" });
   const [step, setStep] = useState(0);
   const [picker, setPicker] = useState<null | "cover_image" | "cover_video" | "media">(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   useEffect(() => { if (editing) setStep(0); }, [editing?.id]);
 
@@ -279,7 +280,7 @@ const AdminNews = () => {
                   })}
                   className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground"
                 ><Pencil size={16}/></button>
-                <button onClick={() => { if(confirm("News wirklich löschen?")) deletePost.mutate(p.id); }} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
+                <button onClick={() => setDeleteId(p.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
                   <Trash2 size={16}/>
                 </button>
               </div>
