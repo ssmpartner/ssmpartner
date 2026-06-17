@@ -24,6 +24,27 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const CUSTOM_PORTAL_URL = "https://ssmpartner.ch/portal";
+const LOVABLE_FALLBACK_HOST = "ssmpartner.lovable.app";
+
+const redirectLovableSsoFallbackToCustomDomain = (session: Session | null) => {
+  if (!session || typeof window === "undefined") return false;
+  if (window.location.hostname !== LOVABLE_FALLBACK_HOST || window.location.pathname !== "/") return false;
+
+  const expiresIn = session.expires_in ?? Math.max((session.expires_at ?? 0) - Math.floor(Date.now() / 1000), 0);
+  const hash = new URLSearchParams({
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+    expires_in: String(expiresIn || 3600),
+    token_type: session.token_type,
+    type: "sso",
+  });
+
+  if (session.expires_at) hash.set("expires_at", String(session.expires_at));
+  window.location.replace(`${CUSTOM_PORTAL_URL}#${hash.toString()}`);
+  return true;
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -42,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (redirectLovableSsoFallbackToCustomDomain(session)) return;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -53,6 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (redirectLovableSsoFallbackToCustomDomain(session)) return;
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
