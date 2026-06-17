@@ -55,7 +55,7 @@ const About = () => {
   const fachfuehrung = members?.filter((m) => m.category === "fachfuehrung") || [];
   const erweitertesTeam = members?.filter((m) => m.category === "erweitertes_team") || [];
 
-  const introImageUrl = aboutImage?.image_url || "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80";
+  const introImageUrl = aboutImage?.image_url || null;
 
   const TeamCard = ({ member, delay, size = "lg" }: { member: any; delay: number; size?: "lg" | "sm" }) => {
     const isSmall = size === "sm";
@@ -131,10 +131,12 @@ const About = () => {
           </AnimatedSection>
           <AnimatedSection delay={0.2}>
             <div
-              className="w-full aspect-[4/3] rounded-2xl overflow-hidden"
+              className="w-full aspect-[4/3] rounded-2xl overflow-hidden bg-muted"
               style={{ boxShadow: "0 8px 32px rgba(36,62,58,0.15), 0 2px 8px rgba(0,0,0,0.06)" }}
             >
-              <img src={introImageUrl} alt={aboutImage?.alt_text || "Über uns"} className="w-full h-full object-cover" />
+              {introImageUrl && (
+                <img src={introImageUrl} alt={aboutImage?.alt_text || "Über uns"} className="w-full h-full object-cover" />
+              )}
             </div>
           </AnimatedSection>
         </div>
