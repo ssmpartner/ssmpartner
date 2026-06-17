@@ -24,14 +24,9 @@ const Login = () => {
   const ssoState = searchParams.get("state");
 
   const handleEntraSso = async () => {
-    const domain = email.trim().split("@")[1]?.toLowerCase();
-    if (!domain) {
-      toast.error("Bitte zuerst deine Firmen-E-Mail eintragen");
-      return;
-    }
     setSsoLoading(true);
     const { data, error } = await supabase.auth.signInWithSSO({
-      domain,
+      domain: "ssmpartner.ch",
       options: { redirectTo: `https://ssmpartner.ch/portal` },
     });
     setSsoLoading(false);
