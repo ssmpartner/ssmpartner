@@ -96,6 +96,7 @@ const ChatOverlay = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
   const [chatOpen, setChatOpen] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const SCRIBE_TOKEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-scribe-token`;
 
@@ -164,8 +165,18 @@ const ChatOverlay = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: allMessages }),
+        body: JSON.stringify({
+          messages: allMessages,
+          session_id: sessionId,
+          source: "onlinecheck",
+          page_url: window.location.pathname,
+        }),
       });
+
+      const respSessionId = resp.headers.get("X-Session-Id") || resp.headers.get("x-session-id");
+      if (respSessionId && !sessionId) {
+        setSessionId(respSessionId);
+      }
 
       if (!resp.ok || !resp.body) {
         const err = await resp.json().catch(() => ({ error: "Fehler" }));
