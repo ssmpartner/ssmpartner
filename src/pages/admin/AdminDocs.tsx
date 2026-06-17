@@ -107,7 +107,7 @@ const changelog = [
 const techStack = [
   { icon: Code, label: "Frontend", value: "React 18 · TypeScript · Vite", sub: "Tailwind CSS · shadcn/ui · Framer Motion" },
   { icon: Database, label: "Backend", value: "Supabase Postgres", sub: "Auth · Storage · Realtime · RLS" },
-  { icon: Zap, label: "Edge Functions", value: "Deno Runtime", sub: "ai-chat · sso-auth · manage-users · bag-premiums" },
+  { icon: Zap, label: "Edge Functions", value: "Deno Runtime", sub: "ai-chat · sso-auth · cockpit-data · manage-users · bag-premiums · gsc-monitor · elevenlabs-tts · elevenlabs-scribe-token" },
   { icon: Cpu, label: "KI / ML", value: "Google Gemini 2.5 Pro", sub: "ElevenLabs TTS & Scribe" },
   { icon: MapIcon, label: "Maps", value: "Mapbox GL JS", sub: "light-v11 Style · Custom Marker" },
   { icon: Cloud, label: "Hosting", value: "Lovable Cloud", sub: "CDN · SSL · Auto-Deploy" },
@@ -116,7 +116,7 @@ const techStack = [
 const stats = [
   { label: "Module", value: sections.length, icon: Layers },
   { label: "Sprachen", value: 4, icon: Globe },
-  { label: "Edge Functions", value: 6, icon: Zap },
+  { label: "Edge Functions", value: 8, icon: Zap },
   { label: "Benutzerrollen", value: 14, icon: Shield },
 ];
 
