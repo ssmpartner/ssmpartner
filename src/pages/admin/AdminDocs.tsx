@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
 import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2, Code, History, Search, Sparkles, Zap, Database, Palette, Map as MapIcon, Cloud, Cpu, Rocket, CheckCircle2, Newspaper, Calendar, BarChart3, ListChecks } from "lucide-react";
 
-const CMS_VERSION = "2.6.0";
-const RELEASE_DATE = "23. April 2026";
+const CMS_VERSION = "2.7.0";
+const RELEASE_DATE = "17. Juni 2026";
 
 type Section = {
   icon: any;
@@ -19,7 +19,8 @@ const sections: Section[] = [
   { icon: Globe, title: "Navigation", category: "Inhalte", content: "Unter «Menüpunkte» verwalten Sie die Hauptnavigation. Sie können Einträge aktivieren/deaktivieren, umbenennen und die Reihenfolge anpassen. Mehrsprachige Labels (DE, FR, IT, EN) werden unterstützt." },
   { icon: Users, title: "Team-Verwaltung", category: "Benutzer & SSO", content: "Unter «Team» fügen Sie Mitglieder hinzu und weisen sie einer Kategorie zu: Geschäftsleitung, Fachführung, Erweitertes Team oder einer Agentur. Pro Agentur kann ein Mitglied als Agenturleiter/in markiert werden (★). Badges wie Verkaufsleiter, Teamleiter, Finanzexperte, Finanzcoach, Finanzcoach VBV oder Trainee können individuell vergeben werden. Über das Feld «Benutzer verknüpfen» wird ein Teammitglied 1:1 mit einem CMS-Benutzer verbunden — diese Verknüpfung liefert die Agentur-Zuordnung an die Benutzerverwaltung und an alle SSO-Projekte (z.B. SSM Recruit). Komfortfunktionen: Suchfeld, Filter-Dropdown, Kacheln-/Listenansicht und Bulk-Aktionen." },
   { icon: Shield, title: "Benutzerverwaltung", category: "Benutzer & SSO", content: "Unter «Benutzer» verwalten Superadmins alle CMS-Konten. Pro Benutzer können Sie Anzeigename, E-Mail, Passwort, Rolle (superadmin, admin, backoffice, analyst, teamleiter, controlling, geschaeftsleitung, hr, agency_manager, vertriebsleiter, agenturleiter, finanzcoach, trainee, verkaufsleiter) und SSO-Projekt-Zugriffe setzen. Die Agentur-Zuordnung wird automatisch aus der Team-Verknüpfung übernommen." },
-  { icon: KeyRound, title: "SSO & Zugriffsverwaltung", category: "Benutzer & SSO", content: "Unter «SSO» legen Superadmins angebundene Projekte (z.B. SSM Recruit) an: project_key, Name, optionale API-URL und API-Secret. Pro Projekt wird gesteuert, welche Benutzer Zugriff haben. Die zentrale Edge Function «sso-auth» liefert beim Login (Action verify) und beim Pull-Sync (Action list_project_users) für jeden Benutzer einheitlich: id, email, display_name, avatar_url, role und agency_id/agency_name. Auth-Audit-Logs werden geführt." },
+  { icon: KeyRound, title: "SSO & Zugriffsverwaltung", category: "Benutzer & SSO", content: "Unter «SSO» legen Superadmins angebundene Projekte (SSM Recruit, SSM Cockpit) an: project_key, Name, optionale API-URL und API-Secret. Pro Projekt wird gesteuert, welche Benutzer Zugriff haben. Die zentrale Edge Function «sso-auth» liefert beim Login (verify) und beim Pull-Sync (list_project_users) für jeden Benutzer einheitlich: id, email, display_name, avatar_url, role und agency_id/agency_name. Zusätzlich: Redirect-SSO via einmalige Tokens (generate_redirect_token / validate_token, 5 Min. TTL). Auth-Audit-Logs werden geführt." },
+  { icon: Shield, title: "Microsoft Entra ID (SAML SSO)", category: "Benutzer & SSO", content: "Unter «Microsoft SSO» richten Superadmins SAML 2.0 Single Sign-On mit Microsoft Entra ID (Azure AD) ein. Service-Provider-Werte (Entity ID, ACS URL, Sign-on URL) sind direkt kopierbar. Nach Konfiguration der Enterprise Application in Entra und Hinterlegung der App Federation Metadata Url wird der Provider für die zugelassene E-Mail-Domain (z.B. ssmpartner.ch) aktiviert. Bestehende Konten mit identischer E-Mail werden beim ersten SSO-Login automatisch verknüpft — Rolle, Profil und Team-/Agentur-Zuordnung bleiben erhalten. E-Mail/Passwort-Logins funktionieren parallel weiter." },
   { icon: Link2, title: "Agentur-Verknüpfung", category: "Benutzer & SSO", content: "Die Agentur-Zugehörigkeit eines Benutzers wird zentral über das Team-Mitglied gepflegt: team_members.user_id verknüpft 1:1 mit auth.users.id, das Feld team_members.agency_id zeigt auf die jeweilige Agentur. Diese Verknüpfung ist die einzige Quelle der Wahrheit." },
   { icon: Building2, title: "Agenturen", category: "Agenturen", content: "Unter «Agenturen» verwalten Sie alle Standorte. Jede Agentur hat eine eigene Detailseite mit Beschreibung, Team, Mapbox-Karte, Bewertungen, Galerie und Kontaktformular. Felder wie Adresse, Telefon, E-Mail, Öffnungszeiten und Koordinaten (Lat/Lng) können gepflegt werden." },
   { icon: Star, title: "Bewertungen", category: "Agenturen", content: "Unter «Agenturen» können pro Standort Kundenbewertungen mit Autorenname, Text und Sternebewertung (1–5) hinzugefügt werden. Diese erscheinen auf der jeweiligen Agentur-Detailseite." },
@@ -36,11 +37,25 @@ const sections: Section[] = [
   { icon: Scissors, title: "Bildzuschnitt", category: "Tools", content: "Beim Hochladen von Bildern (Team, Hero, Slider) steht ein Zuschnitt-Tool zur Verfügung. Seitenverhältnisse: Team 3:4, Hero 21:9, Slider 16:9." },
   { icon: Image, title: "Mediathek", category: "Tools", content: "Alle hochgeladenen Bilder und Videos werden zentral in der Mediathek gespeichert und können in allen Bereichen wiederverwendet werden." },
   { icon: Book, title: "API-Zugang", category: "Tools", content: "Über die REST-API können Sie alle Inhalte programmatisch lesen und schreiben. Details unter «API-Docs» in der Seitenleiste." },
+  { icon: Database, title: "Cockpit-Data API", category: "Tools", content: "Die Edge Function «cockpit-data» liefert externen SSM-Projekten (z.B. SSM Cockpit) authentifizierten Lesezugriff auf Stammdaten (agencies, team_members). Authentifizierung via API-Secret aus sso_projects (Header x-sso-api-key). Der SUPABASE_SERVICE_ROLE_KEY bleibt vollständig serverseitig." },
 ];
 
 const categories: Section["category"][] = ["Inhalte", "Benutzer & SSO", "Agenturen", "Karriere", "Portal", "Tools"];
 
 const changelog = [
+  {
+    version: "2.7.0",
+    date: "17. Juni 2026",
+    type: "Major",
+    changes: [
+      "Microsoft Entra ID SAML SSO — Anleitung & Konfigurations-UI unter /admin/entra-sso",
+      "Automatische Verknüpfung bestehender Konten beim ersten SSO-Login (Rolle/Profil/Team bleiben erhalten)",
+      "Neue Edge Function «cockpit-data» für externen Stammdaten-Zugriff (agencies, team_members) via x-sso-api-key",
+      "SSO-Redirect-Flow mit einmaligen Tokens (generate_redirect_token / validate_token, 5 Min. TTL)",
+      "SSM Cockpit als drittes SSO-Projekt registriert",
+      "Neue Rolle «verkaufsleiter» im app_role-Enum",
+    ],
+  },
   {
     version: "2.6.0",
     date: "23. April 2026",
@@ -92,7 +107,7 @@ const changelog = [
 const techStack = [
   { icon: Code, label: "Frontend", value: "React 18 · TypeScript · Vite", sub: "Tailwind CSS · shadcn/ui · Framer Motion" },
   { icon: Database, label: "Backend", value: "Supabase Postgres", sub: "Auth · Storage · Realtime · RLS" },
-  { icon: Zap, label: "Edge Functions", value: "Deno Runtime", sub: "ai-chat · sso-auth · manage-users · bag-premiums" },
+  { icon: Zap, label: "Edge Functions", value: "Deno Runtime", sub: "ai-chat · sso-auth · cockpit-data · manage-users · bag-premiums · gsc-monitor · elevenlabs-tts · elevenlabs-scribe-token" },
   { icon: Cpu, label: "KI / ML", value: "Google Gemini 2.5 Pro", sub: "ElevenLabs TTS & Scribe" },
   { icon: MapIcon, label: "Maps", value: "Mapbox GL JS", sub: "light-v11 Style · Custom Marker" },
   { icon: Cloud, label: "Hosting", value: "Lovable Cloud", sub: "CDN · SSL · Auto-Deploy" },
@@ -101,7 +116,7 @@ const techStack = [
 const stats = [
   { label: "Module", value: sections.length, icon: Layers },
   { label: "Sprachen", value: 4, icon: Globe },
-  { label: "Edge Functions", value: 6, icon: Zap },
+  { label: "Edge Functions", value: 8, icon: Zap },
   { label: "Benutzerrollen", value: 14, icon: Shield },
 ];
 
