@@ -37,11 +37,25 @@ const sections: Section[] = [
   { icon: Scissors, title: "Bildzuschnitt", category: "Tools", content: "Beim Hochladen von Bildern (Team, Hero, Slider) steht ein Zuschnitt-Tool zur Verfügung. Seitenverhältnisse: Team 3:4, Hero 21:9, Slider 16:9." },
   { icon: Image, title: "Mediathek", category: "Tools", content: "Alle hochgeladenen Bilder und Videos werden zentral in der Mediathek gespeichert und können in allen Bereichen wiederverwendet werden." },
   { icon: Book, title: "API-Zugang", category: "Tools", content: "Über die REST-API können Sie alle Inhalte programmatisch lesen und schreiben. Details unter «API-Docs» in der Seitenleiste." },
+  { icon: Database, title: "Cockpit-Data API", category: "Tools", content: "Die Edge Function «cockpit-data» liefert externen SSM-Projekten (z.B. SSM Cockpit) authentifizierten Lesezugriff auf Stammdaten (agencies, team_members). Authentifizierung via API-Secret aus sso_projects (Header x-sso-api-key). Der SUPABASE_SERVICE_ROLE_KEY bleibt vollständig serverseitig." },
 ];
 
 const categories: Section["category"][] = ["Inhalte", "Benutzer & SSO", "Agenturen", "Karriere", "Portal", "Tools"];
 
 const changelog = [
+  {
+    version: "2.7.0",
+    date: "17. Juni 2026",
+    type: "Major",
+    changes: [
+      "Microsoft Entra ID SAML SSO — Anleitung & Konfigurations-UI unter /admin/entra-sso",
+      "Automatische Verknüpfung bestehender Konten beim ersten SSO-Login (Rolle/Profil/Team bleiben erhalten)",
+      "Neue Edge Function «cockpit-data» für externen Stammdaten-Zugriff (agencies, team_members) via x-sso-api-key",
+      "SSO-Redirect-Flow mit einmaligen Tokens (generate_redirect_token / validate_token, 5 Min. TTL)",
+      "SSM Cockpit als drittes SSO-Projekt registriert",
+      "Neue Rolle «verkaufsleiter» im app_role-Enum",
+    ],
+  },
   {
     version: "2.6.0",
     date: "23. April 2026",
