@@ -96,6 +96,7 @@ const ChatOverlay = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const navigate = useNavigate();
   const [chatOpen, setChatOpen] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   const SCRIBE_TOKEN_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-scribe-token`;
 
