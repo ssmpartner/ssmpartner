@@ -32,7 +32,7 @@ const Login = () => {
     setSsoLoading(true);
     const { data, error } = await supabase.auth.signInWithSSO({
       domain,
-      options: { redirectTo: `${window.location.origin}/portal` },
+      options: { redirectTo: `https://ssmpartner.ch/portal` },
     });
     setSsoLoading(false);
     if (error) {
