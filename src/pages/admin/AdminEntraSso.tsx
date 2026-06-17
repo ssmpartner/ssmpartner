@@ -94,14 +94,12 @@ const AdminEntraSso = () => {
       </div>
 
       <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 space-y-3">
-        <h2 className="font-display text-lg font-semibold">3. In Lovable freischalten</h2>
+        <h2 className="font-display text-lg font-semibold">3. SSO aktivieren</h2>
         <p className="font-body text-sm">
-          Sobald die <strong>App Federation Metadata Url</strong> und die E-Mail-Domain(s) (z.B. <code className="text-xs bg-muted px-1.5 py-0.5 rounded">ssmpartner.ch</code>) bereit sind, im Lovable-Chat schreiben:
+          Sobald die <strong>App Federation Metadata Url</strong> aus Entra vorliegt und die zugelassene E-Mail-Domain (z.B. <code className="text-xs bg-muted px-1.5 py-0.5 rounded">ssmpartner.ch</code>) festgelegt ist, kann die IT-Administration den Provider im Backend freischalten. Anschliessend ist der Microsoft-Login auf der Anmeldeseite verfügbar.
         </p>
-        <pre className="rounded-xl bg-background border p-3 text-xs font-mono whitespace-pre-wrap">{`SAML SSO aktivieren mit Metadata-URL https://login.microsoftonline.com/<tenant>/federationmetadata/...
-für die Domain ssmpartner.ch`}</pre>
         <p className="font-body text-xs text-muted-foreground">
-          Der Agent ruft dann das interne SAML-Setup-Tool auf. Du musst nichts weiter im Code anpassen.
+          Bestehende Konten mit identischer E-Mail werden beim ersten SSO-Login automatisch verknüpft (Rolle, Profil und Team-Zuordnung werden übernommen).
         </p>
       </div>
 
