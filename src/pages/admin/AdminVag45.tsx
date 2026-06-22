@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Download, Shield } from "lucide-react";
+import { Plus, Pencil, Trash2, Download, Shield, UploadCloud } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MediaPickerModal from "@/components/MediaPickerModal";
+import { supabase as sb } from "@/integrations/supabase/client";
 
 /* ─── Downloads ─── */
 
@@ -61,6 +62,42 @@ const AdminVag45 = () => {
   const [dlOpen, setDlOpen] = useState(false);
   const [dlForm, setDlForm] = useState<Omit<Dl, "id"> & { id?: string }>(emptyDl);
   const [mediaOpen, setMediaOpen] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadFile = async (file: File) => {
+    setUploading(true);
+    setUploadPct(0);
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) throw new Error("Nicht angemeldet");
+      const ext = file.name.split(".").pop();
+      const path = `media/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/site-images/${path}`;
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        xhr.setRequestHeader("Authorization", `Bearer ${session.access_token}`);
+        xhr.setRequestHeader("x-upsert", "true");
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) setUploadPct(Math.round((e.loaded / e.total) * 100));
+        };
+        xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error(`Upload fehlgeschlagen (${xhr.status})`)));
+        xhr.onerror = () => reject(new Error("Netzwerkfehler"));
+        xhr.send(file);
+      });
+      const { data: { publicUrl } } = sb.storage.from("site-images").getPublicUrl(path);
+      setDlForm((f) => ({ ...f, url: publicUrl }));
+      toast.success("Datei hochgeladen");
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setUploading(false);
+      setTimeout(() => setUploadPct(0), 1500);
+    }
+  };
 
   const { data: downloads = [], isLoading: dlLoading } = useQuery({
     queryKey: ["vag45_downloads"],
@@ -214,6 +251,41 @@ const AdminVag45 = () => {
                   <div className="flex gap-2">
                     <Input className="flex-1" value={dlForm.url} onChange={(e) => setDlForm({ ...dlForm, url: e.target.value })} placeholder="https://…" />
                     <Button variant="outline" size="sm" onClick={() => setMediaOpen(true)}>Mediathek</Button>
+                  </div>
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setDragOver(false);
+                      const file = e.dataTransfer.files?.[0];
+                      if (file) uploadFile(file);
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`mt-2 flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-6 cursor-pointer transition-colors ${
+                      dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/30"
+                    }`}
+                  >
+                    <UploadCloud size={24} className="text-muted-foreground mb-2" />
+                    <p className="font-body text-xs text-foreground font-medium">
+                      {uploading ? `Hochladen… ${uploadPct}%` : "Datei hierher ziehen oder klicken"}
+                    </p>
+                    <p className="font-body text-[10px] text-muted-foreground mt-1">PDF, DOCX, alle Dateitypen</p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) uploadFile(f);
+                        e.target.value = "";
+                      }}
+                    />
+                    {uploading && (
+                      <div className="w-full mt-3 h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div className="h-full bg-primary transition-all" style={{ width: `${uploadPct}%` }} />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div>
