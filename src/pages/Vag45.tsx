@@ -9,6 +9,25 @@ import { useLanguage } from "@/i18n/LanguageContext";
 type DlItem = { id: string; lang: string; description: string; url: string; sort_order: number };
 type Partner = { id: string; section: string; branch: string; category: string; company: string; address: string; contact_email: string; privacy_url: string; sort_order: number };
 
+const handleDownload = async (url: string, lang: string) => {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Download fehlgeschlagen");
+    const blob = await res.blob();
+    const filename = url.split("/").pop()?.split("?")[0] || `VAG45_${lang}.pdf`;
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+  } catch {
+    window.location.href = url;
+  }
+};
+
 const PartnerRow = ({ partner, t }: { partner: Partner; t: (k: string) => string }) => (
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 py-6 border-b border-border last:border-b-0">
     <div>
@@ -91,9 +110,12 @@ const Vag45 = () => {
                     <h3 className="font-heading text-lg font-semibold text-foreground">{item.lang}</h3>
                     <p className="font-body text-sm text-muted-foreground mt-2 leading-relaxed">{item.description}</p>
                   </div>
-                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 font-body text-sm font-medium text-primary hover:underline mt-6 transition-colors">
+                  <button
+                    onClick={() => handleDownload(item.url, item.lang)}
+                    className="inline-flex items-center gap-2 font-body text-sm font-medium text-primary hover:underline mt-6 transition-colors"
+                  >
                     <Download size={16} /> {t("vag45.download.cta")}
-                  </a>
+                  </button>
                 </div>
               ))}
             </div>
