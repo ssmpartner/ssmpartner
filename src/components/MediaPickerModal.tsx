@@ -184,7 +184,7 @@ const MediaPickerModal = ({ open, onClose, onSelect, accept = "all", title = "Me
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 backdrop-blur-sm" onClick={onClose}>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-foreground/50 backdrop-blur-sm" onClick={onClose}>
       <div className="bg-card border rounded-2xl w-[900px] max-h-[80vh] flex flex-col shadow-2xl" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b">
