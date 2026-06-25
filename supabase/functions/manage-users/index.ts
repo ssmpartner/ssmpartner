@@ -199,16 +199,17 @@ Deno.serve(async (req) => {
         if (isLastSuperadmin) throw new Error("Es muss mindestens ein Superadmin existieren");
       }
 
-      const { error } = await supabaseAdmin
+      // Replace any existing role(s) with the new one so the user ends up
+      // with exactly one role row (avoids stale duplicates).
+      const { error: delErr } = await supabaseAdmin
         .from("user_roles")
-        .upsert({ user_id, role }, { onConflict: "user_id,role" });
-      if (error) {
-        const { error: updateError } = await supabaseAdmin
-          .from("user_roles")
-          .update({ role })
-          .eq("user_id", user_id);
-        if (updateError) throw updateError;
-      }
+        .delete()
+        .eq("user_id", user_id);
+      if (delErr) throw delErr;
+      const { error: insErr } = await supabaseAdmin
+        .from("user_roles")
+        .insert({ user_id, role });
+      if (insErr) throw insErr;
 
       return json({ success: true });
     }
