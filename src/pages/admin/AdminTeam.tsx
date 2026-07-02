@@ -20,6 +20,7 @@ const badgeOptions = [
   { value: "teamleiter", label: "Teamleiter" },
   { value: "finanzexperte", label: "Finanzexperte" },
   { value: "finanzcoach", label: "Finanzcoach" },
+  { value: "finanzcoach_in_ausbildung", label: "Finanzcoach in Ausbildung" },
   { value: "finanzcoach_vbv", label: "Finanzcoach VBV" },
   { value: "finanzcoach_ssm", label: "Finanzcoach SSM" },
   { value: "vermoegensberater", label: "Vermögensberater" },
