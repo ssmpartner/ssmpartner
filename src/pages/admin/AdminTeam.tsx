@@ -26,6 +26,7 @@ const badgeOptions = [
   { value: "vermoegensberater", label: "Vermögensberater" },
   { value: "vermoegensberater_iaf", label: "Vermögensberater IAF" },
   { value: "dipl_finanzberater_iaf", label: "Dipl. Finanzberater IAF" },
+  { value: "finanzplaner_eidg_fa", label: "Finanzplaner mit eidg. FA" },
   { value: "agenturleiter", label: "Agenturleiter" },
   { value: "trainee", label: "Trainee" },
 ];
