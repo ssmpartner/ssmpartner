@@ -68,14 +68,21 @@ export default function AdminAnalytics() {
     queryKey: ["page_views", range],
     queryFn: async () => {
       const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-      const { data, error } = await supabase
-        .from("page_views")
-        .select("*")
-        .gte("created_at", since)
-        .order("created_at", { ascending: false })
-        .limit(10000);
-      if (error) throw error;
-      return (data ?? []) as Row[];
+      // Server caps each response at 1000 rows — paginate until exhausted
+      const all: Row[] = [];
+      const PAGE = 1000;
+      for (let from = 0; from < 100000; from += PAGE) {
+        const { data, error } = await supabase
+          .from("page_views")
+          .select("*")
+          .gte("created_at", since)
+          .order("created_at", { ascending: false })
+          .range(from, from + PAGE - 1);
+        if (error) throw error;
+        all.push(...((data ?? []) as Row[]));
+        if (!data || data.length < PAGE) break;
+      }
+      return all;
     },
     refetchInterval: 60000,
   });
