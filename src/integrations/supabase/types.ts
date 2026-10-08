@@ -389,6 +389,36 @@ export type Database = {
         }
         Relationships: []
       }
+      deleted_records: {
+        Row: {
+          data: Json
+          deleted_at: string
+          deleted_by: string | null
+          id: string
+          label: string | null
+          record_id: string | null
+          table_name: string
+        }
+        Insert: {
+          data: Json
+          deleted_at?: string
+          deleted_by?: string | null
+          id?: string
+          label?: string | null
+          record_id?: string | null
+          table_name: string
+        }
+        Update: {
+          data?: Json
+          deleted_at?: string
+          deleted_by?: string | null
+          id?: string
+          label?: string | null
+          record_id?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
       event_registrations: {
         Row: {
           answers: Json
@@ -1579,6 +1609,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      restore_deleted_record: { Args: { _id: string }; Returns: undefined }
     }
     Enums: {
       app_role:
