@@ -3,9 +3,10 @@ import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Save, Key, Shield } from "lucide-react";
 import { toast } from "sonner";
+import TrashBin from "@/components/admin/TrashBin";
 
 const AdminSettings = () => {
-  const { user } = useAuth();
+  const { user, isSuperadmin } = useAuth();
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
   const [saving, setSaving] = useState(false);
@@ -76,6 +77,8 @@ const AdminSettings = () => {
           </button>
         </div>
       </div>
+
+      {isSuperadmin && <TrashBin />}
     </div>
   );
 };
