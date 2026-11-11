@@ -49,7 +49,7 @@ const ContactMap = () => {
 };
 
 const Contact = () => {
-  const { t, language } = useLanguage();
+  const { t, lang: language } = useLanguage();
   const [agencies, setAgencies] = useState<{ id: string; name: string }[]>([]);
   useEffect(() => {
     supabase.from("agencies").select("id,name").eq("active", true).order("name").then(({ data }) => setAgencies(data || []));
