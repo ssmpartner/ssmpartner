@@ -5,7 +5,7 @@ import { z } from "npm:zod@3";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 const FROM = "SSM Partner AG <noreply@ssmpartner.ch>";
 const BCC = "marketing@ssmpartner.ch";
-const HQ = { name: "Hauptsitz (HQ) Rothenburg", email: "info@ssmpartner.ch" };
+const HQ = { name: "Hauptsitz (HQ) Rothenburg", email: "marketing@ssmpartner.ch" };
 
 const Body = z.object({
   agency: z.string().min(1).max(64), // "hq" or agency uuid
@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     const errors: string[] = [];
     try {
       await send({
-        from: FROM, to: [target.email], bcc: [BCC], reply_to: d.email,
+        from: FROM, to: [target.email], bcc: target.email === BCC ? undefined : [BCC], reply_to: d.email,
         subject: `Neue Kontaktanfrage: ${d.subject} – ${d.name}`,
         html: wrap(`<h2>Neue Kontaktanfrage für ${esc(target.name)}</h2>
           <p><b>Name:</b> ${esc(d.name)}<br><b>E-Mail:</b> ${esc(d.email)}<br><b>Telefon:</b> ${esc(d.phone || "–")}<br><b>Anliegen:</b> ${esc(d.subject)}</p>
