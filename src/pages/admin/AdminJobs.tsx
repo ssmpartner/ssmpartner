@@ -7,7 +7,7 @@ import { toast } from "sonner";
 const AdminJobs = () => {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: "", location: "", workload: "", description_de: "", description_fr: "", description_it: "", description_en: "" });
+  const [form, setForm] = useState({ title: "", location: "", workload: "", description_de: "", description_fr: "", description_it: "", description_en: "", department: "auto" });
 
   const { data: jobs, isLoading } = useQuery({
     queryKey: ["admin-jobs"],
@@ -24,7 +24,7 @@ const AdminJobs = () => {
         const { error } = await supabase.from("job_positions").update({
           title: item.title, location: item.location, workload: item.workload,
           description_de: item.description_de, description_fr: item.description_fr,
-          description_it: item.description_it, description_en: item.description_en,
+          description_it: item.description_it, description_en: item.description_en, department: item.department,
         }).eq("id", item.id);
         if (error) throw error;
       } else {
@@ -37,7 +37,7 @@ const AdminJobs = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-jobs"] });
       setEditingId(null);
-      setForm({ title: "", location: "", workload: "", description_de: "", description_fr: "", description_it: "", description_en: "" });
+      setForm({ title: "", location: "", workload: "", description_de: "", description_fr: "", description_it: "", description_en: "", department: "auto" });
       toast.success("Gespeichert");
     },
     onError: (err: any) => toast.error(err.message),
@@ -64,7 +64,7 @@ const AdminJobs = () => {
 
   const startEdit = (j: any) => {
     setEditingId(j.id);
-    setForm({ title: j.title, location: j.location || "", workload: j.workload || "", description_de: j.description_de || "", description_fr: j.description_fr || "", description_it: j.description_it || "", description_en: j.description_en || "" });
+    setForm({ title: j.title, location: j.location || "", workload: j.workload || "", description_de: j.description_de || "", description_fr: j.description_fr || "", description_it: j.description_it || "", description_en: j.description_en || "", department: j.department || "auto" });
   };
 
   const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
@@ -73,7 +73,7 @@ const AdminJobs = () => {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-heading text-2xl font-semibold text-foreground">Offene Stellen</h1>
-        <button onClick={() => { setEditingId("new"); setForm({ title: "", location: "", workload: "", description_de: "", description_fr: "", description_it: "", description_en: "" }); }}
+        <button onClick={() => { setEditingId("new"); setForm({ title: "", location: "", workload: "", description_de: "", description_fr: "", description_it: "", description_en: "", department: "auto" }); }}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-4 py-2.5 rounded-lg hover:opacity-90">
           <Plus size={18} /> Stelle hinzufügen
         </button>
@@ -86,6 +86,11 @@ const AdminJobs = () => {
             <input placeholder="Standort" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} className={inputClass} />
             <input placeholder="Pensum (z.B. 80-100%)" value={form.workload} onChange={(e) => setForm({ ...form, workload: e.target.value })} className={inputClass} />
           </div>
+          <select value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} className={inputClass}>
+            <option value="auto">Bereich automatisch erkennen</option>
+            <option value="innendienst">Operations / Innendienst</option>
+            <option value="aussendienst">Aussendienst</option>
+          </select>
           <textarea placeholder="Beschreibung (DE)" value={form.description_de} onChange={(e) => setForm({ ...form, description_de: e.target.value })} rows={3} className={`${inputClass} resize-none`} />
           <textarea placeholder="Beschreibung (FR)" value={form.description_fr} onChange={(e) => setForm({ ...form, description_fr: e.target.value })} rows={3} className={`${inputClass} resize-none`} />
           <textarea placeholder="Beschreibung (IT)" value={form.description_it} onChange={(e) => setForm({ ...form, description_it: e.target.value })} rows={3} className={`${inputClass} resize-none`} />
@@ -110,7 +115,7 @@ const AdminJobs = () => {
             <div key={j.id} className="bg-card border rounded-xl p-4 flex items-center justify-between gap-4">
               <div className="flex-1 min-w-0 cursor-pointer" onClick={() => startEdit(j)}>
                 <h3 className="font-heading text-sm font-semibold text-foreground">{j.title}</h3>
-                <p className="font-body text-xs text-muted-foreground">{j.location} · {j.workload}</p>
+                <p className="font-body text-xs text-muted-foreground">{j.department === "aussendienst" ? "Aussendienst" : "Operations / Innendienst"} · {j.location} · {j.workload}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={() => toggleMutation.mutate({ id: j.id, active: !j.active })}

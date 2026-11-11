@@ -119,6 +119,29 @@ const Career = () => {
     },
   });
 
+  const [openJob, setOpenJob] = useState<string | null>(null);
+  const { data: jobs } = useQuery({
+    queryKey: ["career-jobs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("job_positions")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+  const deptLabel = (d: string | null) => d === "aussendienst"
+    ? ({ de: "Aussendienst", fr: "Service externe", it: "Servizio esterno", en: "Field sales" } as any)[lang]
+    : ({ de: "Operations / Innendienst", fr: "Opérations / Service interne", it: "Operations / Servizio interno", en: "Operations / Back office" } as any)[lang];
+  const jobsTx = ({
+    de: { kicker: "Offene Stellen", title: "Aktuelle Jobs bei SSM", apply: "Jetzt bewerben", more: "Details" },
+    fr: { kicker: "Postes ouverts", title: "Offres d'emploi chez SSM", apply: "Postuler", more: "Détails" },
+    it: { kicker: "Posizioni aperte", title: "Offerte di lavoro da SSM", apply: "Candidati ora", more: "Dettagli" },
+    en: { kicker: "Open positions", title: "Current jobs at SSM", apply: "Apply now", more: "Details" },
+  } as any)[lang] || {};
+
   const { data: faqs } = useQuery({
     queryKey: ["career-faqs"],
     queryFn: async () => {
@@ -318,6 +341,42 @@ const Career = () => {
           </p>
         </div>
       </div>
+
+      {/* ── Offene Stellen ── */}
+      {!!jobs?.length && (
+        <section id="offene-stellen" className="py-20 lg:py-28">
+          <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
+            <p className="font-body text-sm font-medium text-primary uppercase tracking-wider">{jobsTx.kicker}</p>
+            <h2 className="font-heading text-3xl lg:text-4xl font-semibold text-foreground mt-2 mb-10">{jobsTx.title}</h2>
+            <div className="space-y-4">
+              {jobs.map((j: any) => {
+                const desc = localized(j, "description");
+                const open = openJob === j.id;
+                return (
+                  <div key={j.id} className="bg-card rounded-2xl shadow-lg border overflow-hidden">
+                    <button onClick={() => setOpenJob(open ? null : j.id)} className="w-full text-left p-6 flex items-start justify-between gap-4">
+                      <div>
+                        <span className="inline-block font-body text-xs font-medium px-3 py-1 rounded-full bg-secondary text-secondary-foreground mb-2">{deptLabel(j.department)}</span>
+                        <h3 className="font-heading text-lg font-semibold text-foreground">{j.title}</h3>
+                        <p className="font-body text-sm text-muted-foreground mt-1">{[j.location, j.workload].filter(Boolean).join(" · ")}</p>
+                      </div>
+                      <ChevronDown size={20} className={`text-muted-foreground mt-1 transition-transform ${open ? "rotate-180" : ""}`} />
+                    </button>
+                    {open && (
+                      <div className="px-6 pb-6">
+                        {desc && <div className="font-body text-sm text-muted-foreground whitespace-pre-line mb-5">{desc}</div>}
+                        <button onClick={() => setShowApply(true)} className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm font-medium px-5 py-2.5 rounded-full hover:opacity-90">
+                          {jobsTx.apply} <ArrowRight size={16} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Ansprechpartner ── */}
       {recruitingPartner && (
