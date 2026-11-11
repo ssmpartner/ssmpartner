@@ -8,6 +8,13 @@
       "when": 1791450100797,
       "tag": "0000_trash_bin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794393269888,
+      "tag": "0001_job_department",
+      "breakpoints": true
     }
   ]
 }
