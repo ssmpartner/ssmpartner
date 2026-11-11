@@ -49,7 +49,11 @@ const ContactMap = () => {
 };
 
 const Contact = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [agencies, setAgencies] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    supabase.from("agencies").select("id,name").eq("active", true).order("name").then(({ data }) => setAgencies(data || []));
+  }, []);
   const { cmsTitle, cmsBody } = useCmsContent("contact");
   const social = useSocialLinks();
   const [errors, setErrors] = useState<Record<string, boolean>>({});
@@ -62,6 +66,7 @@ const Contact = () => {
     const data = new FormData(form);
     const newErrors: Record<string, boolean> = {};
 
+    if (!data.get("agency")) newErrors.agency = true;
     if (!data.get("name")) newErrors.name = true;
     if (!data.get("email")) newErrors.email = true;
     if (!data.get("subject")) newErrors.subject = true;
@@ -75,15 +80,16 @@ const Contact = () => {
     setErrors({});
     setSending(true);
     try {
-      const { error } = await supabase.from("inquiries").insert({
-        source: "contact",
+      const { data: res, error } = await supabase.functions.invoke("contact-submit", { body: {
+        agency: data.get("agency") as string,
+        lang: language,
         name: data.get("name") as string,
         email: data.get("email") as string,
         phone: (data.get("phone") as string) || null,
         subject: data.get("subject") as string,
         message: data.get("message") as string,
-      });
-      if (error) throw error;
+      } });
+      if (error || !res?.ok) throw error || new Error("failed");
       setSubmitted(true);
       toast.success(t("contact.toast.success"));
     } catch {
@@ -114,6 +120,17 @@ const Contact = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="mt-12 space-y-5" noValidate>
+                <div>
+                  <select name="agency" defaultValue="" className={`${inputClass("agency")} appearance-none`}>
+                    <option value="" disabled>{t("contact.form.agency")} *</option>
+                    <option value="hq">{t("contact.form.agency.hq")}</option>
+                    {agencies.map((a) => (
+                      <option key={a.id} value={a.id}>{t("contact.form.agency.prefix")} {a.name}</option>
+                    ))}
+                  </select>
+                  {errors.agency && <span className="font-body text-xs text-destructive mt-1 block">{t("contact.form.required")}</span>}
+                </div>
+
                 <div>
                   <input name="name" type="text" placeholder={t("contact.form.name")} className={inputClass("name")} />
                   {errors.name && <span className="font-body text-xs text-destructive mt-1 block">{t("contact.form.required")}</span>}

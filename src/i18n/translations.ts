@@ -14,6 +14,9 @@ export const translations: Record<string, Record<Language, string>> = {
   "nav.subtext.2": { de: "Gebundener Vermittler gemäss VAG.", fr: "Intermédiaire lié selon la LSA.", it: "Intermediario vincolato secondo la LSA.", en: "Tied intermediary under the ISA." },
 
   // Home - Overlap CTA bar
+  "contact.form.agency": { de: "Generalagentur wählen", fr: "Choisir l'agence générale", it: "Scegliere l'agenzia generale", en: "Select general agency" },
+  "contact.form.agency.hq": { de: "Hauptsitz (HQ) Rothenburg", fr: "Siège principal (HQ) Rothenburg", it: "Sede principale (HQ) Rothenburg", en: "Headquarters (HQ) Rothenburg" },
+  "contact.form.agency.prefix": { de: "Agentur", fr: "Agence", it: "Agenzia", en: "Agency" },
   "home.overlap.cta": { de: "Jetzt Kontakt aufnehmen", fr: "Nous contacter", it: "Contattaci ora", en: "Contact us now" },
 
   // Home - Quickstart cards (slider tiles)
