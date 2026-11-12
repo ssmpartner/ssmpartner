@@ -70,7 +70,10 @@ const AnalyticsTracker = () => {
   return null;
 };
 
-const queryClient = new QueryClient();
+// Cache CMS reads so each visitor doesn't re-query the database on every navigation/focus.
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: 5 * 60 * 1000, gcTime: 30 * 60 * 1000, refetchOnWindowFocus: false, retry: 2, retryDelay: (n) => Math.min(1000 * 2 ** n, 8000) } },
+});
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
   <>

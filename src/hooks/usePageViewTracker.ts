@@ -28,6 +28,15 @@ export function usePageViewTracker() {
       return;
     }
 
+    // Skip bots/crawlers and repeat views of the same page in the same visit (pure statistics, keep DB writes low)
+    if (/bot|crawl|spider|slurp|lighthouse|headless|preview/i.test(navigator.userAgent)) return;
+    const key = `ssm_pv:${pathname}`;
+    try {
+      const last = Number(sessionStorage.getItem(key) || 0);
+      if (Date.now() - last < 30 * 60 * 1000) return;
+      sessionStorage.setItem(key, String(Date.now()));
+    } catch { /* ignore */ }
+
     const payload = {
       path: pathname + (search || ""),
       referrer: document.referrer || null,
@@ -35,6 +44,10 @@ export function usePageViewTracker() {
       session_id: getSessionId(),
     };
 
-    supabase.from("page_views").insert(payload).then(() => {});
+    // Send when the browser is idle so it never competes with loading the page content
+    const send = () => { supabase.from("page_views").insert(payload).then(() => {}); };
+    const w = window as any;
+    const h = w.requestIdleCallback ? w.requestIdleCallback(send, { timeout: 5000 }) : setTimeout(send, 2000);
+    return () => { w.cancelIdleCallback ? w.cancelIdleCallback(h) : clearTimeout(h); };
   }, [pathname, search]);
 }
