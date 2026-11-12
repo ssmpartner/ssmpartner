@@ -11,7 +11,7 @@ import {
   Share2, Activity, AlertCircle,
   KeySquare,
 } from "lucide-react";
-import { BarChart3, Search } from "lucide-react";
+import { BarChart3, Search, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import {
@@ -38,6 +38,7 @@ const adminLinks = [
   { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/news", label: "News & Kommunikation", icon: Newspaper },
   { to: "/admin/events", label: "Events", icon: Calendar },
+  { to: "/admin/starterbrief", label: "Starterbrief", icon: BookOpen },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
