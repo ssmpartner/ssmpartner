@@ -30,7 +30,11 @@ export const PdfFlipbook = ({ url, title }: { url: string; title?: string }) => 
     setPages([]); setError(null); setProgress(0);
     (async () => {
       try {
-        const doc = await pdfjs.getDocument(url).promise;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(res.status === 429 ? "Zu viele Anfragen – bitte in einer Minute neu laden." : `PDF konnte nicht geladen werden (${res.status})`);
+        const buf = await res.arrayBuffer();
+        if (cancelled) return;
+        const doc = await pdfjs.getDocument({ data: buf }).promise;
         const out: string[] = [];
         for (let i = 1; i <= doc.numPages; i++) {
           const p = await doc.getPage(i);
