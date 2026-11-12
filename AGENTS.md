@@ -1,0 +1,1 @@
+- CMS write access in RLS goes through public.is_cms_editor(uid) (role allow-list); update that function, not individual policies, when editor roles change.
