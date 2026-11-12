@@ -29,21 +29,40 @@ const AdminStarterbrief = () => {
   });
   const refresh = () => { qc.invalidateQueries({ queryKey: ["admin-starterbrief"] }); qc.invalidateQueries({ queryKey: ["starterbrief-editions"] }); };
 
-  const upload = async () => {
-    if (!file || !title.trim()) return toast.error("Titel und PDF sind erforderlich");
-    if (file.type !== "application/pdf") return toast.error("Bitte eine PDF-Datei wählen");
-    setUploading(true);
+  const [progress, setProgress] = useState(0);
+  const [done, setDone] = useState<string | null>(null);
+
+  const xhrUpload = (path: string, f: File, token: string) => new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/starterbrief/${path}`);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.setRequestHeader("apikey", import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+    xhr.setRequestHeader("Content-Type", "application/pdf");
+    xhr.upload.onprogress = e => e.lengthComputable && setProgress(Math.round((e.loaded / e.total) * 100));
+    xhr.onload = () => xhr.status < 300 ? resolve() : reject(new Error(`Upload fehlgeschlagen (${xhr.status}): ${xhr.responseText}`));
+    xhr.onerror = () => reject(new Error("Netzwerkfehler beim Upload"));
+    xhr.send(f);
+  });
+
+  const upload = async (f: File | null = file) => {
+    if (!f) return toast.error("Bitte zuerst ein PDF wählen");
+    if (f.type !== "application/pdf" && !f.name.toLowerCase().endsWith(".pdf")) return toast.error("Bitte eine PDF-Datei wählen");
+    const t = title.trim() || f.name.replace(/\.pdf$/i, "");
+    setUploading(true); setProgress(0); setDone(null);
     try {
-      const path = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
-      const { error: upErr } = await supabase.storage.from("starterbrief").upload(path, file, { contentType: "application/pdf" });
-      if (upErr) throw upErr;
-      const { data: u } = await supabase.auth.getUser();
-      const { error } = await supabase.from("starterbrief_editions").insert({ title, description: description || null, pdf_url: path, created_by: u.user?.id });
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
+      if (!token) throw new Error("Nicht angemeldet");
+      const path = `${Date.now()}-${f.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+      await xhrUpload(path, f, token);
+      const { error } = await supabase.from("starterbrief_editions").insert({ title: t, description: description || null, pdf_url: path, created_by: sess.session?.user.id });
       if (error) throw error;
-      toast.success("Ausgabe hochgeladen (noch nicht publiziert)");
-      setTitle(""); setDescription(""); setFile(null); refresh();
+      toast.success(`«${t}» hochgeladen – jetzt unten publizieren`);
+      setDone(t); setTitle(""); setDescription(""); setFile(null); refresh();
     } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }
   };
+
+  const pick = (f: File | null) => { setFile(f); setDone(null); if (f) upload(f); };
 
   const setPublished = useMutation({
     mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
@@ -73,17 +92,25 @@ const AdminStarterbrief = () => {
 
       <div className="rounded-2xl border bg-card p-6 shadow-sm space-y-4">
         <h2 className="font-semibold">Neue Ausgabe</h2>
-        <Input placeholder="Titel, z.B. Starterbrief 2026" value={title} onChange={e => setTitle(e.target.value)} />
+        <Input placeholder="Titel (optional, sonst Dateiname), z.B. Starterbrief 2026" value={title} onChange={e => setTitle(e.target.value)} />
         <Textarea placeholder="Kurzbeschreibung (optional)" value={description} onChange={e => setDescription(e.target.value)} />
         <label
           onDragOver={e => e.preventDefault()}
-          onDrop={e => { e.preventDefault(); setFile(e.dataTransfer.files?.[0] || null); }}
+          onDrop={e => { e.preventDefault(); pick(e.dataTransfer.files?.[0] || null); }}
           className="flex flex-col items-center justify-center gap-2 border-2 border-dashed rounded-2xl p-8 cursor-pointer hover:bg-muted/50">
           <Upload className="h-6 w-6 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">{file ? file.name : "PDF hierher ziehen oder klicken"}</span>
-          <input type="file" accept="application/pdf" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+          <span className="text-sm text-muted-foreground">{uploading ? `Wird hochgeladen: ${file?.name}` : "PDF hierher ziehen oder klicken – der Upload startet sofort"}</span>
+          <input type="file" accept="application/pdf" className="hidden" onChange={e => { pick(e.target.files?.[0] || null); e.target.value = ""; }} disabled={uploading} />
         </label>
-        <Button onClick={upload} disabled={uploading}>{uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}Hochladen</Button>
+        {uploading && (
+          <div className="space-y-1">
+            <div className="h-2 w-full rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${progress}%` }} /></div>
+            <p className="text-xs text-muted-foreground flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" />{progress < 100 ? `${progress}% hochgeladen` : "Wird gespeichert …"}</p>
+          </div>
+        )}
+        {done && !uploading && (
+          <p className="text-sm text-primary flex items-center gap-2"><CheckCircle2 className="h-4 w-4" />«{done}» wurde hochgeladen. Klicken Sie unten auf «Publizieren», damit es im Portal erscheint.</p>
+        )}
       </div>
 
       <div className="rounded-2xl border bg-card shadow-sm divide-y">
