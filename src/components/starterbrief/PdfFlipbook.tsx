@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState, forwardRef } from "react";
 import HTMLFlipBook from "react-pageflip";
 import * as pdfjs from "pdfjs-dist";
-import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { ChevronLeft, ChevronRight, Maximize2, Minimize2, Download, ZoomIn, ZoomOut, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 
 const Page = forwardRef<HTMLDivElement, { src: string; n: number }>(({ src, n }, ref) => (
   <div ref={ref} className="bg-card shadow-inner">
