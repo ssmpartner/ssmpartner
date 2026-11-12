@@ -50,6 +50,13 @@
       "when": 1794493329251,
       "tag": "0006_starterbrief_is_public",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794493536366,
+      "tag": "0007_restrict_cms_writes_to_editors",
+      "breakpoints": true
     }
   ]
 }
