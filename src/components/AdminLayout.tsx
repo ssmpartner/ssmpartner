@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { BookOpen, Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,6 +38,7 @@ const adminLinks = [
   { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/news", label: "News & Kommunikation", icon: Newspaper },
   { to: "/admin/events", label: "Events", icon: Calendar },
+  { to: "/admin/starterbrief", label: "Starterbrief", icon: BookOpen },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },

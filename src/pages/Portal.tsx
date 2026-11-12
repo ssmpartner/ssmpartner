@@ -246,6 +246,15 @@ const Portal = () => {
             </p>
           </div>
 
+          <Link to="/portal/starterbrief" className="group mb-8 flex items-center gap-4 rounded-2xl border bg-card p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all">
+            <div className="h-12 w-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center"><BookOpen className="h-6 w-6" /></div>
+            <div className="flex-1 text-left">
+              <p className="font-semibold text-foreground">SSM Academy Starterbrief</p>
+              <p className="text-sm text-muted-foreground font-body">Aktuelle Ausgabe als Magazin durchblättern</p>
+            </div>
+            <ArrowRight className="h-5 w-5 text-primary group-hover:translate-x-1 transition-transform" />
+          </Link>
+
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
