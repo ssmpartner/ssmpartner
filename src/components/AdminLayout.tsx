@@ -11,7 +11,7 @@ import {
   Share2, Activity, AlertCircle,
   KeySquare,
 } from "lucide-react";
-import { BarChart3, Search } from "lucide-react";
+import { BarChart3, Search, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import {
