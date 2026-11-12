@@ -73,6 +73,11 @@ const AdminStarterbrief = () => {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const setPublic = async (id: string, value: boolean) => {
+    const { error } = await supabase.from("starterbrief_editions").update({ is_public: value } as any).eq("id", id);
+    if (error) toast.error(error.message); else { toast.success(value ? "Öffentlich sichtbar (ohne Anmeldung)" : "Nur für angemeldete Benutzer"); refresh(); }
+  };
+
   const remove = async () => {
     const { error } = await supabase.from("starterbrief_editions").delete().eq("id", toDelete.id);
     if (error) toast.error(error.message); else { toast.success("In den Papierkorb verschoben"); refresh(); }
@@ -123,6 +128,10 @@ const AdminStarterbrief = () => {
                   {e.is_published ? <span className="text-xs px-2 py-0.5 rounded-full bg-primary text-primary-foreground">Publiziert</span>
                     : <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Archiv</span>}
                 </p>
+                <label className="flex items-center gap-2 text-xs text-muted-foreground mt-1 cursor-pointer">
+                  <input type="checkbox" className="accent-primary" checked={(e as any).is_public !== false} onChange={ev => setPublic(e.id, ev.target.checked)} />
+                  Öffentlich (ohne Anmeldung sichtbar){(e as any).is_public === false ? " – aktuell nur für angemeldete Benutzer" : ""}
+                </label>
                 <p className="text-xs text-muted-foreground">Erstellt {new Date(e.created_at).toLocaleDateString("de-CH")}</p>
               </div>
               <div className="flex gap-2">
