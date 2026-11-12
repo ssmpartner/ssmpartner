@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public reads published starterbrief file" ON storage.objects;

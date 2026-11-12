@@ -28,8 +28,10 @@ const PortalStarterbrief = () => {
   const active = editions.find(e => e.id === selected) || editions.find(e => e.is_published);
   useEffect(() => {
     setUrl(null);
-    if (active) signedStarterbriefUrl(active.pdf_url).then(setUrl).catch(() => setUrl(null));
-  }, [active?.id]);
+    if (!active) return;
+    if (user) signedStarterbriefUrl(active.pdf_url).then(setUrl).catch(() => setUrl(null));
+    else supabase.functions.invoke("starterbrief-public").then(({ data }) => setUrl(data?.url ?? null));
+  }, [active?.id, user?.id]);
 
   if (loading) return null;
   const archive = !user ? [] : editions.filter(e => e.id !== active?.id && (e.is_published || e.published_at));
