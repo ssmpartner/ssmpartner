@@ -71,6 +71,13 @@
       "when": 1794493654670,
       "tag": "0009_scope_starterbrief_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1794493794623,
+      "tag": "0010_restrict_cms_writes_more_tables",
+      "breakpoints": true
     }
   ]
 }
