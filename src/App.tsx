@@ -28,6 +28,8 @@ import AdminNav from "./pages/admin/AdminNav";
 import AdminHeroes from "./pages/admin/AdminHeroes";
 import AdminInquiries from "./pages/admin/AdminInquiries";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminAccountSettings from "./pages/admin/AdminAccountSettings";
+import AdminTrash from "./pages/admin/AdminTrash";
 import AdminApiDocs from "./pages/admin/AdminApiDocs";
 import AdminDocs from "./pages/admin/AdminDocs";
 import AdminCareerVideos from "./pages/admin/AdminCareerVideos";
@@ -121,6 +123,8 @@ const App = () => (
                 <Route path="/admin/media" element={<AdminMediaLibrary />} />
                 <Route path="/admin/inquiries" element={<AdminInquiries />} />
                 <Route path="/admin/settings" element={<AdminSettings />} />
+                <Route path="/admin/settings/account" element={<AdminAccountSettings />} />
+                <Route path="/admin/settings/trash" element={<AdminTrash />} />
                 <Route path="/admin/api-docs" element={<AdminApiDocs />} />
                 <Route path="/admin/docs" element={<AdminDocs />} />
                 <Route path="/admin/chat-knowledge" element={<AdminChatKnowledge />} />
