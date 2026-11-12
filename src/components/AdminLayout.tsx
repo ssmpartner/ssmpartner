@@ -34,23 +34,20 @@ const adminLinks = [
   { to: "/admin/career-videos", label: "Karriere-Videos", icon: Video },
   { to: "/admin/career-faqs", label: "Karriere-FAQ", icon: HelpCircle },
   { to: "/admin/media", label: "Mediathek", icon: FolderOpen },
-  { to: "/admin/chat-knowledge", label: "KI-Chat Wissen", icon: Bot },
   { to: "/admin/chat-logs", label: "Chat-Verläufe", icon: MessagesSquare },
   { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/news", label: "News & Kommunikation", icon: Newspaper },
   { to: "/admin/events", label: "Events", icon: Calendar },
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
-  { to: "/admin/social-links", label: "Social Media", icon: Share2 },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/admin/seo", label: "SEO Optimierung", icon: Search },
-  { to: "/admin/gsc-monitor", label: "Search Console", icon: Activity },
 ];
+
+const settingsSubPaths = ["/admin/settings", "/admin/users", "/admin/entra-sso", "/admin/gsc-monitor", "/admin/chat-knowledge", "/admin/social-links"];
 
 const bottomLinks = [
   { to: "/admin/settings", label: "Einstellungen", icon: Settings },
-  { to: "/admin/users", label: "Benutzer", icon: UserCog },
-  { to: "/admin/entra-sso", label: "Microsoft SSO", icon: KeySquare },
   { to: "/admin/api-docs", label: "API-Docs", icon: Code2 },
   { to: "/admin/docs", label: "Dokumentation", icon: Book },
 ];
@@ -162,7 +159,7 @@ const AdminLayout = () => {
                 to={link.to}
                 icon={link.icon}
                 label={link.label}
-                isActive={location.pathname.startsWith(link.to)}
+                isActive={link.to === "/admin/settings" ? settingsSubPaths.some((p) => location.pathname.startsWith(p)) : location.pathname.startsWith(link.to)}
                 collapsed={collapsed}
               />
             ))}
@@ -285,6 +282,11 @@ const AdminLayout = () => {
                 <span className="text-xs underline">Details ansehen</span>
               </Link>
             )}
+            {settingsSubPaths.slice(1).some((p) => location.pathname.startsWith(p)) || location.pathname.startsWith("/admin/settings/") ? (
+              <Link to="/admin/settings" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                ← Zurück zu Einstellungen
+              </Link>
+            ) : null}
             <Outlet />
           </main>
         </div>

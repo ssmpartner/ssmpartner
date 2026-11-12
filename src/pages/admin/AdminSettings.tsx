@@ -1,84 +1,36 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { Save, Key, Shield } from "lucide-react";
-import { toast } from "sonner";
-import TrashBin from "@/components/admin/TrashBin";
+import { Shield, UserCog, KeySquare, Activity, Bot, Share2, Trash2, ChevronRight } from "lucide-react";
 
 const AdminSettings = () => {
-  const { user, isSuperadmin } = useAuth();
-  const [currentPw, setCurrentPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const handlePasswordChange = async () => {
-    if (!newPw || newPw.length < 6) {
-      toast.error("Passwort muss mindestens 6 Zeichen lang sein");
-      return;
-    }
-    setSaving(true);
-    const { error } = await supabase.auth.updateUser({ password: newPw });
-    setSaving(false);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success("Passwort geändert");
-      setCurrentPw("");
-      setNewPw("");
-    }
-  };
-
-  const inputClass = "w-full bg-background border border-border px-3 py-2 font-body text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-ring";
-
+  const { isSuperadmin } = useAuth();
+  const tiles = [
+    { to: "/admin/settings/account", label: "Konto & Passwort", desc: "Kontodaten und Passwort ändern", icon: Shield },
+    { to: "/admin/users", label: "Benutzer", desc: "Benutzer und Rollen verwalten", icon: UserCog },
+    { to: "/admin/entra-sso", label: "Microsoft SSO", desc: "Anmeldung mit Microsoft Entra ID", icon: KeySquare },
+    { to: "/admin/gsc-monitor", label: "Search Console", desc: "Indexierung und Crawling überwachen", icon: Activity },
+    { to: "/admin/chat-knowledge", label: "KI-Chat Wissen", desc: "Wissensbasis des KI-Chats pflegen", icon: Bot },
+    { to: "/admin/social-links", label: "Social Media", desc: "Links zu Social-Media-Kanälen", icon: Share2 },
+    ...(isSuperadmin ? [{ to: "/admin/settings/trash", label: "Papierkorb", desc: "Gelöschte Einträge wiederherstellen", icon: Trash2 }] : []),
+  ];
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-5xl">
       <h1 className="font-heading text-2xl font-semibold text-foreground mb-1">Einstellungen</h1>
-      <p className="font-body text-sm text-muted-foreground mb-8">Konto- und Sicherheitseinstellungen.</p>
-
-      {/* Account Info */}
-      <div className="bg-card border rounded-xl p-6 mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Shield size={20} className="text-primary" />
-          <h2 className="font-heading text-lg font-semibold text-foreground">Konto</h2>
-        </div>
-        <div className="space-y-3">
-          <div>
-            <label className="font-body text-xs text-muted-foreground">E-Mail</label>
-            <p className="font-body text-sm text-foreground">{user?.email}</p>
-          </div>
-          <div>
-            <label className="font-body text-xs text-muted-foreground">Benutzer-ID</label>
-            <p className="font-body text-xs text-muted-foreground font-mono bg-muted px-2 py-1 rounded inline-block">{user?.id}</p>
-          </div>
-        </div>
+      <p className="font-body text-sm text-muted-foreground mb-8">Wählen Sie einen Bereich.</p>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {tiles.map(({ to, label, desc, icon: Icon }) => (
+          <Link key={to} to={to} className="group bg-card border rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/40 transition-all flex items-start gap-4">
+            <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <Icon size={20} />
+            </div>
+            <div className="flex-1">
+              <h2 className="font-heading text-base font-semibold text-foreground">{label}</h2>
+              <p className="font-body text-sm text-muted-foreground mt-1">{desc}</p>
+            </div>
+            <ChevronRight size={18} className="text-muted-foreground group-hover:translate-x-0.5 transition-transform mt-1" />
+          </Link>
+        ))}
       </div>
-
-      {/* Password Change */}
-      <div className="bg-card border rounded-xl p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <Key size={20} className="text-primary" />
-          <h2 className="font-heading text-lg font-semibold text-foreground">Passwort ändern</h2>
-        </div>
-        <div className="space-y-3">
-          <input
-            type="password"
-            placeholder="Neues Passwort"
-            value={newPw}
-            onChange={(e) => setNewPw(e.target.value)}
-            className={inputClass}
-          />
-          <button
-            onClick={handlePasswordChange}
-            disabled={saving}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-body text-sm px-4 py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
-          >
-            <Save size={16} />
-            {saving ? "Speichern..." : "Passwort speichern"}
-          </button>
-        </div>
-      </div>
-
-      {isSuperadmin && <TrashBin />}
     </div>
   );
 };
