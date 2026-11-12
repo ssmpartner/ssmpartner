@@ -1380,6 +1380,7 @@ export type Database = {
           created_by: string | null
           description: string | null
           id: string
+          is_public: boolean
           is_published: boolean
           pdf_url: string
           published_at: string | null
@@ -1391,6 +1392,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean
           is_published?: boolean
           pdf_url: string
           published_at?: string | null
@@ -1402,6 +1404,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           id?: string
+          is_public?: boolean
           is_published?: boolean
           pdf_url?: string
           published_at?: string | null

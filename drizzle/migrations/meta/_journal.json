@@ -43,6 +43,13 @@
       "when": 1794493031217,
       "tag": "0005_starterbrief_drop_anon_storage",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794493329251,
+      "tag": "0006_starterbrief_is_public",
+      "breakpoints": true
     }
   ]
 }
