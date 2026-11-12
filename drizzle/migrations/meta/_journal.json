@@ -64,6 +64,13 @@
       "when": 1794493574727,
       "tag": "0008_scope_news_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794493654670,
+      "tag": "0009_scope_starterbrief_reads",
+      "breakpoints": true
     }
   ]
 }
