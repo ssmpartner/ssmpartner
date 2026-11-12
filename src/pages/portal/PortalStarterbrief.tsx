@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { toast } from "sonner";
+import { Share2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,8 +15,8 @@ const PortalStarterbrief = () => {
   const [url, setUrl] = useState<string | null>(null);
 
   const { data: editions = [], isLoading } = useQuery({
-    queryKey: ["starterbrief-editions"],
-    enabled: !!user,
+    queryKey: ["starterbrief-editions", !!user],
+    enabled: !loading,
     queryFn: async () => {
       const { data, error } = await supabase.from("starterbrief_editions").select("*")
         .order("is_published", { ascending: false }).order("created_at", { ascending: false });
@@ -30,13 +32,15 @@ const PortalStarterbrief = () => {
   }, [active?.id]);
 
   if (loading) return null;
-  if (!user) return <Navigate to="/login" replace />;
-  const archive = editions.filter(e => e.id !== active?.id && (e.is_published || e.published_at));
+  const archive = !user ? [] : editions.filter(e => e.id !== active?.id && (e.is_published || e.published_at));
 
   return (
     <div className="min-h-screen bg-background px-4 md:px-8 py-10">
       <div className="max-w-7xl mx-auto">
-        <Link to="/portal" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mb-6"><ArrowLeft className="h-4 w-4" /> Zurück zum Portal</Link>
+        <div className="flex items-center justify-between mb-6">
+          {user ? <Link to="/portal" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"><ArrowLeft className="h-4 w-4" /> Zurück zum Portal</Link> : <span />}
+          <button onClick={() => { navigator.clipboard.writeText("https://ssmpartner.ch/portal/starterbrief"); toast.success("Öffentlicher Link kopiert"); }} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"><Share2 className="h-4 w-4" /> Link teilen</button>
+        </div>
         <div className="flex items-center gap-3 mb-2">
           <BookOpen className="h-7 w-7 text-primary" />
           <h1 className="text-3xl font-semibold text-foreground">SSM Academy Starterbrief</h1>

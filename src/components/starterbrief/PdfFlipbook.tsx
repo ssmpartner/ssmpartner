@@ -52,11 +52,14 @@ export const PdfFlipbook = ({ url, title }: { url: string; title?: string }) => 
 
   useEffect(() => {
     const el = wrap.current; if (!el) return;
-    const ro = new ResizeObserver(() => setWidth(el.clientWidth));
-    ro.observe(el); setWidth(el.clientWidth);
+    let t: any;
+    const measure = () => { clearTimeout(t); t = setTimeout(() => setWidth(w => Math.abs(w - el.clientWidth) > 40 ? el.clientWidth : w), 200); };
+    setWidth(el.clientWidth);
+    window.addEventListener("resize", measure);
+    document.addEventListener("fullscreenchange", measure);
     const onFs = () => setFs(!!document.fullscreenElement);
     document.addEventListener("fullscreenchange", onFs);
-    return () => { ro.disconnect(); document.removeEventListener("fullscreenchange", onFs); };
+    return () => { clearTimeout(t); window.removeEventListener("resize", measure); document.removeEventListener("fullscreenchange", measure); document.removeEventListener("fullscreenchange", onFs); };
   }, []);
 
   useEffect(() => {
@@ -70,14 +73,15 @@ export const PdfFlipbook = ({ url, title }: { url: string; title?: string }) => 
   const mobile = width < 768;
   const avail = (width - 32) * zoom;
   let pw = Math.floor(mobile ? avail : avail / 2);
-  const maxH = (fs ? window.innerHeight - 120 : window.innerHeight * 0.75) * zoom;
+  const [vh] = useState(() => window.innerHeight);
+  const maxH = (fs ? screen.height - 120 : vh * 0.75) * zoom;
   if (pw * ratio > maxH) pw = Math.floor(maxH / ratio);
   const ph = Math.floor(pw * ratio);
 
   const toggleFs = () => fs ? document.exitFullscreen() : wrap.current?.requestFullscreen();
 
   return (
-    <div ref={wrap} className="relative w-full bg-muted rounded-2xl p-4 overflow-auto">
+    <div ref={wrap} className={`relative w-full bg-muted rounded-2xl p-4 ${zoom > 1 ? "overflow-auto" : "overflow-hidden"}`}>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <span className="text-sm text-muted-foreground font-body">
           {pages.length ? `Seite ${current + 1} / ${pages.length}` : title}
@@ -99,7 +103,7 @@ export const PdfFlipbook = ({ url, title }: { url: string; title?: string }) => 
         ) : (
           <div className="flex justify-center">
             {/* @ts-ignore – lib typings require many optional props */}
-            <HTMLFlipBook key={`${pw}-${mobile}`} ref={book} width={pw} height={ph} size="fixed"
+            <HTMLFlipBook key={`${pw}-${mobile}`} startPage={current} flippingTime={700} useMouseEvents clickEventForward={false} swipeDistance={30} drawShadow ref={book} width={pw} height={ph} size="fixed"
               showCover={!mobile} usePortrait={mobile} mobileScrollSupport maxShadowOpacity={0.5}
               onFlip={(e: any) => setCurrent(e.data)} className="shadow-2xl">
               {pages.map((src, i) => <Page key={i} src={src} n={i + 1} />)}
