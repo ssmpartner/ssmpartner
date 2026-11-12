@@ -22,6 +22,27 @@
       "when": 1794492475097,
       "tag": "0002_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794492856433,
+      "tag": "0003_starterbrief_public",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794492954378,
+      "tag": "0004_starterbrief_public_fn",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794493031217,
+      "tag": "0005_starterbrief_drop_anon_storage",
+      "breakpoints": true
     }
   ]
 }

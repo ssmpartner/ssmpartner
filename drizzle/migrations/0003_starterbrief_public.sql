@@ -1,0 +1,3 @@
+GRANT SELECT ON public.starterbrief_editions TO anon;
+CREATE POLICY "Public reads published edition" ON public.starterbrief_editions FOR SELECT TO anon USING (is_published);
+CREATE POLICY "Public reads published starterbrief file" ON storage.objects FOR SELECT TO anon USING (bucket_id = 'starterbrief' AND EXISTS (SELECT 1 FROM public.starterbrief_editions e WHERE e.is_published AND e.pdf_url = storage.objects.name));

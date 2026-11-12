@@ -1648,6 +1648,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_published_starterbrief: { Args: { _name: string }; Returns: boolean }
       restore_deleted_record: { Args: { _id: string }; Returns: undefined }
     }
     Enums: {
