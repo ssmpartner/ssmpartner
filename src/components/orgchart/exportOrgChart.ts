@@ -5,14 +5,23 @@ import jsPDF from "jspdf";
 const PAGE_BG = "#e9ecea";
 const A4_RATIO = 297 / 210;
 
+function measuredBounds(nodes: Node[]) {
+  const withSize = nodes.map((n) => {
+    const el = document.querySelector<HTMLElement>(`.react-flow__node[data-id="${n.id}"]`);
+    return { ...n, measured: { width: el?.offsetWidth ?? n.measured?.width ?? 224, height: el?.offsetHeight ?? n.measured?.height ?? 60 } };
+  });
+  return getNodesBounds(withSize);
+}
+
 async function render(nodes: Node[], landscape: boolean) {
-  const bounds = getNodesBounds(nodes);
+  const bounds = measuredBounds(nodes);
   const pad = 60;
   const ratio = landscape ? A4_RATIO : 1 / A4_RATIO;
   let w = Math.ceil(bounds.width + pad * 2), h = Math.ceil(bounds.height + pad * 2);
   if (w / h > ratio) h = Math.ceil(w / ratio); else w = Math.ceil(h * ratio);
   w = Math.max(w, 1100); h = Math.round(w / ratio);
-  const vp = getViewportForBounds(bounds, w, h, 0.05, 4, 0.06);
+  const padded = { x: bounds.x - pad, y: bounds.y - pad, width: bounds.width + pad * 2, height: bounds.height + pad * 2 };
+  const vp = getViewportForBounds(padded, w, h, 0.05, 4, 0);
   const el = document.querySelector(".react-flow__viewport") as HTMLElement;
 
   // Inline edge styles so html-to-image renders the SVG connection lines
@@ -38,7 +47,7 @@ async function render(nodes: Node[], landscape: boolean) {
 }
 
 const safe = (s: string) => s.replace(/[^\w\-äöüÄÖÜ ]+/g, "").trim().replace(/\s+/g, "_") || "Organigramm";
-const isLandscape = (nodes: Node[]) => { const b = getNodesBounds(nodes); return b.width >= b.height; };
+const isLandscape = (nodes: Node[]) => { const b = measuredBounds(nodes); return b.width >= b.height; };
 
 export async function exportPng(nodes: Node[], title: string) {
   const { dataUrl } = await render(nodes, isLandscape(nodes));
