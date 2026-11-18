@@ -44,11 +44,11 @@ const PortalOrgChart = () => {
         {isLoading ? <Loader2 className="h-6 w-6 animate-spin text-primary" /> : !chart ? (
           <div className="rounded-2xl border bg-card p-10 text-center text-muted-foreground">Es ist noch kein Organigramm publiziert.</div>
         ) : (
-          <div className="rounded-2xl border bg-card shadow-sm h-[78vh] overflow-hidden">
+          <div className="rounded-2xl border bg-card shadow-sm h-[78vh] overflow-hidden" style={{ colorScheme: "light" }}>
             <ReactFlowProvider>
               <ReactFlow nodes={nodes} edges={(chart.edges as any[]) || []} nodeTypes={nodeTypes} fitView
                 nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} proOptions={{ hideAttribution: true }}>
-                <Background gap={20} /><Controls showInteractive={false} />
+                <Background gap={20} color="#c3ccc6" /><Controls showInteractive={false} />
               </ReactFlow>
             </ReactFlowProvider>
           </div>

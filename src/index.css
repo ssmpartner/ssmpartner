@@ -28,6 +28,10 @@
 
 @layer base {
   :root {
+    /* App has no dark mode: pin the light color scheme so browser/OS dark
+       preferences can't turn native controls or light-dark() colors dark. */
+    color-scheme: light;
+
     --background: 0 0% 97.5%;
     --foreground: 0 0% 12%;
 

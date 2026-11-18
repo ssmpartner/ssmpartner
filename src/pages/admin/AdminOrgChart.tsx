@@ -235,12 +235,12 @@ const Editor = () => {
           <p className="text-[11px] text-muted-foreground">Ziehen oder klicken zum Hinzufügen. Linien vom unteren zum oberen Punkt ziehen. Auswahl mit Entf löschen.</p>
         </aside>
 
-        <div className="rounded-2xl border bg-background shadow-sm h-[75vh] overflow-hidden" onDragOver={e => e.preventDefault()} onDrop={onDrop}>
+        <div className="rounded-2xl border bg-background shadow-sm h-[75vh] overflow-hidden" style={{ colorScheme: "light" }} onDragOver={e => e.preventDefault()} onDrop={onDrop}>
           <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} defaultEdgeOptions={edgeDefaults}
             onNodesChange={c => { onNodesChange(c); if (([] as any[]).concat(c as unknown as any).some((x: any) => x.type !== "select" && x.type !== "dimensions")) setDirty(true); }}
             onEdgesChange={c => { onEdgesChange(c); if (([] as any[]).concat(c as unknown as any).some((x: any) => x.type !== "select")) setDirty(true); }}
             onConnect={onConnect} fitView snapToGrid snapGrid={[10, 10]} deleteKeyCode={["Delete", "Backspace"]} proOptions={{ hideAttribution: true }}>
-            <Background gap={20} />
+            <Background gap={20} color="#c3ccc6" />
             <Controls />
             <MiniMap pannable zoomable />
           </ReactFlow>
