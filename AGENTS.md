@@ -1,1 +1,2 @@
 - CMS write access in RLS goes through public.is_cms_editor(uid) (role allow-list); update that function, not individual policies, when editor roles change.
+- Authentication emails use the scaffolded auth-email-hook and managed email SDK; do not add queue infrastructure because delivery is platform-managed.
