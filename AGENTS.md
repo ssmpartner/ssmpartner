@@ -1,2 +1,3 @@
 - CMS write access in RLS goes through public.is_cms_editor(uid) (role allow-list); update that function, not individual policies, when editor roles change.
 - Authentication emails use the scaffolded auth-email-hook and managed email SDK; do not add queue infrastructure because delivery is platform-managed.
+- Org charts (admin editor + portal view) use @xyflow/react; SMTP settings are stored server-side and managed via the smtp-settings edge function, never read in the browser — keeps credentials off the client.
