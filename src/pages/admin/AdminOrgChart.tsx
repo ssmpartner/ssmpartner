@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, addEdge, useNodesState, useEdgesState,
-  useReactFlow, ConnectionMode, type Connection, type Edge, type Node,
+  useReactFlow, ConnectionMode, ViewportPortal, type Connection, type Edge, type Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { supabase } from "@/integrations/supabase/client";
@@ -171,12 +171,51 @@ const Editor = () => {
     descendants(dragged).forEach(id => { const n = nodes.find(x => x.id === id); if (n && !n.selected) ids.set(id, { ...n.position }); });
     dragRef.current = { start: { ...node.position }, ids };
   };
+  // Alignment guides: snap the dragged box to edges/centres of other boxes and draw a line.
+  const [guides, setGuides] = useState<{ x?: number; y?: number }>({});
+  const size = (n: Node) => ({ w: n.measured?.width ?? 224, h: n.measured?.height ?? 72 });
   const onNodeDrag = (_: any, node: Node) => {
-    const d = dragRef.current; if (!d || !d.ids.size) return;
-    const dx = node.position.x - d.start.x, dy = node.position.y - d.start.y;
-    setNodes(ns => ns.map(n => { const p = d.ids.get(n.id); return p ? { ...n, position: { x: p.x + dx, y: p.y + dy } } : n; }));
+    const d = dragRef.current;
+    const moving = new Set([node.id, ...(d ? d.ids.keys() : [])]);
+    const { w, h } = size(node);
+    let { x, y } = node.position; let gx: number | undefined, gy: number | undefined;
+    const T = 6;
+    for (const o of nodes) {
+      if (moving.has(o.id) || o.selected) continue;
+      const s2 = size(o);
+      const xs = [o.position.x, o.position.x + s2.w / 2, o.position.x + s2.w];
+      const ys = [o.position.y, o.position.y + s2.h / 2, o.position.y + s2.h];
+      for (const [off, k] of [[0, 0], [w / 2, 1], [w, 2]] as const) {
+        for (const ox of xs) if (gx === undefined && Math.abs(node.position.x + off - ox) < T) { x = ox - off; gx = ox; }
+      }
+      for (const [off] of [[0], [h / 2], [h]] as const) {
+        for (const oy of ys) if (gy === undefined && Math.abs(node.position.y + off - oy) < T) { y = oy - off; gy = oy; }
+      }
+    }
+    setGuides({ x: gx, y: gy });
+    const snapped = gx !== undefined || gy !== undefined;
+    const dx = d ? x - d.start.x : 0, dy = d ? y - d.start.y : 0;
+    if (!snapped && (!d || !d.ids.size)) return;
+    setNodes(ns => ns.map(n => {
+      if (n.id === node.id && snapped) return { ...n, position: { x, y } };
+      const p = d?.ids.get(n.id); return p ? { ...n, position: { x: p.x + dx, y: p.y + dy } } : n;
+    }));
   };
-  const onNodeDragStop = () => { dragRef.current = null; };
+  const onNodeDragStop = () => { dragRef.current = null; setGuides({}); };
+
+  // Align / distribute the current selection with a fixed spacing.
+  const [gap, setGap] = useState(40);
+  const arrange = (mode: "top" | "middle" | "left" | "center" | "row" | "col") => {
+    const sel = nodes.filter(n => n.selected); if (sel.length < 2) return;
+    const pos = new Map<string, { x: number; y: number }>();
+    if (mode === "top") { const v = Math.min(...sel.map(n => n.position.y)); sel.forEach(n => pos.set(n.id, { x: n.position.x, y: v })); }
+    if (mode === "left") { const v = Math.min(...sel.map(n => n.position.x)); sel.forEach(n => pos.set(n.id, { x: v, y: n.position.y })); }
+    if (mode === "middle") { const v = sel.reduce((a, n) => a + n.position.y + size(n).h / 2, 0) / sel.length; sel.forEach(n => pos.set(n.id, { x: n.position.x, y: v - size(n).h / 2 })); }
+    if (mode === "center") { const v = sel.reduce((a, n) => a + n.position.x + size(n).w / 2, 0) / sel.length; sel.forEach(n => pos.set(n.id, { x: v - size(n).w / 2, y: n.position.y })); }
+    if (mode === "row") { let cur = Math.min(...sel.map(n => n.position.x)); [...sel].sort((a, b) => a.position.x - b.position.x).forEach(n => { pos.set(n.id, { x: cur, y: n.position.y }); cur += size(n).w + gap; }); }
+    if (mode === "col") { let cur = Math.min(...sel.map(n => n.position.y)); [...sel].sort((a, b) => a.position.y - b.position.y).forEach(n => { pos.set(n.id, { x: n.position.x, y: cur }); cur += size(n).h + gap; }); }
+    setNodes(ns => ns.map(n => pos.has(n.id) ? { ...n, position: pos.get(n.id)! } : n)); setDirty(true);
+  };
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -331,6 +370,23 @@ const Editor = () => {
                   <Input value={((selectedNodes[0].data as any).label as string) || ""} onChange={e => updateData({ label: e.target.value })} />
                 </div>
               )}
+              {selectedNodes.length >= 2 && (
+                <div className="space-y-1.5">
+                  <p className="text-xs text-muted-foreground">Ausrichten</p>
+                  <div className="grid grid-cols-2 gap-1">
+                    <Button size="sm" variant="outline" onClick={() => arrange("top")}>Oben</Button>
+                    <Button size="sm" variant="outline" onClick={() => arrange("middle")}>Mitte waagr.</Button>
+                    <Button size="sm" variant="outline" onClick={() => arrange("left")}>Links</Button>
+                    <Button size="sm" variant="outline" onClick={() => arrange("center")}>Mitte senkr.</Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Abstand (px)</p>
+                  <div className="flex gap-1">
+                    <Input type="number" min={0} step={10} value={gap} onChange={e => setGap(Number(e.target.value) || 0)} className="w-20" />
+                    <Button size="sm" variant="outline" className="flex-1" onClick={() => arrange("row")}>Nebeneinander</Button>
+                    <Button size="sm" variant="outline" className="flex-1" onClick={() => arrange("col")}>Untereinander</Button>
+                  </div>
+                </div>
+              )}
               <Button size="sm" variant="outline" className="w-full" onClick={duplicateSelected}>
                 <CopyPlus className="h-4 w-4 mr-1" />Duplizieren (Strg+D)
               </Button>
@@ -353,7 +409,7 @@ const Editor = () => {
               ))}
             </div>
           </div>
-          <p className="text-[11px] text-muted-foreground">Ziehen oder klicken zum Hinzufügen. Linien von einem beliebigen Punkt (oben, unten, links, rechts) ziehen. Verschieben nimmt alle darunterliegenden mit. Auswahl mit Entf löschen.</p>
+          <p className="text-[11px] text-muted-foreground">Ziehen oder klicken zum Hinzufügen. Linien von einem beliebigen Punkt (oben, unten, links, rechts) ziehen. Verschieben nimmt alle darunterliegenden mit. Auswahl mit Entf löschen. Mehrere mit Strg-Klick oder Shift-Ziehen auswählen, um sie auszurichten.</p>
         </aside>
 
         <div className="rounded-2xl border bg-background shadow-sm h-[75vh] overflow-hidden" style={{ colorScheme: "light" }} onDragOver={e => e.preventDefault()} onDrop={onDrop}>
@@ -364,6 +420,10 @@ const Editor = () => {
             <Background gap={20} color="#c3ccc6" />
             <Controls />
             <MiniMap pannable zoomable />
+            <ViewportPortal>
+              {guides.x !== undefined && <div className="absolute pointer-events-none border-l border-dashed border-destructive" style={{ left: guides.x, top: -100000, height: 200000 }} />}
+              {guides.y !== undefined && <div className="absolute pointer-events-none border-t border-dashed border-destructive" style={{ top: guides.y, left: -100000, width: 200000 }} />}
+            </ViewportPortal>
           </ReactFlow>
         </div>
       </div>
