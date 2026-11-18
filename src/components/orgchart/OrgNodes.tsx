@@ -31,7 +31,7 @@ export const PersonNode = ({ data, selected }: NodeProps) => {
       )}
       <div className="min-w-0">
         <p className="font-semibold text-sm text-foreground truncate">{d.name}</p>
-        {d.role && <p className="text-xs text-muted-foreground line-clamp-2">{d.role}</p>}
+        {d.role && <p className="text-xs text-muted-foreground whitespace-normal break-words">{d.role}</p>}
         {d.agency && <p className="text-[11px] text-primary/80 truncate">{d.agency}</p>}
       </div>
     </div>
