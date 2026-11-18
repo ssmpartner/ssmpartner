@@ -15,7 +15,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { CopyPlus, Copy, Download, FileDown, Plus, Save, Send, Trash2, Building2, LayoutGrid, Loader2 } from "lucide-react";
+import { CopyPlus, Copy, Download, FileDown, Plus, Save, Send, Trash2, Building2, LayoutGrid, Loader2, Undo2 } from "lucide-react";
 import { nodeTypes } from "@/components/orgchart/OrgNodes";
 import { exportPdf, exportPng } from "@/components/orgchart/exportOrgChart";
 
@@ -94,6 +94,40 @@ const Editor = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
 
+  // Undo history: snapshot of nodes+edges (ignoring selection/measurement), debounced.
+  const history = useRef<{ nodes: Node[]; edges: Edge[] }[]>([]);
+  const restoring = useRef(false);
+  const [histLen, setHistLen] = useState(0);
+  const strip = (ns: Node[], es: Edge[]) => JSON.stringify([
+    ns.map(({ id, type, position, data }) => ({ id, type, position, data })),
+    es.map(({ id, source, target, sourceHandle, targetHandle }) => ({ id, source, target, sourceHandle, targetHandle })),
+  ]);
+  useEffect(() => { history.current = []; setHistLen(0); }, [selectedId]);
+  useEffect(() => {
+    if (restoring.current) { restoring.current = false; return; }
+    const t = setTimeout(() => {
+      if (dragRef.current) return;
+      const last = history.current[history.current.length - 1];
+      if (last && strip(last.nodes, last.edges) === strip(nodes, edges)) return;
+      history.current.push({ nodes: nodes.map(n => ({ ...n, selected: false })), edges });
+      if (history.current.length > 100) history.current.shift();
+      setHistLen(history.current.length);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [nodes, edges]);
+  const undo = () => {
+    if (history.current.length < 2) return;
+    history.current.pop();
+    const prev = history.current[history.current.length - 1];
+    restoring.current = true;
+    setNodes(prev.nodes); setEdges(prev.edges); setDirty(true);
+    setHistLen(history.current.length);
+  };
+  const updateData = (patch: Record<string, unknown>) => {
+    setNodes(ns => ns.map(n => n.selected ? { ...n, data: { ...n.data, ...patch } } : n));
+    setDirty(true);
+  };
+
   // A person may appear several times in one chart; show how often instead of hiding them.
   const usedCount = useMemo(() => {
     const m = new Map<string, number>();
@@ -149,6 +183,7 @@ const Editor = () => {
       const t = e.target as HTMLElement;
       if (t.closest("input,textarea,select")) return;
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d") { e.preventDefault(); duplicateSelected(); }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === "z") { e.preventDefault(); undo(); }
     };
     window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
   });
@@ -252,6 +287,7 @@ const Editor = () => {
           <Button size="sm" variant="outline" onClick={publish} disabled={busy}><Send className="h-4 w-4 mr-1" />Publizieren</Button>
           <Button size="sm" variant="outline" onClick={() => createVersion()} disabled={busy}><Plus className="h-4 w-4 mr-1" />Neu</Button>
           <Button size="sm" variant="outline" onClick={() => current && createVersion(current)} disabled={busy}><Copy className="h-4 w-4 mr-1" />Duplizieren</Button>
+          <Button size="sm" variant="outline" onClick={undo} disabled={histLen < 2} title="Rückgängig (Strg+Z)"><Undo2 className="h-4 w-4 mr-1" />Rückgängig</Button>
           <Button size="sm" variant="outline" onClick={() => doExport("png")} disabled={busy}><Download className="h-4 w-4 mr-1" />PNG</Button>
           <Button size="sm" variant="outline" onClick={() => doExport("pdf")} disabled={busy}><FileDown className="h-4 w-4 mr-1" />PDF</Button>
           <Button size="sm" variant="outline" onClick={() => setConfirmDelete(true)}><Trash2 className="h-4 w-4" /></Button>
@@ -283,6 +319,18 @@ const Editor = () => {
                 </label>
                 <button onClick={() => setColor(undefined)} className="text-xs underline text-muted-foreground">Standard</button>
               </div>
+              {selectedNodes.length === 1 && selectedNodes[0].type === "person" && (
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Position / Funktion</label>
+                  <Input value={((selectedNodes[0].data as any).role as string) || ""} onChange={e => updateData({ role: e.target.value })} placeholder="z. B. Teamleiter" />
+                </div>
+              )}
+              {selectedNodes.length === 1 && selectedNodes[0].type === "unit" && (
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">Bezeichnung</label>
+                  <Input value={((selectedNodes[0].data as any).label as string) || ""} onChange={e => updateData({ label: e.target.value })} />
+                </div>
+              )}
               <Button size="sm" variant="outline" className="w-full" onClick={duplicateSelected}>
                 <CopyPlus className="h-4 w-4 mr-1" />Duplizieren (Strg+D)
               </Button>
