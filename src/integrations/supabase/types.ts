@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.4"
-  }
   public: {
     Tables: {
       agencies: {
@@ -1075,6 +1070,42 @@ export type Database = {
           },
         ]
       }
+      org_charts: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          edges: Json
+          id: string
+          is_published: boolean
+          nodes: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          edges?: Json
+          id?: string
+          is_published?: boolean
+          nodes?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          edges?: Json
+          id?: string
+          is_published?: boolean
+          nodes?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_heroes: {
         Row: {
           alt_text: string | null
@@ -1308,6 +1339,48 @@ export type Database = {
           sort_order?: number
           subline?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      smtp_settings: {
+        Row: {
+          enabled: boolean
+          from_email: string
+          from_name: string
+          host: string
+          id: number
+          notify_email: string
+          password: string
+          port: number
+          secure: boolean
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          enabled?: boolean
+          from_email?: string
+          from_name?: string
+          host?: string
+          id?: number
+          notify_email?: string
+          password?: string
+          port?: number
+          secure?: boolean
+          updated_at?: string
+          username?: string
+        }
+        Update: {
+          enabled?: boolean
+          from_email?: string
+          from_name?: string
+          host?: string
+          id?: number
+          notify_email?: string
+          password?: string
+          port?: number
+          secure?: boolean
+          updated_at?: string
+          username?: string
         }
         Relationships: []
       }
@@ -1817,3 +1890,4 @@ export const Constants = {
     },
   },
 } as const
+

@@ -3,7 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Brain, Globe, Calculator, UserCircle, Newspaper, ArrowRight, Calendar, MapPin } from "lucide-react";
+import { LogOut, ExternalLink, Shield, BarChart3, Users, Loader2, BookOpen, Network, Brain, Globe, Calculator, UserCircle, Newspaper, ArrowRight, Calendar, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import myssmLogo from "@/assets/myssm-logo.png";
 import { Link } from "react-router-dom";
@@ -251,6 +251,15 @@ const Portal = () => {
             <div className="flex-1 text-left">
               <p className="font-semibold text-foreground">SSM Academy Starterbrief</p>
               <p className="text-sm text-muted-foreground font-body">Aktuelle Ausgabe als Magazin durchblättern</p>
+            </div>
+            <ArrowRight className="h-5 w-5 text-primary group-hover:translate-x-1 transition-transform" />
+          </Link>
+
+          <Link to="/portal/organigramm" className="group mb-8 -mt-4 flex items-center gap-4 rounded-2xl border bg-card p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all">
+            <div className="h-12 w-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center"><Network className="h-6 w-6" /></div>
+            <div className="flex-1 text-left">
+              <p className="font-semibold text-foreground">Organigramm</p>
+              <p className="text-sm text-muted-foreground font-body">Aktuelle Unternehmensstruktur ansehen und herunterladen</p>
             </div>
             <ArrowRight className="h-5 w-5 text-primary group-hover:translate-x-1 transition-transform" />
           </Link>

@@ -26,6 +26,8 @@ import AdminAgencies from "./pages/admin/AdminAgencies";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminStarterbrief from "./pages/admin/AdminStarterbrief";
 import PortalStarterbrief from "./pages/portal/PortalStarterbrief";
+import PortalOrgChart from "./pages/portal/PortalOrgChart";
+import AdminOrgChart from "./pages/admin/AdminOrgChart";
 import AdminNav from "./pages/admin/AdminNav";
 import AdminHeroes from "./pages/admin/AdminHeroes";
 import AdminInquiries from "./pages/admin/AdminInquiries";
@@ -43,6 +45,7 @@ import AdminVag45 from "./pages/admin/AdminVag45";
 import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSocialLinks from "./pages/admin/AdminSocialLinks";
+import AdminSmtp from "./pages/admin/AdminSmtp";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminSEO from "./pages/admin/AdminSEO";
 import AdminGscMonitor from "./pages/admin/AdminGscMonitor";
@@ -112,6 +115,7 @@ const App = () => (
             <Route path="/portal/news/:slug" element={<PortalNewsDetail />} />
             <Route path="/portal/events" element={<PortalEvents />} />
             <Route path="/portal/starterbrief" element={<PortalStarterbrief />} />
+            <Route path="/portal/organigramm" element={<PortalOrgChart />} />
 
             {/* Admin CMS */}
             <Route element={<ProtectedRoute />}>
@@ -125,6 +129,7 @@ const App = () => (
                 <Route path="/admin/agencies" element={<AdminAgencies />} />
                 <Route path="/admin/jobs" element={<AdminJobs />} />
                 <Route path="/admin/starterbrief" element={<AdminStarterbrief />} />
+                <Route path="/admin/organigramm" element={<AdminOrgChart />} />
                 <Route path="/admin/career-videos" element={<AdminCareerVideos />} />
                 <Route path="/admin/career-faqs" element={<AdminCareerFaqs />} />
                 <Route path="/admin/media" element={<AdminMediaLibrary />} />
@@ -140,6 +145,7 @@ const App = () => (
                 <Route path="/admin/onlinecheck" element={<AdminOnlineCheck />} />
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/social-links" element={<AdminSocialLinks />} />
+                <Route path="/admin/settings/smtp" element={<AdminSmtp />} />
                 <Route path="/admin/analytics" element={<AdminAnalytics />} />
                 <Route path="/admin/seo" element={<AdminSEO />} />
                 <Route path="/admin/gsc-monitor" element={<AdminGscMonitor />} />

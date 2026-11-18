@@ -1,6 +1,7 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { z } from "npm:zod@3";
+import { loadSmtp, sendSmtp, type SmtpConfig } from "../_shared/smtp.ts";
 
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 const FROM = "SSM Partner AG <noreply@ssmpartner.ch>";
@@ -27,7 +28,11 @@ const confirm = {
   en: { s: "Thank you for your inquiry – SSM Partner AG", h: "Thank you for your inquiry", p: "We have received your message and will get back to you as soon as possible.", y: "Your message", a: "Responsible office" },
 };
 
-async function send(payload: Record<string, unknown>) {
+let smtp: SmtpConfig | null = null;
+async function send(payload: Record<string, any>) {
+  if (smtp) {
+    return await sendSmtp(smtp, { to: payload.to, bcc: payload.bcc, replyTo: payload.reply_to, subject: payload.subject, html: payload.html });
+  }
   const r = await fetch(`${GATEWAY_URL}/emails`, {
     method: "POST",
     headers: {
@@ -50,6 +55,7 @@ Deno.serve(async (req) => {
     const d = parsed.data;
 
     const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    smtp = await loadSmtp(sb);
     let target = HQ;
     let agencyId: string | null = null;
     if (d.agency !== "hq") {

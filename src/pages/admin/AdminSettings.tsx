@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Shield, UserCog, KeySquare, Activity, Bot, Share2, Trash2, ChevronRight } from "lucide-react";
+import { Shield, UserCog, KeySquare, Activity, Bot, Share2, Trash2, ChevronRight, Mail } from "lucide-react";
 
 const AdminSettings = () => {
   const { isSuperadmin } = useAuth();
@@ -11,6 +11,7 @@ const AdminSettings = () => {
     { to: "/admin/gsc-monitor", label: "Search Console", desc: "Indexierung und Crawling überwachen", icon: Activity },
     { to: "/admin/chat-knowledge", label: "KI-Chat Wissen", desc: "Wissensbasis des KI-Chats pflegen", icon: Bot },
     { to: "/admin/social-links", label: "Social Media", desc: "Links zu Social-Media-Kanälen", icon: Share2 },
+    { to: "/admin/settings/smtp", label: "E-Mail (SMTP)", desc: "Mailserver für Benachrichtigungen", icon: Mail },
     ...(isSuperadmin ? [{ to: "/admin/settings/trash", label: "Papierkorb", desc: "Gelöschte Einträge wiederherstellen", icon: Trash2 }] : []),
   ];
   return (

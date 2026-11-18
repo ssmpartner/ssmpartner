@@ -78,6 +78,20 @@
       "when": 1794493794623,
       "tag": "0010_restrict_cms_writes_more_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1794838591503,
+      "tag": "0011_create_org_charts",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794992081817,
+      "tag": "0012_smtp_settings",
+      "breakpoints": true
     }
   ]
 }
