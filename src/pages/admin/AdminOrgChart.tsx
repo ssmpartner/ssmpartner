@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ReactFlow, ReactFlowProvider, Background, Controls, MiniMap, addEdge, useNodesState, useEdgesState,
-  useReactFlow, type Connection, type Edge, type Node,
+  useReactFlow, ConnectionMode, type Connection, type Edge, type Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +15,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
   AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Copy, Download, FileDown, Plus, Save, Send, Trash2, Building2, LayoutGrid, Loader2 } from "lucide-react";
+import { CopyPlus, Copy, Download, FileDown, Plus, Save, Send, Trash2, Building2, LayoutGrid, Loader2 } from "lucide-react";
 import { nodeTypes } from "@/components/orgchart/OrgNodes";
 import { exportPdf, exportPng } from "@/components/orgchart/exportOrgChart";
 
@@ -89,13 +89,69 @@ const Editor = () => {
   useEffect(() => {
     const c = charts.find(x => x.id === selectedId);
     if (!c) return;
-    setTitle(c.title); setNodes(c.nodes || []); setEdges(c.edges || []); setDirty(false);
+    setTitle(c.title); setNodes(c.nodes || []); setEdges((c.edges || []).map((e: any) => ({ ...e, sourceHandle: e.sourceHandle ?? "b", targetHandle: e.targetHandle ?? "t" }))); setDirty(false);
     setTimeout(() => rf.fitView({ padding: 0.2 }), 50);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedId]);
 
-  const used = useMemo(() => new Set(nodes.map(n => (n.data as any)?.memberId).filter(Boolean)), [nodes]);
-  const pool = members.filter(m => !used.has(m.id) && m.name.toLowerCase().includes(search.toLowerCase()));
+  // A person may appear several times in one chart; show how often instead of hiding them.
+  const usedCount = useMemo(() => {
+    const m = new Map<string, number>();
+    nodes.forEach(n => { const id = (n.data as any)?.memberId; if (id) m.set(id, (m.get(id) || 0) + 1); });
+    return m;
+  }, [nodes]);
+  const pool = members.filter(m => m.name.toLowerCase().includes(search.toLowerCase()));
+  const selectedNodes = nodes.filter(n => n.selected);
+
+  const COLORS = ["#243e3a", "#B3B69C", "#2563eb", "#0891b2", "#16a34a", "#ca8a04", "#ea580c", "#dc2626", "#db2777", "#7c3aed", "#64748b"];
+  const setColor = (color?: string) => {
+    setNodes(ns => ns.map(n => n.selected ? { ...n, data: { ...n.data, color } } : n));
+    setDirty(true);
+  };
+  const duplicateSelected = () => {
+    if (!selectedNodes.length) return;
+    const stamp = Date.now();
+    const copies = selectedNodes.map((n, i) => ({
+      ...n, id: `${n.id.split("-dup")[0]}-dup${stamp}${i}`, selected: true,
+      position: { x: n.position.x + 40, y: n.position.y + 40 }, data: { ...n.data },
+    }));
+    setNodes(ns => [...ns.map(n => ({ ...n, selected: false })), ...copies]);
+    setDirty(true);
+  };
+
+  // Dragging a node moves everything hanging below it (its whole subtree).
+  const dragRef = useRef<{ start: { x: number; y: number }; ids: Map<string, { x: number; y: number }> } | null>(null);
+  const descendants = (rootIds: string[]) => {
+    const out = new Set<string>(); const stack = [...rootIds]; const roots = new Set(rootIds);
+    while (stack.length) {
+      const id = stack.pop()!;
+      edges.forEach(e => {
+        if (e.source === id && !out.has(e.target) && !roots.has(e.target)) { out.add(e.target); stack.push(e.target); }
+      });
+    }
+    return out;
+  };
+  const onNodeDragStart = (_: any, node: Node) => {
+    const dragged = node.selected ? nodes.filter(n => n.selected).map(n => n.id) : [node.id];
+    const ids = new Map<string, { x: number; y: number }>();
+    descendants(dragged).forEach(id => { const n = nodes.find(x => x.id === id); if (n && !n.selected) ids.set(id, { ...n.position }); });
+    dragRef.current = { start: { ...node.position }, ids };
+  };
+  const onNodeDrag = (_: any, node: Node) => {
+    const d = dragRef.current; if (!d || !d.ids.size) return;
+    const dx = node.position.x - d.start.x, dy = node.position.y - d.start.y;
+    setNodes(ns => ns.map(n => { const p = d.ids.get(n.id); return p ? { ...n, position: { x: p.x + dx, y: p.y + dy } } : n; }));
+  };
+  const onNodeDragStop = () => { dragRef.current = null; };
+
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.closest("input,textarea,select")) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "d") { e.preventDefault(); duplicateSelected(); }
+    };
+    window.addEventListener("keydown", h); return () => window.removeEventListener("keydown", h);
+  });
 
   const center = () => {
     const el = document.querySelector(".react-flow") as HTMLElement | null;
@@ -215,6 +271,23 @@ const Editor = () => {
           <Button size="sm" variant="secondary" onClick={() => { setNodes(ns => autoLayout(ns, edges)); setDirty(true); setTimeout(() => rf.fitView({ padding: 0.2 }), 50); }}>
             <LayoutGrid className="h-4 w-4 mr-1" />Automatisch anordnen
           </Button>
+          {selectedNodes.length > 0 && (
+            <div className="rounded-xl border p-2 space-y-2">
+              <p className="text-sm font-semibold">Auswahl ({selectedNodes.length})</p>
+              <div className="flex flex-wrap gap-1.5">
+                {COLORS.map(c => (
+                  <button key={c} title={c} onClick={() => setColor(c)} className="h-6 w-6 rounded-full border shadow-sm" style={{ backgroundColor: c }} />
+                ))}
+                <label className="h-6 w-6 rounded-full border overflow-hidden cursor-pointer" title="Eigene Farbe">
+                  <input type="color" className="h-8 w-8 -m-1 cursor-pointer" onChange={e => setColor(e.target.value)} />
+                </label>
+                <button onClick={() => setColor(undefined)} className="text-xs underline text-muted-foreground">Standard</button>
+              </div>
+              <Button size="sm" variant="outline" className="w-full" onClick={duplicateSelected}>
+                <CopyPlus className="h-4 w-4 mr-1" />Duplizieren (Strg+D)
+              </Button>
+            </div>
+          )}
           <div className="flex-1 min-h-0 flex flex-col">
             <p className="text-sm font-semibold mb-2">Team ({pool.length})</p>
             <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Suchen…" className="mb-2" />
@@ -225,21 +298,21 @@ const Editor = () => {
                   className="w-full flex items-center gap-2 rounded-xl p-2 text-left hover:bg-muted cursor-grab">
                   {m.image_url ? <img src={m.image_url} alt="" className="h-8 w-8 rounded-full object-cover" /> : <div className="h-8 w-8 rounded-full bg-muted" />}
                   <div className="min-w-0">
-                    <p className="text-sm font-medium truncate">{m.name}</p>
+                    <p className="text-sm font-medium truncate">{m.name}{usedCount.get(m.id) ? <span className="ml-1 text-xs text-primary">({usedCount.get(m.id)}×)</span> : null}</p>
                     <p className="text-xs text-muted-foreground truncate">{m.agencies?.name || m.role_de}</p>
                   </div>
                 </button>
               ))}
             </div>
           </div>
-          <p className="text-[11px] text-muted-foreground">Ziehen oder klicken zum Hinzufügen. Linien vom unteren zum oberen Punkt ziehen. Auswahl mit Entf löschen.</p>
+          <p className="text-[11px] text-muted-foreground">Ziehen oder klicken zum Hinzufügen. Linien von einem beliebigen Punkt (oben, unten, links, rechts) ziehen. Verschieben nimmt alle darunterliegenden mit. Auswahl mit Entf löschen.</p>
         </aside>
 
         <div className="rounded-2xl border bg-background shadow-sm h-[75vh] overflow-hidden" style={{ colorScheme: "light" }} onDragOver={e => e.preventDefault()} onDrop={onDrop}>
           <ReactFlow nodes={nodes} edges={edges} nodeTypes={nodeTypes} defaultEdgeOptions={edgeDefaults}
             onNodesChange={c => { onNodesChange(c); if (([] as any[]).concat(c as unknown as any).some((x: any) => x.type !== "select" && x.type !== "dimensions")) setDirty(true); }}
             onEdgesChange={c => { onEdgesChange(c); if (([] as any[]).concat(c as unknown as any).some((x: any) => x.type !== "select")) setDirty(true); }}
-            onConnect={onConnect} fitView snapToGrid snapGrid={[10, 10]} deleteKeyCode={["Delete", "Backspace"]} proOptions={{ hideAttribution: true }}>
+            onConnect={onConnect} connectionMode={ConnectionMode.Loose} onNodeDragStart={onNodeDragStart} onNodeDrag={onNodeDrag} onNodeDragStop={onNodeDragStop} fitView snapToGrid snapGrid={[10, 10]} deleteKeyCode={["Delete", "Backspace"]} proOptions={{ hideAttribution: true }}>
             <Background gap={20} color="#c3ccc6" />
             <Controls />
             <MiniMap pannable zoomable />

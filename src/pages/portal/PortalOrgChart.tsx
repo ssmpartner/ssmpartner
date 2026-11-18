@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ReactFlow, ReactFlowProvider, Background, Controls } from "@xyflow/react";
+import { ReactFlow, ReactFlowProvider, ConnectionMode, Background, Controls } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { ArrowLeft, Download, FileDown, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -46,7 +46,7 @@ const PortalOrgChart = () => {
         ) : (
           <div className="rounded-2xl border bg-card shadow-sm h-[78vh] overflow-hidden" style={{ colorScheme: "light" }}>
             <ReactFlowProvider>
-              <ReactFlow nodes={nodes} edges={(chart.edges as any[]) || []} nodeTypes={nodeTypes} fitView
+              <ReactFlow nodes={nodes} edges={((chart.edges as any[]) || []).map((e: any) => ({ ...e, sourceHandle: e.sourceHandle ?? "b", targetHandle: e.targetHandle ?? "t" }))} connectionMode={ConnectionMode.Loose} nodeTypes={nodeTypes} fitView
                 nodesDraggable={false} nodesConnectable={false} elementsSelectable={false} proOptions={{ hideAttribution: true }}>
                 <Background gap={20} color="#c3ccc6" /><Controls showInteractive={false} />
               </ReactFlow>
