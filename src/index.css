@@ -26,6 +26,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* React Flow pins `color-scheme: light dark` on its own container, so its
+   light-dark() colors (canvas, minimap, zoom buttons) would follow the OS
+   theme. This app has no dark mode, so pin the org chart surface to light.
+   Unlayered on purpose: it must win over the library's layered rule. */
+.react-flow {
+  color-scheme: light;
+}
+
 @layer base {
   :root {
     /* App has no dark mode: pin the light color scheme so browser/OS dark
