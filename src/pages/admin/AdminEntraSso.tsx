@@ -47,7 +47,11 @@ const AdminEntraSso = () => {
     setTesting(true);
     const { data, error } = await supabase.auth.signInWithSSO({
       domain,
-      options: { redirectTo: `https://ssmpartner.ch/portal` },
+      options: {
+        redirectTo: /lovableproject\.com$|id-preview--/.test(window.location.hostname)
+          ? `${window.location.origin}/portal`
+          : `https://ssmpartner.ch/portal`,
+      },
     });
     setTesting(false);
     if (error) {
