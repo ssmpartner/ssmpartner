@@ -27,7 +27,11 @@ const Login = () => {
     setSsoLoading(true);
     const { data, error } = await supabase.auth.signInWithSSO({
       domain: "ssmpartner.ch",
-      options: { redirectTo: `https://ssmpartner.ch/portal` },
+      options: {
+        redirectTo: /lovableproject\.com$|id-preview--/.test(window.location.hostname)
+          ? `${window.location.origin}/portal`
+          : `https://ssmpartner.ch/portal`,
+      },
     });
     setSsoLoading(false);
     if (error) {
