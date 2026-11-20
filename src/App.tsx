@@ -57,7 +57,7 @@ import AdminEvents from "./pages/admin/AdminEvents";
 import PortalNews from "./pages/portal/PortalNews";
 import PortalNewsDetail from "./pages/portal/PortalNewsDetail";
 import PortalEvents from "./pages/portal/PortalEvents";
-import ChatWidget from "@/components/ChatWidget";
+// ChatWidget temporarily removed; re-add <ChatWidget /> in PublicLayout to restore.
 import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
 import OnlineCheck from "./pages/OnlineCheck";
@@ -84,7 +84,6 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
     <Navbar />
     {children}
     <Footer />
-    <ChatWidget />
   </>
 );
 
