@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useChatWidgetEnabled } from "@/hooks/useChatWidgetEnabled";
 import { ContactCardModal } from "@/components/ContactCardModal";
 import type { TeamMember } from "@/components/ContactCardModal";
 
@@ -19,6 +20,7 @@ const quickActions = [
 ];
 
 const ChatWidget = () => {
+  const widgetEnabled = useChatWidgetEnabled();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -246,6 +248,8 @@ const ChatWidget = () => {
       </>
     );
   };
+
+  if (!widgetEnabled) return null;
 
   return (
     <>

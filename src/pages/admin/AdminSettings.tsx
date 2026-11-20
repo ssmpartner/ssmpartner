@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Shield, UserCog, KeySquare, Activity, Bot, Share2, Trash2, ChevronRight, Mail } from "lucide-react";
+import { Shield, UserCog, KeySquare, Activity, Bot, Share2, Trash2, ChevronRight, Mail, MessageCircle } from "lucide-react";
 
 const AdminSettings = () => {
   const { isSuperadmin } = useAuth();
@@ -10,6 +10,7 @@ const AdminSettings = () => {
     { to: "/admin/entra-sso", label: "Microsoft SSO", desc: "Anmeldung mit Microsoft Entra ID", icon: KeySquare },
     { to: "/admin/gsc-monitor", label: "Search Console", desc: "Indexierung und Crawling überwachen", icon: Activity },
     { to: "/admin/chat-knowledge", label: "KI-Chat Wissen", desc: "Wissensbasis des KI-Chats pflegen", icon: Bot },
+    { to: "/admin/chat-widget", label: "Beratungs-Widget", desc: "Chat-Assistent auf der Website ein-/ausblenden", icon: MessageCircle },
     { to: "/admin/social-links", label: "Social Media", desc: "Links zu Social-Media-Kanälen", icon: Share2 },
     { to: "/admin/settings/smtp", label: "E-Mail (SMTP)", desc: "Mailserver für Benachrichtigungen", icon: Mail },
     ...(isSuperadmin ? [{ to: "/admin/settings/trash", label: "Papierkorb", desc: "Gelöschte Einträge wiederherstellen", icon: Trash2 }] : []),
