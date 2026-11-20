@@ -46,14 +46,14 @@ const AdminChatWidget = () => {
       return;
     }
     qc.invalidateQueries({ queryKey: ["chat-widget-enabled"] });
-    toast.success(value ? "Beratungs-Widget aktiviert" : "Beratungs-Widget deaktiviert");
+    toast.success(value ? "KI-Chat aktiviert" : "KI-Chat deaktiviert");
   };
 
   return (
     <div className="max-w-2xl">
-      <h1 className="font-heading text-2xl font-semibold text-foreground mb-1">Beratungs-Widget</h1>
+      <h1 className="font-heading text-2xl font-semibold text-foreground mb-1">KI-Chat (unten rechts)</h1>
       <p className="font-body text-sm text-muted-foreground mb-8">
-        Steuere, ob der Chat-Assistent unten rechts auf der Website erscheint.
+        Steuere, ob der KI-Chat unten rechts auf der Website erscheint.
       </p>
 
       <div className="bg-card border rounded-xl p-6">
@@ -68,11 +68,11 @@ const AdminChatWidget = () => {
                 <MessageCircle size={20} />
               </div>
               <div>
-                <h2 className="font-heading text-base font-semibold text-foreground">Widget auf der Website anzeigen</h2>
+                <h2 className="font-heading text-base font-semibold text-foreground">KI-Chat auf der Website anzeigen</h2>
                 <p className="font-body text-sm text-muted-foreground mt-1">
                   {enabled
-                    ? "Das Beratungs-Widget ist für Besucher sichtbar."
-                    : "Das Beratungs-Widget ist ausgeblendet. Besucher sehen es nicht."}
+                    ? "Der KI-Chat ist für Besucher sichtbar."
+                    : "Der KI-Chat ist ausgeblendet. Besucher sehen ihn nicht."}
                 </p>
               </div>
             </div>
