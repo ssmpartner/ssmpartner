@@ -17,5 +17,6 @@ export const useChatWidgetEnabled = () => {
       return data?.body !== "false";
     },
   });
-  return data !== false;
+  // Hidden until the setting has loaded, so a disabled widget never flashes up.
+  return data === true;
 };
