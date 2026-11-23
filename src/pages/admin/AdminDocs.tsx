@@ -1,8 +1,8 @@
 import { useState, useMemo } from "react";
-import { Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2, Code, History, Search, Sparkles, Zap, Database, Palette, Map as MapIcon, Cloud, Cpu, Rocket, CheckCircle2, Newspaper, Calendar, BarChart3, ListChecks } from "lucide-react";
+import { GitBranch, Trash2, Mail, Bell, MessageSquare, Book, Image, Users, Building2, FileText, Inbox, Layers, Globe, Briefcase, Video, HelpCircle, Star, Bot, CreditCard, Scissors, Gift, Shield, KeyRound, Link2, Code, History, Search, Sparkles, Zap, Database, Palette, Map as MapIcon, Cloud, Cpu, Rocket, CheckCircle2, Newspaper, Calendar, BarChart3, ListChecks } from "lucide-react";
 
-const CMS_VERSION = "2.7.0";
-const RELEASE_DATE = "17. Juni 2026";
+const CMS_VERSION = "3.0.0";
+const RELEASE_DATE = "23. November 2026";
 
 type Section = {
   icon: any;
@@ -38,11 +38,56 @@ const sections: Section[] = [
   { icon: Image, title: "Mediathek", category: "Tools", content: "Alle hochgeladenen Bilder und Videos werden zentral in der Mediathek gespeichert und können in allen Bereichen wiederverwendet werden." },
   { icon: Book, title: "API-Zugang", category: "Tools", content: "Über die REST-API können Sie alle Inhalte programmatisch lesen und schreiben. Details unter «API-Docs» in der Seitenleiste." },
   { icon: Database, title: "Cockpit-Data API", category: "Tools", content: "Die Edge Function «cockpit-data» liefert externen SSM-Projekten (z.B. SSM Cockpit) authentifizierten Lesezugriff auf Stammdaten (agencies, team_members). Authentifizierung via API-Secret aus sso_projects (Header x-sso-api-key). Der SUPABASE_SERVICE_ROLE_KEY bleibt vollständig serverseitig." },
+  { icon: GitBranch, title: "Organigramm", category: "Portal", content: "Unter «Organigramm» erstellen Sie Organigramme per Drag & Drop aus dem Team-Pool. Funktionen: Farben pro Kästchen, Verbindungen von allen Seiten, ganzen Ast mitverschieben, Duplizieren (Strg+D) mit manuell anpassbarer Position, Rückgängig (Strg+Z, bis 100 Schritte), Hilfslinien mit Einrasten, Ausrichten und gleichmässige Abstände. Export als PNG/PDF auf A4 zentriert mit grauem Hintergrund. Publizierte Organigramme sind im Portal sichtbar." },
+  { icon: Trash2, title: "Papierkorb", category: "Tools", content: "Unter Einstellungen → «Papierkorb» (nur Superadmins) landen alle gelöschten Einträge (Team, Agenturen, News, Events, FAQs, Stellen, Slider, VAG45, Anfragen, Menü, Texte). Jeder Eintrag kann jederzeit wiederhergestellt werden — es gibt keine endgültige Löschung mehr." },
+  { icon: Mail, title: "Kontaktformular & E-Mail", category: "Tools", content: "Im Kontaktformular ist «Generalagentur wählen» ein Pflichtfeld (alle Agenturen inkl. HQ). Die gewählte Agentur erhält die Anfrage per E-Mail, eine Kopie geht immer an marketing@ssmpartner.ch, der Kunde erhält eine Bestätigung in seiner Sprache. SMTP-Zugangsdaten werden unter Einstellungen → «E-Mail (SMTP)» serverseitig verwaltet." },
+  { icon: MessageSquare, title: "KI-Chat-Schalter", category: "Tools", content: "Unter Einstellungen → «KI-Chat (unten rechts)» lässt sich der KI-Chat auf der Website ein- oder ausblenden. Chat-Verläufe werden pro Gespräch gebündelt unter «Chat-Verläufe» gespeichert." },
+  { icon: BarChart3, title: "Analytics & SEO", category: "Tools", content: "«Analytics» zeigt Besucherzahlen (alle Seitenaufrufe, ohne Admin/Portal). «SEO» verwaltet Titel und Beschreibung pro Seite. Das «Search Console Monitoring» prüft täglich Indexierungs- und Crawling-Probleme und meldet sie als Banner im Admin." },
+  { icon: Bell, title: "Social-Media-Links", category: "Inhalte", content: "Unter «Social Media» passen Sie die Links in Footer und Kontaktseite jederzeit an." },
 ];
 
 const categories: Section["category"][] = ["Inhalte", "Benutzer & SSO", "Agenturen", "Karriere", "Portal", "Tools"];
 
 const changelog = [
+  {
+    version: "3.0.0",
+    date: "23. November 2026",
+    type: "Major",
+    changes: [
+      "Neues Modul «Organigramm» mit Editor, Undo, Hilfslinien, Ausrichten, Duplizieren und A4-Export (PNG/PDF)",
+      "Organigramm und SSM Academy Starterbrief als kompakte Icons im Portal",
+      "Microsoft SSO leitet in der Vorschau zurück zur Vorschau, live immer auf ssmpartner.ch",
+      "Schalter «KI-Chat (unten rechts)» unter Einstellungen; externes Beratungs-Widget entfernt",
+      "Doppelte Konten (Passwort + Microsoft) zusammengeführt",
+    ],
+  },
+  {
+    version: "2.9.0",
+    date: "12. November 2026",
+    type: "Minor",
+    changes: [
+      "Kontaktformular mit Pflichtfeld «Generalagentur wählen» und E-Mail an Agentur, Kopie an Marketing, Kundenbestätigung",
+      "SMTP-Einstellungen serverseitig verwaltet",
+      "Offene Stellen auf /karriere mit automatischer Zuordnung Innendienst/Aussendienst",
+      "SSM Academy Starterbrief-Modul mit Upload und PDF-Download",
+      "Sicherheitsverbesserungen bei Zugriffsregeln und Speicher",
+    ],
+  },
+  {
+    version: "2.8.0",
+    date: "Oktober 2026",
+    type: "Minor",
+    changes: [
+      "Papierkorb für Superadmins — alle Löschungen wiederherstellbar",
+      "Stabilere Modals bei News und Team (kein ungewolltes Schliessen)",
+      "Analytics-Dashboard, SEO-Modul und tägliches Search Console Monitoring",
+      "Social-Media-Links im Admin editierbar",
+      "Vollständige Übersetzung FR/IT/EN inkl. Karriere-FAQs",
+      "VAG45-PDFs direkt im Admin hochladbar, direkter Download",
+      "Neue Badges «Finanzcoach in Ausbildung» und «Finanzplaner mit eidg. FA»",
+      "Rollenwechsel in der Benutzerverwaltung korrigiert",
+    ],
+  },
   {
     version: "2.7.0",
     date: "17. Juni 2026",
