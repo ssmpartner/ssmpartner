@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Eye, X, Mail, Phone, Building2, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { Trash2, Eye, Archive, X, Mail, Phone, Building2, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   new: { label: "Neu", color: "bg-blue-100 text-blue-700" },
@@ -15,6 +17,39 @@ const AdminInquiries = () => {
   const queryClient = useQueryClient();
   const [selected, setSelected] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [checked, setChecked] = useState<Set<string>>(new Set());
+  const [confirmDelete, setConfirmDelete] = useState<string[] | null>(null);
+
+  const toggle = (id: string) => setChecked((prev) => {
+    const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n;
+  });
+
+  const bulkStatusMutation = useMutation({
+    mutationFn: async ({ ids, status }: { ids: string[]; status: string }) => {
+      const { error } = await supabase.from("inquiries").update({ status }).in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: (_d, v) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-inquiries"] });
+      setChecked(new Set());
+      toast.success(v.status === "archived" ? `${v.ids.length} archiviert` : `Status für ${v.ids.length} aktualisiert`);
+    },
+    onError: () => toast.error("Aktion fehlgeschlagen"),
+  });
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      const { error } = await supabase.from("inquiries").delete().in("id", ids);
+      if (error) throw error;
+    },
+    onSuccess: (_d, ids) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-inquiries"] });
+      setChecked(new Set());
+      setSelected(null);
+      toast.success(`${ids.length} gelöscht (im Papierkorb wiederherstellbar)`);
+    },
+    onError: () => toast.error("Löschen fehlgeschlagen"),
+  });
 
   const { data: inquiries, isLoading } = useQuery({
     queryKey: ["admin-inquiries"],
@@ -98,10 +133,44 @@ const AdminInquiries = () => {
           <p className="font-body text-sm text-muted-foreground">Keine Anfragen vorhanden.</p>
         </div>
       ) : (
+        <>
+        {checked.size > 0 && (
+          <div className="sticky top-2 z-20 mb-3 flex flex-wrap items-center gap-2 rounded-2xl border bg-card px-4 py-2.5 shadow-lg">
+            <span className="font-body text-sm font-semibold text-foreground mr-2">{checked.size} ausgewählt</span>
+            <select
+              defaultValue=""
+              onChange={(e) => { if (e.target.value) bulkStatusMutation.mutate({ ids: [...checked], status: e.target.value }); e.target.value = ""; }}
+              className="font-body text-xs px-3 py-1.5 rounded-lg border bg-background"
+            >
+              <option value="" disabled>Status ändern…</option>
+              <option value="new">Neu</option>
+              <option value="in_progress">In Bearbeitung</option>
+              <option value="done">Erledigt</option>
+            </select>
+            <button onClick={() => bulkStatusMutation.mutate({ ids: [...checked], status: "archived" })}
+              className="font-body text-xs px-3 py-1.5 rounded-lg border hover:bg-muted inline-flex items-center gap-1">
+              <Archive size={14} /> Archivieren
+            </button>
+            <button onClick={() => setConfirmDelete([...checked])}
+              className="font-body text-xs px-3 py-1.5 rounded-lg border text-destructive hover:bg-destructive/10 inline-flex items-center gap-1">
+              <Trash2 size={14} /> Löschen
+            </button>
+            <button onClick={() => setChecked(new Set())} className="ml-auto text-muted-foreground hover:text-foreground" aria-label="Auswahl aufheben">
+              <X size={16} />
+            </button>
+          </div>
+        )}
         <div className="bg-card border rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/50">
+                <th className="px-4 py-3 w-10">
+                  <Checkbox
+                    checked={!!filtered?.length && filtered.every((i) => checked.has(i.id))}
+                    onCheckedChange={(v) => setChecked(v ? new Set(filtered!.map((i) => i.id)) : new Set())}
+                    aria-label="Alle auswählen"
+                  />
+                </th>
                 <th className="text-left font-body text-xs font-medium text-muted-foreground px-4 py-3">Datum</th>
                 <th className="text-left font-body text-xs font-medium text-muted-foreground px-4 py-3">Name</th>
                 <th className="text-left font-body text-xs font-medium text-muted-foreground px-4 py-3">E-Mail</th>
@@ -114,7 +183,10 @@ const AdminInquiries = () => {
               {filtered?.map((inq) => {
                 const st = statusLabels[inq.status] || statusLabels.new;
                 return (
-                  <tr key={inq.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <tr key={inq.id} onClick={() => setSelected(inq)} className={`border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer ${checked.has(inq.id) ? "bg-primary/5" : ""}`}>
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox checked={checked.has(inq.id)} onCheckedChange={() => toggle(inq.id)} aria-label="Auswählen" />
+                    </td>
                     <td className="px-4 py-3 font-body text-xs text-muted-foreground">
                       {new Date(inq.created_at).toLocaleDateString("de-CH", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </td>
@@ -128,7 +200,7 @@ const AdminInquiries = () => {
                         </span>
                       ) : inq.source === "contact" ? "Kontaktseite" : inq.source}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <select
                         value={inq.status}
                         onChange={(e) => updateStatusMutation.mutate({ id: inq.id, status: e.target.value })}
@@ -140,11 +212,11 @@ const AdminInquiries = () => {
                         <option value="archived">Archiviert</option>
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
                       <button onClick={() => setSelected(inq)} className="text-muted-foreground hover:text-foreground mr-2">
                         <Eye size={14} />
                       </button>
-                      <button onClick={() => deleteMutation.mutate(inq.id)} className="text-muted-foreground hover:text-destructive">
+                      <button onClick={() => setConfirmDelete([inq.id])} className="text-muted-foreground hover:text-destructive">
                         <Trash2 size={14} />
                       </button>
                     </td>
@@ -154,7 +226,21 @@ const AdminInquiries = () => {
             </tbody>
           </table>
         </div>
+        </>
       )}
+
+      <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{confirmDelete?.length === 1 ? "Anfrage löschen?" : `${confirmDelete?.length} Anfragen löschen?`}</AlertDialogTitle>
+            <AlertDialogDescription>Gelöschte Anfragen können im Papierkorb wiederhergestellt werden.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { if (confirmDelete) bulkDeleteMutation.mutate(confirmDelete); setConfirmDelete(null); }}>Löschen</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Detail Modal */}
       {selected && (
