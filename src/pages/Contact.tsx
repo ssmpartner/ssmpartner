@@ -60,6 +60,7 @@ const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
 
+  const startedAt = useRef(Date.now());
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -88,6 +89,8 @@ const Contact = () => {
         phone: (data.get("phone") as string) || null,
         subject: data.get("subject") as string,
         message: data.get("message") as string,
+        website: (data.get("website") as string) || "",
+        started_at: startedAt.current,
       } });
       if (error || !res?.ok) throw error || new Error("failed");
       setSubmitted(true);
@@ -120,6 +123,9 @@ const Contact = () => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="mt-12 space-y-5" noValidate>
+                <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+                  <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+                </div>
                 <div>
                   <select name="agency" defaultValue="" className={`${inputClass("agency")} appearance-none`}>
                     <option value="" disabled>{t("contact.form.agency")} *</option>

@@ -13,10 +13,20 @@ const Body = z.object({
   name: z.string().trim().min(1).max(200),
   email: z.string().trim().email().max(255),
   phone: z.string().trim().max(50).optional().nullable(),
-  subject: z.string().trim().min(1).max(100),
+  subject: z.string().trim().max(100).optional().nullable(),
   message: z.string().trim().min(1).max(5000),
   lang: z.enum(["de", "fr", "it", "en"]).default("de"),
+  source: z.enum(["contact", "agency"]).default("contact"),
+  recipient: z.string().trim().max(200).optional().nullable(),
+  website: z.string().max(500).optional().nullable(), // honeypot
+  started_at: z.number().optional().nullable(), // form load time (ms)
 });
+
+const MIN_FILL_MS = 3000;
+const RATE_WINDOW_MIN = 10;
+const RATE_MAX = 3;
+const SPAM_RE = /(https?:\/\/|www\.)/i;
+const CYRILLIC_RE = /[\u0400-\u04FF]{5,}/;
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -31,7 +41,7 @@ const confirm = {
 let smtp: SmtpConfig | null = null;
 async function send(payload: Record<string, any>) {
   if (smtp) {
-    return await sendSmtp(smtp, { to: payload.to, bcc: payload.bcc, replyTo: payload.reply_to, subject: payload.subject, html: payload.html });
+    return await sendSmtp(smtp, { to: payload.to, bcc: payload.bcc, replyTo: payload.reply_to, subject: payloasubject, html: payload.html });
   }
   const r = await fetch(`${GATEWAY_URL}/emails`, {
     method: "POST",
@@ -53,8 +63,25 @@ Deno.serve(async (req) => {
     const parsed = Body.safeParse(await req.json());
     if (!parsed.success) return json({ error: parsed.error.flatten().fieldErrors }, 400);
     const d = parsed.data;
+    const subject = d.subject || (d.source === "agency" ? "Anfrage über Agenturseite" : "");
+    if (!subject) return json({ error: { subject: ["required"] } }, 400);
+
+    // Spam checks: silently accept so bots get no signal
+    const fake = () => json({ ok: true, id: null });
+    if (d.website && d.website.trim() !== "") { console.warn("honeypot hit"); return fake(); }
+    if (!d.started_at || Date.now() - d.started_at < MIN_FILL_MS) { console.warn("too fast"); return fake(); }
+    if (SPAM_RE.test(d.name) || CYRILLIC_RE.test(d.message) || (d.message.match(/https?:\/\//gi)?.length ?? 0) > 2) {
+      console.warn("pattern spam"); return fake();
+    }
 
     const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+
+    const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || req.headers.get("cf-connecting-ip") || "unknown";
+    const since = new Date(Date.now() - RATE_WINDOW_MIN * 60_000).toISOString();
+    const { count } = await sb.from("form_rate_limits").select("id", { count: "exact", head: true }).eq("ip", ip).gte("created_at", since);
+    if ((count ?? 0) >= RATE_MAX) return json({ error: "rate_limited" }, 429);
+    await sb.from("form_rate_limits").insert({ ip });
+    await sb.from("form_rate_limits").delete().lt("created_at", new Date(Date.now() - 86_400_000).toISOString());
     smtp = await loadSmtp(sb);
     let target = HQ;
     let agencyId: string | null = null;
@@ -66,10 +93,13 @@ Deno.serve(async (req) => {
     }
 
     const { data: row, error } = await sb.from("inquiries").insert({
-      source: "contact", agency_id: agencyId, agency_name: target.name,
-      name: d.name, email: d.email, phone: d.phone || null, subject: d.subject, message: d.message,
+      source: d.source, agency_id: agencyId, agency_name: d.source === "agency" ? target.name.replace(/^Agentur /, "") : target.name,
+      recipient_name: d.recipient || null,
+      name: d.name, email: d.email, phone: d.phone || null, subject, message: d.message,
     }).select("id").single();
     if (error) throw error;
+
+    if (d.source === "agency") return json({ ok: true, id: row.id });
 
     const msg = esc(d.message).replace(/\n/g, "<br>");
     const wrap = (inner: string) => `<div style="font-family:Arial,sans-serif;color:#243e3a;max-width:600px;margin:auto;padding:24px">${inner}<p style="margin-top:32px;font-size:12px;color:#777">SSM Partner AG · Stationsstrasse 92 · 6023 Rothenburg · 041 220 20 50</p></div>`;
@@ -78,9 +108,9 @@ Deno.serve(async (req) => {
     try {
       await send({
         from: FROM, to: [target.email], bcc: target.email === BCC ? undefined : [BCC], reply_to: d.email,
-        subject: `Neue Kontaktanfrage: ${d.subject} – ${d.name}`,
+        subject: `Neue Kontaktanfrage: ${subject} – ${d.name}`,
         html: wrap(`<h2>Neue Kontaktanfrage für ${esc(target.name)}</h2>
-          <p><b>Name:</b> ${esc(d.name)}<br><b>E-Mail:</b> ${esc(d.email)}<br><b>Telefon:</b> ${esc(d.phone || "–")}<br><b>Anliegen:</b> ${esc(d.subject)}</p>
+          <p><b>Name:</b> ${esc(d.name)}<br><b>E-Mail:</b> ${esc(d.email)}<br><b>Telefon:</b> ${esc(d.phone || "–")}<br><b>Anliegen:</b> ${esc(subject)}</p>
           <p><b>Nachricht:</b><br>${msg}</p><p style="font-size:12px;color:#777">Antworten Sie direkt auf diese E-Mail, um dem Kunden zu schreiben.</p>`),
         headers: { "X-Entity-Ref-ID": `inquiry-${row.id}` },
       });

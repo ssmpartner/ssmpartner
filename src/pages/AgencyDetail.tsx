@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,8 @@ const AgencyDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { lang, t } = useLanguage();
+  const startedAt = useRef(Date.now());
+  const [honeypot, setHoneypot] = useState("");
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "", recipient: "" });
   const [sending, setSending] = useState(false);
   const [selectedContact, setSelectedContact] = useState<any>(null);
@@ -86,18 +88,18 @@ const AgencyDetail = () => {
     }
     setSending(true);
     try {
-      // Save to inquiries table
-      const { error } = await supabase.from("inquiries").insert({
+      const { data: res, error } = await supabase.functions.invoke("contact-submit", { body: {
         source: "agency",
-        agency_id: agency?.id,
-        agency_name: agency?.name,
-        recipient_name: contactForm.recipient || null,
+        agency: agency?.id,
+        recipient: contactForm.recipient || null,
         name: contactForm.name,
         email: contactForm.email,
         phone: contactForm.phone || null,
         message: contactForm.message,
-      });
-      if (error) throw error;
+        website: honeypot,
+        started_at: startedAt.current,
+      } });
+      if (error || !res?.ok) throw error || new Error("failed");
       toast.success(t("agency.form.success"));
       setContactForm({ name: "", email: "", phone: "", message: "", recipient: "" });
     } catch {
@@ -272,6 +274,9 @@ const AgencyDetail = () => {
                   <div className="mt-8 pt-6 border-t">
                     <h4 className="font-heading text-sm font-semibold text-foreground mb-4">{t("agency.form.title")}</h4>
                     <form onSubmit={handleContactSubmit} className="space-y-3">
+                      <div aria-hidden="true" style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
+                        <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} /></label>
+                      </div>
                       {/* Recipient selector */}
                       {(() => {
                         const people: { name: string; label: string }[] = [];

@@ -92,6 +92,13 @@
       "when": 1794992081817,
       "tag": "0012_smtp_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795422510336,
+      "tag": "0013_form_rate_limits",
+      "breakpoints": true
     }
   ]
 }
