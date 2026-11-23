@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageSquare, Trash2, ChevronRight, ChevronDown, Clock, Globe } from "lucide-react";
+import { MessageSquare, Trash2, Clock, Globe } from "lucide-react";
 import { toast } from "sonner";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 interface ChatMessage {
   id: string;
@@ -24,6 +25,7 @@ interface ChatSession {
 const AdminChatLogs = () => {
   const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["admin-chat-sessions"],
@@ -60,7 +62,7 @@ const AdminChatLogs = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-chat-sessions"] });
-      if (expandedId) setExpandedId(null);
+      setExpandedId(null);
       toast.success("Chat-Verlauf gelöscht");
     },
   });
@@ -72,6 +74,13 @@ const AdminChatLogs = () => {
       hour: "2-digit", minute: "2-digit",
     });
   };
+
+  const formatDay = (d: string) =>
+    new Date(d).toLocaleDateString("de-CH", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const formatTime = (d: string) =>
+    new Date(d).toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" });
+
+  const selected = sessions?.find((s) => s.id === expandedId) ?? null;
 
   const sourceLabel = (s: string) => {
     switch (s) {
@@ -102,74 +111,76 @@ const AdminChatLogs = () => {
           <p className="font-body text-sm text-muted-foreground">Noch keine Chat-Verläufe vorhanden.</p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {sessions.map((session) => (
-            <div key={session.id} className="bg-card border rounded-xl overflow-hidden">
-              {/* Session header */}
-              <div
-                className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() => setExpandedId(expandedId === session.id ? null : session.id)}
-              >
-                {expandedId === session.id ? (
-                  <ChevronDown size={16} className="text-muted-foreground shrink-0" />
-                ) : (
-                  <ChevronRight size={16} className="text-muted-foreground shrink-0" />
-                )}
-
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(320px,420px)_1fr] gap-4 items-start">
+          {/* Liste */}
+          <div className="space-y-2 lg:max-h-[calc(100vh-200px)] lg:overflow-y-auto pr-1">
+            {sessions.map((session) => {
+              const active = expandedId === session.id;
+              return (
+                <div
+                  key={session.id}
+                  onClick={() => setExpandedId(session.id)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
+                    active ? "bg-primary/10 border-primary" : "bg-card hover:bg-muted/50"
+                  }`}
+                >
+                  <div className="flex-1 min-w-0">
                     <span className={`font-body text-xs px-2 py-0.5 rounded-full ${
-                      session.source === "onlinecheck"
-                        ? "bg-accent/10 text-accent-foreground"
-                        : "bg-primary/10 text-primary"
+                      session.source === "onlinecheck" ? "bg-accent/10 text-accent-foreground" : "bg-primary/10 text-primary"
                     }`}>
                       {sourceLabel(session.source)}
                     </span>
                     {session.page_url && (
-                      <span className="font-body text-xs text-muted-foreground flex items-center gap-1">
-                        <Globe size={10} />
-                        {session.page_url}
-                      </span>
+                      <p className="font-body text-xs text-muted-foreground flex items-center gap-1 mt-1 truncate">
+                        <Globe size={10} className="shrink-0" />
+                        <span className="truncate">{session.page_url}</span>
+                      </p>
                     )}
                   </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-body text-xs font-semibold text-foreground">{formatDay(session.created_at)}</p>
+                    <p className="font-body text-xs text-muted-foreground flex items-center gap-1 justify-end">
+                      <Clock size={10} /> {formatTime(session.created_at)}
+                    </p>
+                  </div>
                 </div>
+              );
+            })}
+          </div>
 
-                <span className="font-body text-xs text-muted-foreground flex items-center gap-1 shrink-0">
-                  <Clock size={12} />
-                  {formatDate(session.created_at)}
-                </span>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (confirm("Chat-Verlauf endgültig löschen?")) {
-                      deleteMutation.mutate(session.id);
-                    }
-                  }}
-                  className="text-muted-foreground hover:text-destructive shrink-0 ml-2"
-                >
-                  <Trash2 size={14} />
-                </button>
+          {/* Detail */}
+          <div className="bg-card border rounded-xl lg:sticky lg:top-4 flex flex-col lg:max-h-[calc(100vh-200px)]">
+            {!selected ? (
+              <div className="p-12 text-center">
+                <MessageSquare size={40} className="mx-auto text-muted-foreground/30 mb-3" />
+                <p className="font-body text-sm text-muted-foreground">Gespräch links auswählen, um den ganzen Chat zu sehen.</p>
               </div>
-
-              {/* Expanded messages */}
-              {expandedId === session.id && (
-                <div className="border-t px-4 py-4 space-y-3 bg-muted/20 max-h-[500px] overflow-y-auto">
+            ) : (
+              <>
+                <div className="flex items-center justify-between gap-3 px-4 py-3 border-b">
+                  <div className="min-w-0">
+                    <p className="font-body text-sm font-semibold text-foreground">{sourceLabel(selected.source)}</p>
+                    <p className="font-body text-xs text-muted-foreground">
+                      {formatDate(selected.created_at)} · {messages?.length || 0} Nachrichten
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setDeleteId(selected.id)}
+                    className="text-muted-foreground hover:text-destructive shrink-0"
+                    aria-label="Chat löschen"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+                <div className="px-4 py-4 space-y-3 bg-muted/20 overflow-y-auto flex-1 min-h-[300px]">
                   {!messages?.length ? (
                     <p className="font-body text-xs text-muted-foreground italic">Keine Nachrichten gespeichert.</p>
                   ) : (
                     messages.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                      >
-                        <div
-                          className={`max-w-[80%] rounded-xl px-4 py-2.5 ${
-                            msg.role === "user"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-card border"
-                          }`}
-                        >
+                      <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                        <div className={`max-w-[80%] rounded-xl px-4 py-2.5 ${
+                          msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-card border"
+                        }`}>
                           <p className="font-body text-sm whitespace-pre-wrap break-words">{msg.content}</p>
                           <p className={`font-body text-[10px] mt-1 ${
                             msg.role === "user" ? "text-primary-foreground/60" : "text-muted-foreground"
@@ -181,11 +192,26 @@ const AdminChatLogs = () => {
                     ))
                   )}
                 </div>
-              )}
-            </div>
-          ))}
+              </>
+            )}
+          </div>
         </div>
       )}
+
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Chat-Verlauf löschen?</AlertDialogTitle>
+            <AlertDialogDescription>Das Gespräch wird gelöscht.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+            <AlertDialogAction onClick={() => { if (deleteId) deleteMutation.mutate(deleteId); setDeleteId(null); }}>
+              Löschen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
