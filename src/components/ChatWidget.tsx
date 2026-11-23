@@ -19,9 +19,13 @@ const quickActions = [
   { label: "Kontakt aufnehmen", message: "Wie kann ich euch kontaktieren?" },
 ];
 
-const ChatWidget = () => {
+const ChatWidget = ({ open, onOpenChange: setOpen, hidden = false, dockLeft = false }: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  hidden?: boolean;
+  dockLeft?: boolean;
+}) => {
   const widgetEnabled = useChatWidgetEnabled();
-  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -249,7 +253,11 @@ const ChatWidget = () => {
     );
   };
 
-  if (!widgetEnabled) return null;
+  useEffect(() => {
+    if (!widgetEnabled) setOpen(false);
+  }, [widgetEnabled, setOpen]);
+
+  if (!widgetEnabled || hidden) return null;
 
   return (
     <>
@@ -275,7 +283,7 @@ const ChatWidget = () => {
               boxShadow: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
             }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[#243e3a] to-[#B3B69C] text-white flex items-center justify-center ring-2 ring-[#B3B69C]/40 ring-offset-2"
+            className={`fixed bottom-6 ${dockLeft ? "left-4 sm:left-6" : "right-6"} z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center ring-2 ring-primary/40 ring-offset-2`}
             aria-label="Chat öffnen"
           >
             <MessageCircle size={24} />
@@ -291,7 +299,7 @@ const ChatWidget = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-4rem)] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
+            className={`fixed bottom-6 ${dockLeft ? "left-4 sm:left-6" : "right-6"} z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-4rem)] bg-card rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border`}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 bg-[#243e3a] text-white">

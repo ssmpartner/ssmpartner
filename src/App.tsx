@@ -46,6 +46,7 @@ import AdminOnlineCheck from "./pages/admin/AdminOnlineCheck";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSocialLinks from "./pages/admin/AdminSocialLinks";
 import AdminChatWidget from "./pages/admin/AdminChatWidget";
+import AdminConsultationWidget from "./pages/admin/AdminConsultationWidget";
 import AdminSmtp from "./pages/admin/AdminSmtp";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminSEO from "./pages/admin/AdminSEO";
@@ -57,7 +58,7 @@ import AdminEvents from "./pages/admin/AdminEvents";
 import PortalNews from "./pages/portal/PortalNews";
 import PortalNewsDetail from "./pages/portal/PortalNewsDetail";
 import PortalEvents from "./pages/portal/PortalEvents";
-import ChatWidget from "@/components/ChatWidget";
+import WebsiteWidgets from "@/components/WebsiteWidgets";
 import Vag45 from "./pages/Vag45";
 import Legal from "./pages/Legal";
 import OnlineCheck from "./pages/OnlineCheck";
@@ -84,7 +85,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => (
     <Navbar />
     {children}
     <Footer />
-    <ChatWidget />
+    <WebsiteWidgets />
   </>
 );
 
@@ -147,6 +148,7 @@ const App = () => (
                 <Route path="/admin/users" element={<AdminUsers />} />
                 <Route path="/admin/social-links" element={<AdminSocialLinks />} />
                 <Route path="/admin/chat-widget" element={<AdminChatWidget />} />
+                <Route path="/admin/consultation-widget" element={<AdminConsultationWidget />} />
                 <Route path="/admin/settings/smtp" element={<AdminSmtp />} />
                 <Route path="/admin/analytics" element={<AdminAnalytics />} />
                 <Route path="/admin/seo" element={<AdminSEO />} />

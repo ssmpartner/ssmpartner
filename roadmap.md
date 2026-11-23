@@ -1,0 +1,2 @@
+- [x] Beratungs-Widget mit dem gelieferten Script und separatem Einstellungsschalter einbauen.
+- [x] Überlagerungen mit dem KI-Chat verhindern und beide Anzeigen prüfen (Desktop/Handy, Testbrowser unter freigegebener Domain).

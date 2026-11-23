@@ -5,6 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const useChatWidgetEnabled = () => {
   const { data } = useQuery({
     queryKey: ["chat-widget-enabled"],
+    staleTime: 0,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("site_content")

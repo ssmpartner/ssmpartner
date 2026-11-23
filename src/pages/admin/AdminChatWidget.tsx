@@ -51,9 +51,9 @@ const AdminChatWidget = () => {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="font-heading text-2xl font-semibold text-foreground mb-1">KI-Chat (unten rechts)</h1>
+      <h1 className="font-heading text-2xl font-semibold text-foreground mb-1">KI-Chat</h1>
       <p className="font-body text-sm text-muted-foreground mb-8">
-        Steuere, ob der KI-Chat unten rechts auf der Website erscheint.
+        Steuere, ob der KI-Chat auf der Website erscheint.
       </p>
 
       <div className="bg-card border rounded-xl p-6">
