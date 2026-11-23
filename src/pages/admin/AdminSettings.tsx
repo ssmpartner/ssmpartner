@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Shield, UserCog, KeySquare, Activity, Bot, Share2, Trash2, ChevronRight, Mail, MessageCircle } from "lucide-react";
+import { Shield, UserCog, KeySquare, Activity, Bot, Share2, Trash2, ChevronRight, Mail, MessageCircle, MessageSquare, Search } from "lucide-react";
 
 const AdminSettings = () => {
   const { isSuperadmin } = useAuth();
@@ -8,9 +8,11 @@ const AdminSettings = () => {
     { to: "/admin/settings/account", label: "Konto & Passwort", desc: "Kontodaten und Passwort ändern", icon: Shield },
     { to: "/admin/users", label: "Benutzer", desc: "Benutzer und Rollen verwalten", icon: UserCog },
     { to: "/admin/entra-sso", label: "Microsoft SSO", desc: "Anmeldung mit Microsoft Entra ID", icon: KeySquare },
+    { to: "/admin/onlinecheck", label: "Online-Beratung", desc: "Online-Check und Beratung verwalten", icon: MessageSquare },
+    { to: "/admin/seo", label: "SEO Optimierung", desc: "Titel und Beschreibungen pro Seite", icon: Search },
     { to: "/admin/gsc-monitor", label: "Search Console", desc: "Indexierung und Crawling überwachen", icon: Activity },
     { to: "/admin/chat-knowledge", label: "KI-Chat Wissen", desc: "Wissensbasis des KI-Chats pflegen", icon: Bot },
-    { to: "/admin/chat-widget", label: "KI-Chat (unten rechts)", desc: "KI-Chat auf der Website ein-/ausblenden", icon: MessageCircle },
+    { to: "/admin/chat-widget", label: "KI-Chat (unten rechts)", desc: "KI-Chat auf der Website ein-/ausblenden", icon: MessageCircle, MessageSquare, Search },
     { to: "/admin/social-links", label: "Social Media", desc: "Links zu Social-Media-Kanälen", icon: Share2 },
     { to: "/admin/settings/smtp", label: "E-Mail (SMTP)", desc: "Mailserver für Benachrichtigungen", icon: Mail },
     ...(isSuperadmin ? [{ to: "/admin/settings/trash", label: "Papierkorb", desc: "Gelöschte Einträge wiederherstellen", icon: Trash2 }] : []),

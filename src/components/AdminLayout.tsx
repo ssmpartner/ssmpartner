@@ -35,7 +35,6 @@ const adminLinks = [
   { to: "/admin/career-faqs", label: "Karriere-FAQ", icon: HelpCircle },
   { to: "/admin/media", label: "Mediathek", icon: FolderOpen },
   { to: "/admin/chat-logs", label: "Chat-Verläufe", icon: MessagesSquare },
-  { to: "/admin/onlinecheck", label: "Online-Beratung", icon: MessageSquare },
   { to: "/admin/news", label: "News & Kommunikation", icon: Newspaper },
   { to: "/admin/events", label: "Events", icon: Calendar },
   { to: "/admin/starterbrief", label: "Starterbrief", icon: BookOpen },
@@ -43,7 +42,6 @@ const adminLinks = [
   { to: "/admin/vag45", label: "VAG 45", icon: FileText },
   { to: "/admin/inquiries", label: "Anfragen", icon: Inbox },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/admin/seo", label: "SEO Optimierung", icon: Search },
 ];
 
 const settingsSubPaths = ["/admin/settings", "/admin/users", "/admin/entra-sso", "/admin/gsc-monitor", "/admin/chat-knowledge", "/admin/social-links"];
