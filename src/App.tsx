@@ -22,6 +22,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSlider from "./pages/admin/AdminSlider";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminTeam from "./pages/admin/AdminTeam";
+import AdminBusinessCards from "./pages/admin/AdminBusinessCards";
 import AdminAgencies from "./pages/admin/AdminAgencies";
 import AdminJobs from "./pages/admin/AdminJobs";
 import AdminStarterbrief from "./pages/admin/AdminStarterbrief";
@@ -128,6 +129,7 @@ const App = () => (
                 <Route path="/admin/nav" element={<AdminNav />} />
                 <Route path="/admin/content" element={<AdminContent />} />
                 <Route path="/admin/team" element={<AdminTeam />} />
+                <Route path="/admin/visitenkarten" element={<AdminBusinessCards />} />
                 <Route path="/admin/agencies" element={<AdminAgencies />} />
                 <Route path="/admin/jobs" element={<AdminJobs />} />
                 <Route path="/admin/starterbrief" element={<AdminStarterbrief />} />

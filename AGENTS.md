@@ -2,3 +2,4 @@
 - Authentication emails use the scaffolded auth-email-hook and managed email SDK; do not add queue infrastructure because delivery is platform-managed.
 - Org charts (admin editor + portal view) use @xyflow/react; SMTP settings are stored server-side and managed via the smtp-settings edge function, never read in the browser — keeps credentials off the client.
 - Public website widgets share a visibility coordinator and independent CMS switches; load the vendor script once and suspend its iframe when disabled because the vendor has no teardown API.
+- Business card generator: preview SVG and CMYK PDF (pdf-lib) both read src/lib/businessCard/layout.ts — one source for geometry so screen and print match.

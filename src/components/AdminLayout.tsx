@@ -9,7 +9,7 @@ import {
   MessageSquare, PanelLeftClose, PanelLeft, ExternalLink, ArrowLeftRight,
   User, ChevronDown, Newspaper, Calendar,
   Share2, Activity, AlertCircle,
-  KeySquare,
+  KeySquare, IdCard,
 } from "lucide-react";
 import { BarChart3, Search, BookOpen , Network } from "lucide-react";
 import { useState } from "react";
@@ -29,6 +29,7 @@ const adminLinks = [
   { to: "/admin/nav", label: "Menüpunkte", icon: MenuIcon },
   { to: "/admin/content", label: "Seitentexte", icon: FileText },
   { to: "/admin/team", label: "Team", icon: Users },
+  { to: "/admin/visitenkarten", label: "Visitenkarten", icon: IdCard },
   { to: "/admin/agencies", label: "Agenturen", icon: Building2 },
   { to: "/admin/jobs", label: "Stellen", icon: Briefcase },
   { to: "/admin/career-videos", label: "Karriere-Videos", icon: Video },
