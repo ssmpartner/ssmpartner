@@ -62,13 +62,18 @@ async function fetchFont(url: string): Promise<ArrayBuffer | null> {
   } catch { return null; }
 }
 
+async function fetchFirst(...urls: string[]) {
+  for (const u of urls) { const b = await fetchFont(u); if (b) return b; }
+  return null;
+}
+
 let fontsPromise: Promise<CardFonts> | null = null;
 export function loadCardFonts(): Promise<CardFonts> {
   if (fontsPromise) return fontsPromise;
   fontsPromise = (async () => {
     const [bold, semi, medium, regular] = await Promise.all([
-      fetchFont("/NeueAlteGrotesk-Bold.ttf"), fetchFont("/NeueAlteGrotesk-SemiBold.ttf"),
-      fetchFont("/NeueAlteGrotesk-Medium.ttf"), fetchFont("/NeueAlteGrotesk-Regular.ttf"),
+      fetchFirst("/NeueAlteGrotesk-Bold.ttf", "/NeueAlteGrotesk-Bold.otf"), fetchFont("/NeueAlteGrotesk-SemiBold.ttf"),
+      fetchFirst("/NeueAlteGrotesk-Medium.ttf", "/NeueAlteGrotesk-Medium.otf"), fetchFont("/NeueAlteGrotesk-Regular.ttf"),
     ]);
     if (!regular || !(bold || semi)) throw new Error("Schriftdateien konnten nicht geladen werden");
     const bytes: Record<FontRole, ArrayBuffer> = { bold: (bold || semi)!, medium: medium || regular, regular };
@@ -87,7 +92,7 @@ export function loadCardFonts(): Promise<CardFonts> {
       fallback: !bold || !medium,
       measure: (role, text, size) => {
         const f = fk[role];
-        return (f.layout(text).advanceWidth / f.unitsPerEm) * size * PT_TO_MM;
+        return (f.layout(text, { liga: false }).advanceWidth / f.unitsPerEm) * size * PT_TO_MM;
       },
     };
   })();

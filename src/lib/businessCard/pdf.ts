@@ -10,9 +10,9 @@ export async function buildBusinessCardPdf(layout: CardLayout, vcard: string, fo
   doc.registerFontkit(fontkit);
   doc.setTitle(`Visitenkarte ${layout.name.text}`);
   const f = {
-    bold: await doc.embedFont(fonts.bytes.bold, { subset: true }),
-    regular: await doc.embedFont(fonts.bytes.regular, { subset: true }),
-    medium: await doc.embedFont(fonts.bytes.medium, { subset: true }),
+    bold: await doc.embedFont(fonts.bytes.bold, { subset: false, features: { liga: false } }),
+    regular: await doc.embedFont(fonts.bytes.regular, { subset: false, features: { liga: false } }),
+    medium: await doc.embedFont(fonts.bytes.medium, { subset: false, features: { liga: false } }),
   };
   const W = mm(PAGE_W_MM), H = mm(PAGE_H_MM);
   const boxes = (p: ReturnType<typeof doc.addPage>) => {

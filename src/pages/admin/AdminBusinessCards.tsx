@@ -40,7 +40,7 @@ function Front({ layout, vcard }: { layout: CardLayout; vcard: string }) {
   const { n, runs } = useMemo(() => qrRuns(vcard), [vcard]);
   const m = QR.size / n;
   return (
-    <svg viewBox={`0 0 ${PAGE_W_MM} ${PAGE_H_MM}`} className="w-full rounded-md shadow-md" style={{ background: SCREEN.white }}>
+    <svg viewBox={`0 0 ${PAGE_W_MM} ${PAGE_H_MM}`} className="w-full rounded-md shadow-md" style={{ background: SCREEN.white, fontVariantLigatures: "none" }}>
       {runs.map(([r, s, len], i) => <rect key={i} x={QR.x + s * m} y={QR.y + r * m} width={len * m + 0.01} height={m + 0.01} fill={SCREEN.green} />)}
       {[layout.name, layout.role].map((t, i) => (
         <text key={i} x={t.x} y={t.y} fontSize={t.size * k} fontFamily={FONT_FAMILY[t.font]} fill={SCREEN.black}>{t.text}</text>
