@@ -29,7 +29,7 @@ function vcardFor(d: CardData) {
   return v.replace("END:VCARD", "URL:https://www.ssmpartner.ch\nEND:VCARD");
 }
 function download(bytes: Uint8Array, name: string) {
-  const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
+  const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: "application/pdf" }));
   const a = document.createElement("a"); a.href = url; a.download = name;
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
